@@ -7,20 +7,71 @@
 
 @layer base {
   html {
-    font-family: 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-family:
+      'Pretendard',
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      'Roboto',
+      'Helvetica Neue',
+      Arial,
+      sans-serif;
   }
+}
+
+/* React Slick 화살표 위치 조정 */
+.slick-prev,
+.slick-next {
+  width: 40px !important;
+  height: 40px !important;
+  z-index: 10;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.slick-prev {
+  left: -50px !important;
+  transform: none !important;
+  position: absolute !important;
+}
+
+/* 오른쪽 화살표 위치 */
+.slick-next {
+  right: -60px !important;
+  transform: none !important;
+  position: absolute !important;
+}
+
+/* 기본 화살표 내용 숨기기 */
+.slick-prev:before,
+.slick-next:before {
+  display: none !important;
 }
 
 body {
   margin: 0;
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family:
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
