@@ -42,8 +42,32 @@ export default function Shop() {
                   alt={item.name}
                   className='w-full object-cover'
                 />
-                <h3>{item.name}</h3>
-                <p>{item.price.toLocaleString()}원</p>
+                {!item.saleRate && (
+                  <div className='flex justify-between gap-2'>
+                    <h3 className='text-lg'>{item.name}</h3>
+                    <p className='text-lg font-semibold'>
+                      {item.price.toLocaleString()}원
+                    </p>
+                  </div>
+                )}
+                {item.saleRate && (
+                  <div className='flex flex-col gap-2'>
+                    <div className='flex justify-between gap-2'>
+                      <h3 className='text-lg'>{item.name}</h3>
+                      <p className='text-lg font-semibold line-through text-gray-500'>
+                        {item.price.toLocaleString()}원
+                      </p>
+                    </div>
+                    <div className='flex justify-end gap-2'>
+                      <p className='flex text-lg font-semibold text-red-500 justify-start'>
+                        {item.saleRate}%
+                      </p>
+                      <p className='text-lg font-semibold text-gray-900'>
+                        {item.salePrice.toLocaleString()}원
+                      </p>
+                    </div>
+                  </div>
+                )}
               </li>
             </Link>
           </motion.div>
