@@ -5,7 +5,7 @@ import { useToast } from '../../../context/ToastContext';
 
 export default function CheckItemDeleteButton({ cart, updateCart }) {
   const { addToast } = useToast();
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
 
   const handleDeleteSelected = () => {
     const selectedItems = cart.filter(item => item.checked);
