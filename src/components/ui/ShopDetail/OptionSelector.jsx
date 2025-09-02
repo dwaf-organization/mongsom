@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import Select from '../Select';
 import QuantityControlButton from '../../../layout/button/QuantityControlButton';
 
-export default function OptionSelector({ product, onTotalPriceChange }) {
+export default function OptionSelector({
+  product,
+  onTotalPriceChange,
+  onOptionsChange,
+}) {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   useEffect(() => {
@@ -11,7 +15,12 @@ export default function OptionSelector({ product, onTotalPriceChange }) {
     }, 0);
 
     onTotalPriceChange(totalPrice);
-  }, [selectedOptions, product.price, onTotalPriceChange]);
+
+    // 선택된 옵션들을 부모 컴포넌트로 전달
+    if (onOptionsChange) {
+      onOptionsChange(selectedOptions);
+    }
+  }, [selectedOptions, product.price, onTotalPriceChange, onOptionsChange]);
 
   const handleOptionChange = value => {
     const existingOptionIndex = selectedOptions.findIndex(
@@ -51,7 +60,7 @@ export default function OptionSelector({ product, onTotalPriceChange }) {
         }))}
         value=''
         onChange={handleOptionChange}
-        className='w-full pb-4 items-center mt-4 border-b border-gray-500'
+        className='w-full pb-4 items-center mt-4 '
       />
 
       {selectedOptions.length > 0 && (
