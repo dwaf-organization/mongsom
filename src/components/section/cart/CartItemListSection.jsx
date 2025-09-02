@@ -21,6 +21,9 @@ export default function CartItemListSection({ cart, updateCart }) {
   };
 
   const calculateTotalPrice = item => {
+    if (item.salePrice) {
+      return item.salePrice * item.count;
+    }
     return item.price * item.count;
   };
 
@@ -62,6 +65,18 @@ export default function CartItemListSection({ cart, updateCart }) {
                 </p>
                 <p className='text-pretendart text-gray-600'>{item.option}</p>
               </div>
+              {item.salePrice ? (
+                <div className='flex items-center gap-2'>
+                  <p className='text-pretendart text-primary-200 font-semibold'>
+                    {item.saleRate}%
+                  </p>
+                  <p className='text-pretendart text-gray-500 line-through'>
+                    {item.price.toLocaleString()}원
+                  </p>
+                </div>
+              ) : (
+                <p>{item.price.toLocaleString()}원</p>
+              )}
               <p className='text-pretendart font-semibold text-xl'>
                 {calculateTotalPrice(item).toLocaleString()}원
               </p>

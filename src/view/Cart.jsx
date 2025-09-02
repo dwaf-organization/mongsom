@@ -31,7 +31,7 @@ export default function Cart() {
     <InnerPaddingSectionWrapper>
       <h2 className='text-4xl font-semibold font-pretendard pb-5'>장바구니</h2>
 
-      <BreadCrumbSection />
+      <BreadCrumbSection currentStep='cart' />
       <AllCheckBoxSection
         allChecked={allChecked}
         onAllCheckChange={handleAllCheckChange}

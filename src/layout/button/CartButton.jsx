@@ -23,6 +23,9 @@ export default function CartButton({ selectedOptions, product }) {
       image: product.image,
       option: option.name,
       count: option.quantity,
+      selectedOptions: selectedOptions,
+      salePrice: product.salePrice,
+      saleRate: product.saleRate,
       checked: true,
     }));
 
