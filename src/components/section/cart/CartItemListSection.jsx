@@ -24,6 +24,14 @@ export default function CartItemListSection({ cart, updateCart }) {
     return item.price * item.count;
   };
 
+  const handleCheckboxChange = (itemId, checked) => {
+    const updatedCart = cart.map(item =>
+      item.id === itemId ? { ...item, checked } : item,
+    );
+    updateCart(updatedCart);
+    sessionStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
+
   return (
     <>
       <ul className='flexs flex-col items-start justify-start gap-4 w-full'>
@@ -42,7 +50,11 @@ export default function CartItemListSection({ cart, updateCart }) {
                 <p className='text-xl font-semibold whitespace-nowrap'>
                   {item.name}
                 </p>
-                <CheckBox />
+                <CheckBox
+                  checked={item.checked}
+                  onChange={checked => handleCheckboxChange(item.id, checked)}
+                  id={`checkbox-${item.id}`}
+                />
               </div>
               <div className='flex items-center gap-2'>
                 <p className='text-pretendart border-r border-gray-500 pr-2 text-gray-500 leading-none'>

@@ -5,7 +5,7 @@ import { useToast } from '../../../context/ToastContext';
 
 export default function CheckItemDeleteButton({ cart, updateCart }) {
   const { addToast } = useToast();
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
 
   const handleDeleteSelected = () => {
     const selectedItems = cart.filter(item => item.checked);
@@ -14,23 +14,13 @@ export default function CheckItemDeleteButton({ cart, updateCart }) {
       return;
     }
 
-    const modalId = openModal({
-      title: '상품 삭제 확인',
-      content: (
-        <DeleteConfirmModal
-          itemCount={selectedItems.length}
-          onCancel={() => closeModal(modalId)}
-          onConfirm={() => {
-            const updatedCart = cart.filter(item => !item.checked);
-            updateCart(updatedCart);
-            sessionStorage.setItem('cart', JSON.stringify(updatedCart));
-            addToast('선택된 상품이 삭제되었습니다.', 'success');
-            closeModal(modalId);
-          }}
-        />
-      ),
-      size: 'sm',
-    });
+    openModal(
+      <DeleteConfirmModal
+        itemCount={selectedItems.length}
+        cart={cart}
+        updateCart={updateCart}
+      />,
+    );
   };
   return (
     <div className='flex items-center justify-end border-t border-gray-500 py-4 '>
