@@ -21,6 +21,12 @@ export default function Cart() {
     setCart(updatedCart);
   };
 
+  const handleAllCheckChange = checked => {
+    const updatedCart = cart.map(item => ({ ...item, checked }));
+    updateCart(updatedCart);
+    sessionStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
+
   return (
     <InnerPaddingSectionWrapper>
       <h2 className='text-4xl font-semibold font-pretendard pb-5'>장바구니</h2>
@@ -28,8 +34,7 @@ export default function Cart() {
       <BreadCrumbSection />
       <AllCheckBoxSection
         allChecked={allChecked}
-        cart={cart}
-        updateCart={updateCart}
+        onAllCheckChange={handleAllCheckChange}
       />
       <CartItemListSection cart={cart} updateCart={updateCart} />
       <CartPriceSummarySection cart={cart} />

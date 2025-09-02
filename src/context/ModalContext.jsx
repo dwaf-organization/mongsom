@@ -11,29 +11,22 @@ export const useModal = () => {
 };
 
 export const ModalProvider = ({ children }) => {
-  const [modals, setModals] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
 
-  const openModal = modalData => {
-    const id = Date.now() + Math.random();
-    const modal = {
-      id,
-      ...modalData,
-    };
-    setModals(prev => [...prev, modal]);
-    return id;
+  const openModal = content => {
+    setModalContent(content);
+    setIsOpen(true);
   };
 
-  const closeModal = id => {
-    setModals(prev => prev.filter(modal => modal.id !== id));
-  };
-
-  const closeAllModals = () => {
-    setModals([]);
+  const closeModal = () => {
+    setModalContent(null);
+    setIsOpen(false);
   };
 
   return (
     <ModalContext.Provider
-      value={{ modals, openModal, closeModal, closeAllModals }}
+      value={{ isOpen, modalContent, openModal, closeModal }}
     >
       {children}
     </ModalContext.Provider>

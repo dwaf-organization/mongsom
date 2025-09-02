@@ -4,10 +4,14 @@ import ProductHeader from '../../ui/ShopDetail/ProductHeader';
 import OptionSelector from '../../ui/ShopDetail/OptionSelector';
 import TotalPrice from '../../ui/ShopDetail/TotalPrice';
 import PurchaseBar from '../../ui/ShopDetail/PurchaseBar';
+import { useToast } from '../../../context/ToastContext';
+import CartButton from '../../../layout/button/CartButton';
+import BuyButton from '../../../layout/button/BuyButton';
 
 export default function PurchaseInfo({ product }) {
   const [totalPrice, setTotalPrice] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const { addToast } = useToast();
 
   const handleTotalPriceChange = newTotalPrice => {
     setTotalPrice(newTotalPrice);
@@ -15,34 +19,6 @@ export default function PurchaseInfo({ product }) {
 
   const handleOptionsChange = options => {
     setSelectedOptions(options);
-  };
-
-  const handleAddToCart = () => {
-    if (selectedOptions.length === 0) {
-      alert('옵션을 선택해주세요.');
-      return;
-    }
-
-    // 세션에서 기존 장바구니 데이터 가져오기
-    const existingCart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-
-    // 새로운 상품들을 장바구니에 추가
-    const newCartItems = selectedOptions.map(option => ({
-      id: Date.now() + Math.random(), // 고유 ID 생성
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      option: option.name,
-      count: option.quantity,
-      checked: true,
-    }));
-
-    const updatedCart = [...existingCart, ...newCartItems];
-    sessionStorage.setItem('cart', JSON.stringify(updatedCart));
-
-    alert('장바구니에 상품이 추가되었습니다!');
-    console.log('장바구니에 추가된 상품:', newCartItems);
   };
 
   return (
@@ -54,7 +30,10 @@ export default function PurchaseInfo({ product }) {
         onOptionsChange={handleOptionsChange}
       />
       <TotalPrice totalPrice={totalPrice} />
-      <PurchaseBar onAddToCart={handleAddToCart} />
+      <div className='flex justify-between gap-2'>
+        <CartButton selectedOptions={selectedOptions} product={product} />
+        <BuyButton />
+      </div>
     </div>
   );
 }

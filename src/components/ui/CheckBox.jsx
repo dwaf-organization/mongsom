@@ -1,26 +1,24 @@
-import { useState } from 'react';
-
-export default function CheckBox() {
-  const [isChecked, setIsChecked] = useState(true);
-
+export default function CheckBox({ checked = false, onChange, id }) {
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
+    if (onChange) {
+      onChange(!checked);
+    }
   };
 
   return (
     <>
       <div className='relative w-5 h-5'>
         <input
-          id='custom-checkbox'
+          id={id || 'custom-checkbox'}
           name='productchecked'
           type='checkbox'
-          checked={isChecked}
+          checked={checked}
           onChange={handleCheckboxChange}
           className='w-full h-full appearance-none border border-primary-200 rounded 
           checked:bg-primary-200 checked:border-transparent active:border-black
           cursor-pointer relative'
         />
-        {isChecked && (
+        {checked && (
           <svg
             className='absolute inset-0 w-full h-full pointer-events-none'
             viewBox='0 0 20 20'
