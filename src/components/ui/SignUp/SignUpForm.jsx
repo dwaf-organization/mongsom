@@ -1,6 +1,7 @@
 import { Button } from '../../ui/button';
 import AdditionalInfoInput from './AdditionalInfoInput';
 import FormField from './FormField';
+import AddressInput from '../AddressInput';
 import { useState, useEffect } from 'react';
 import { SignUpSchema } from '../../../schema/SignUpSchema';
 import { useToast } from '../../../context/ToastContext';
@@ -13,8 +14,7 @@ export default function SignUpForm() {
     password: '',
     confirmPassword: '',
     name: '',
-    address: '',
-    addressDetail: '',
+    address: { address: '', addressDetail: '', userDetailAddress: '' },
     email: '',
   });
 
@@ -58,6 +58,13 @@ export default function SignUpForm() {
     setFormData(prev => ({
       ...prev,
       [field]: value,
+    }));
+  };
+
+  const handleAddressChange = addressData => {
+    setFormData(prev => ({
+      ...prev,
+      address: addressData,
     }));
   };
 
@@ -133,33 +140,14 @@ export default function SignUpForm() {
           value={formData.name}
           onChange={e => handleInputChange('name', e.target.value)}
         />
-        <FormField id='address' label='주소'>
-          <div className='flex flex-col gap-2 w-full max-w-[500px]'>
-            <div className='flex items-center gap-2'>
-              <input
-                id='address'
-                type='text'
-                value={formData.address}
-                onChange={e => handleInputChange('address', e.target.value)}
-                className='border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200'
-              />
-              <button
-                type='button'
-                className='bg-black-100 text-white text-sm whitespace-nowrap h-[42px] rounded-md p-2 max-w-[168px]'
-              >
-                주소검색
-              </button>
-            </div>
-            <input
-              id='addressDetail'
-              type='text'
-              placeholder='상세주소를 입력하세요'
-              value={formData.addressDetail}
-              onChange={e => handleInputChange('addressDetail', e.target.value)}
-              className='border border-gray-400 rounded-md p-2 max-w-[500px] w-full focus:outline-primary-200'
-            />
-          </div>
-        </FormField>
+        <AddressInput
+          id='address'
+          label='주소'
+          value={formData.address}
+          onChange={handleAddressChange}
+          placeholder='상세주소를 입력하세요'
+          variant='signup'
+        />
         <FormField
           id='email'
           label='이메일'

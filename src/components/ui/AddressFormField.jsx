@@ -6,6 +6,9 @@ export default function AddressFormField({
   children,
   className = '',
   required,
+  value,
+  onChange,
+  error,
 }) {
   return (
     <label
@@ -21,9 +24,12 @@ export default function AddressFormField({
           id={id}
           type={type}
           placeholder={placeholder}
-          className='border border-gray-400 rounded-md p-2  w-full focus:outline-primary-200'
+          value={value || ''}
+          onChange={onChange}
+          className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200`}
         />
       )}
+      {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}
     </label>
   );
 }

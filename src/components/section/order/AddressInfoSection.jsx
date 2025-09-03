@@ -1,6 +1,61 @@
 import AddressFormField from '../../ui/AddressFormField';
+import AddressInput from '../../ui/AddressInput';
+import { useState, useEffect } from 'react';
+import { OrderSchema } from '../../../schema/OrderSchema';
+import { useToast } from '../../../context/ToastContext';
 
-export default function AddressInfoSection() {
+export default function AddressInfoSection({ onFormValidChange }) {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
+    address: '',
+    addressDetail: '',
+    userDetailAddress: '',
+    additionalInfo: '',
+  });
+
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const handleAddressChange = newAddressData => {
+    setFormData(prev => ({
+      ...prev,
+      address: newAddressData.address,
+      addressDetail: newAddressData.addressDetail,
+      userDetailAddress: newAddressData.userDetailAddress || '',
+    }));
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  useEffect(() => {
+    const result = OrderSchema.safeParse(formData);
+    const isValid = result.success;
+
+    setIsFormValid(isValid);
+
+    if (!result.success && result.error) {
+      const newErrors = {};
+      result.error.issues.forEach(issue => {
+        newErrors[issue.path[0]] = issue.message;
+      });
+      setErrors(newErrors);
+    } else {
+      setErrors({});
+    }
+
+    if (onFormValidChange) {
+      onFormValidChange(isValid);
+    }
+  }, [formData, onFormValidChange]);
+
   return (
     <section className='py-10'>
       <h3 className='text-xl text-left font-semibold mb-4 '>배송지 정보</h3>
@@ -10,15 +65,20 @@ export default function AddressInfoSection() {
           label='이름'
           placeholder='이름을 입력하세요'
           required
+          value={formData.name}
+          onChange={e => handleInputChange('name', e.target.value)}
+          error={errors.name}
         />
-        <AddressFormField id='phonenumber' label='휴대전화' required>
+        <AddressFormField id='phonenumber' label='휴대전화' required class>
           <div className='flex items-center gap-2 w-full'>
             <input
               id='phone1'
               type='text'
               name='phone1'
               maxLength='3'
-              className='border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200'
+              value={formData.phone1}
+              onChange={e => handleInputChange('phone1', e.target.value)}
+              className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 $`}
             />
             -
             <input
@@ -26,7 +86,9 @@ export default function AddressInfoSection() {
               type='text'
               name='phone2'
               maxLength='4'
-              className='border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200'
+              value={formData.phone2}
+              onChange={e => handleInputChange('phone2', e.target.value)}
+              className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 `}
             />
             -
             <input
@@ -34,41 +96,31 @@ export default function AddressInfoSection() {
               type='text'
               name='phone3'
               maxLength='4'
-              className='border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200'
+              value={formData.phone3}
+              onChange={e => handleInputChange('phone3', e.target.value)}
+              className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 `}
             />
           </div>
+          {(errors.phone1 || errors.phone2 || errors.phone3) && (
+            <p className='text-red-500 text-xs mt-1'>
+              {errors.phone1 || errors.phone2 || errors.phone3}
+            </p>
+          )}
         </AddressFormField>
 
-        <AddressFormField id='address' label='주소' required>
-          <div className='flex flex-col gap-2 w-full '>
-            <div className='flex items-center gap-2'>
-              <input
-                id='address'
-                type='text'
-                className='border border-gray-400 rounded-md p-2 focus:outline-none '
-                readOnly
-              />
-              <button
-                type='button'
-                className='bg-black-100 text-white text-sm whitespace-nowrap h-[42px] rounded-md p-2 '
-              >
-                주소검색
-              </button>
-            </div>
-            <input
-              id='addressDetail1'
-              type='text'
-              className='border border-gray-400 rounded-md p-2 w-full focus:outline-none'
-              readOnly
-            />
-            <input
-              id='addressDetail2'
-              type='text'
-              className='border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200'
-              placeholder='상세주소를 입력하세요'
-            />
-          </div>
-        </AddressFormField>
+        <AddressInput
+          id='address'
+          label='주소'
+          required
+          value={{
+            address: formData.address,
+            addressDetail: formData.addressDetail,
+            userDetailAddress: formData.userDetailAddress,
+          }}
+          onChange={handleAddressChange}
+          variant='order'
+          error={errors.address || errors.userDetailAddress}
+        />
         <label
           htmlFor='additionalInfo'
           className='text-lg font-semibold text-left py-10'
@@ -76,9 +128,10 @@ export default function AddressInfoSection() {
           <span className='w-full '>배송메시지</span>
           <textarea
             id='additionalInfo'
+            value={formData.additionalInfo}
+            onChange={e => handleInputChange('additionalInfo', e.target.value)}
             className='border border-gray-400 rounded-md p-2 w-full resize-none focus:outline-primary-200'
             placeholder='배송메시지를 입력하세요'
-            required
           />
         </label>
       </form>
