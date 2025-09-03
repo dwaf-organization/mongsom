@@ -1,12 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useToast } from '../../context/ToastContext';
 
 export default function Nav() {
-  const { addToast } = useToast();
   const navigate = useNavigate();
+
   const handleLogout = () => {
     window.logout();
-    addToast('로그아웃에 성공했습니다.', 'success');
     navigate('/login');
   };
   return (

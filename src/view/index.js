@@ -7,5 +7,17 @@ import Notice from './Notice';
 import Cart from './Cart';
 import Order from './Order';
 import SignUp from './SignUp';
+import Mypage from './Mypage';
 
-export { Login, Main, Brand, Shop, ShopDetail, Notice, Cart, Order, SignUp };
+export {
+  Login,
+  Main,
+  Brand,
+  Shop,
+  ShopDetail,
+  Notice,
+  Cart,
+  Order,
+  SignUp,
+  Mypage,
+};

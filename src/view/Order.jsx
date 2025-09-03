@@ -9,6 +9,7 @@ import PaymentButton from '../components/ui/order/PaymentButton';
 
 export default function Order() {
   const [selectedItems, setSelectedItems] = useState([]);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
     const sessionCart = JSON.parse(sessionStorage.getItem('cart') || '[]');
@@ -16,14 +17,18 @@ export default function Order() {
     setSelectedItems(checkedItems);
   }, []);
 
+  const handleFormValidChange = isValid => {
+    setIsFormValid(isValid);
+  };
+
   return (
     <InnerPaddingSectionWrapper>
       <h2 className='text-4xl font-semibold font-pretendard pb-5'>주문/결제</h2>
       <BreadCrumbSection currentStep='order' />
       <OrderItemListSection selectedItems={selectedItems} />
-      <AddressInfoSection />
+      <AddressInfoSection onFormValidChange={handleFormValidChange} />
       <OrderSummarySection items={selectedItems} />
-      <PaymentButton />
+      <PaymentButton disabled={!isFormValid} />
     </InnerPaddingSectionWrapper>
   );
 }
