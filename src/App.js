@@ -10,6 +10,7 @@ import {
   Cart,
   Order,
   SignUp,
+  Mypage,
 } from './view';
 import { ToastProvider } from './context/ToastContext';
 import { ModalProvider } from './context/ModalContext';
@@ -31,6 +32,7 @@ export default function App() {
             <Route path='/notice' element={<Notice />} />
             <Route path='/cart' element={<Cart />} />
             <Route path='/order' element={<Order />} />
+            <Route path='/mypage' element={<Mypage />} />
           </Routes>
           <GlobalToast />
           <GlobalModal />

@@ -12,7 +12,7 @@ export default function Toast({
     const timer = setTimeout(() => {
       setIsVisible(false);
       if (onClose) {
-        setTimeout(onClose, 300); // 애니메이션 완료 후 onClose 호출
+        setTimeout(onClose, 300);
       }
     }, duration);
 
@@ -22,7 +22,7 @@ export default function Toast({
   const getToastStyles = () => {
     switch (type) {
       case 'success':
-        return 'bg-green-500 text-white';
+        return 'bg-primary-200 text-white';
       case 'error':
         return 'bg-red-500 text-white';
       case 'warning':
