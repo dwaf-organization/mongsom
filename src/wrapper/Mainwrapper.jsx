@@ -1,7 +1,9 @@
+import { cn } from '../lib/utils';
+
 export default function Mainwrapper({ children }) {
   return (
     <main>
-        <div className="container mx-auto py-20">
+        <div className={cn('min-h-screen top-0')}>
             {children}
         </div>
     </main>

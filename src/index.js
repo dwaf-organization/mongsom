@@ -7,16 +7,36 @@ import './index.css';
 import App from './App';
 import Header from './layout/header/Header.jsx';
 import Footer from './layout/footer/Footer.jsx';
+import { ToastProvider } from './context/ToastContext';
+
+// 전역 세션 관리 함수들
+window.isAuthenticated = () => {
+  return !!sessionStorage.getItem('userId');
+};
+
+window.getUserId = () => {
+  return sessionStorage.getItem('userId');
+};
+
+window.login = userId => {
+  sessionStorage.setItem('userId', userId);
+};
+
+window.logout = () => {
+  sessionStorage.removeItem('userId');
+};
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Header />
-      <App />
-      <Footer />
-    </BrowserRouter>
-  </React.StrictMode>
+    <ToastProvider>
+      <BrowserRouter>
+        <Header />
+        <App />
+        <Footer />
+      </BrowserRouter>
+    </ToastProvider>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function
