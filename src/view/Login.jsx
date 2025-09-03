@@ -48,7 +48,7 @@ export default function Login() {
       <div className='flex flex-col items-center justify-center gap-4'>
         <form
           onSubmit={handleLogin}
-          className='flex flex-col items-center justify-center gap-4 w-full max-w-[600px]'
+          className='flex flex-col items-center justify-center gap-4 w-full max-w-[400px]'
         >
           <input
             type='text'
@@ -66,7 +66,7 @@ export default function Login() {
           />
           <Link
             to='/'
-            className='flex justify-end w-full text-gray-500 text-sm'
+            className='flex justify-end w-full text-gray-500 text-xs'
           >
             비밀번호 찾기
           </Link>
@@ -74,12 +74,12 @@ export default function Login() {
             로그인
           </Button>
         </form>
-        <Link to='/signup' className='flex justify-center w-full max-w-[600px]'>
+        <Link to='/signup' className='flex justify-center w-full max-w-[400px]'>
           <Button variant='outline' className='p-3'>
             회원가입
           </Button>
         </Link>
-        <div className='flex items-center w-full max-w-[600px] my-4'>
+        <div className='flex items-center w-full max-w-[400px] my-4'>
           <hr className='flex-grow border-t border-gray-300' />
           <span className='mx-4 text-gray-500 whitespace-nowrap'>
             SNS로 로그인

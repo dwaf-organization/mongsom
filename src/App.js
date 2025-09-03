@@ -16,6 +16,8 @@ import { ToastProvider } from './context/ToastContext';
 import { ModalProvider } from './context/ModalContext';
 import GlobalToast from './components/ui/GlobalToast';
 import GlobalModal from './components/ui/GlobalModal';
+import OrderDetail from './view/OrderDetail';
+import CreateReview from './view/CreateReview';
 
 export default function App() {
   return (
@@ -33,6 +35,8 @@ export default function App() {
             <Route path='/cart' element={<Cart />} />
             <Route path='/order' element={<Order />} />
             <Route path='/mypage' element={<Mypage />} />
+            <Route path='/order-detail/:id' element={<OrderDetail />} />
+            <Route path='/create-review/:id' element={<CreateReview />} />
           </Routes>
           <GlobalToast />
           <GlobalModal />
