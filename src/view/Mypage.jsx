@@ -1,9 +1,17 @@
+import { Link } from 'react-router-dom';
+
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
+import MypageTab from '../components/ui/mypage/MypageTab';
 
 export default function Mypage() {
   return (
     <InnerPaddingSectionWrapper>
-      <h2 className='text-4xl font-semibold font-pretendard'>마이페이지</h2>
+      <div className='flex items-center justify-between border-b border-black-100 pb-4'>
+        <Link to='/mypage' className='text-2xl font-semibold font-montserrat'>
+          My Page
+        </Link>
+        <MypageTab />
+      </div>
     </InnerPaddingSectionWrapper>
   );
 }

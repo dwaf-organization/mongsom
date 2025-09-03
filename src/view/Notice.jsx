@@ -7,17 +7,17 @@ export default function Notice() {
       <h2 className='text-xl text-start font-semibold font-pretendard border-b-2 border-gray-700 pb-4'>
         공지사항
       </h2>
-      <table className='w-full bg-secondary-100'>
+      <table className='w-full bg-secondary-100/80'>
         <thead>
           <tr className='flex justify-between border-b border-gray-400 py-5'>
             <th className='text-cneter font-montserrat font-medium w-full max-w-[100px]'>
               NO
             </th>
             <th className='text-cneter  font-medium w-full'>제목</th>
-            <th className='text-cneter font-medium w-full max-w-[100px]'>
+            <th className='text-center font-medium w-full max-w-[120px]'>
               글쓴이
             </th>
-            <th className='text-cneter font-medium w-full max-w-[100px]'>
+            <th className='text-center font-medium w-full max-w-[120px] pr-8'>
               날짜
             </th>
           </tr>
@@ -34,10 +34,10 @@ export default function Notice() {
               <td className='text-start font-montserrat font-medium w-full pl-4'>
                 {item.title}
               </td>
-              <td className='text-cneter font-montserrat font-medium w-full max-w-[100px]'>
+              <td className='text-center font-montserrat font-medium w-full max-w-[120px]'>
                 {item.writer}
               </td>
-              <td className='text-cneter font-montserrat font-medium w-full max-w-[100px]'>
+              <td className='text-center font-montserrat font-medium w-full max-w-[120px] pr-8'>
                 {item.date}
               </td>
             </tr>
