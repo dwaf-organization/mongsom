@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import { Button } from '../components/ui/button';
+import Select from '../components/ui/Select';
 import { shop } from '../data/Shop';
 import { routes } from '../constants/routes';
 import Pagination from '../components/ui/Pagination';
@@ -10,18 +11,23 @@ import Pagination from '../components/ui/Pagination';
 export default function Shop() {
   const productItems = shop.filter(item => item.price);
 
+  const sortOptions = [
+    { value: 'latest', label: '최신순' },
+    { value: 'popular', label: '인기순' },
+    { value: 'review', label: '리뷰많은순' },
+  ];
+
   return (
     <InnerPaddingSectionWrapper>
       <h2 className='text-4xl font-semibold font-montserrat'>Shop</h2>
       <div className='flex items-center justify-end gap-8'>
-        <Button className='bg-primary-200 text-white rounded-full w-fit'>
+        <Button
+          className='rounded-full border border-gray-50 px-8 py-2 text-gray-50 w-fit'
+          variant='outline'
+        >
           프리미엄 선물용
         </Button>
-        <select className='border border-gray-300 rounded-md p-2'>
-          <option>최신순</option>
-          <option>인기순</option>
-          <option>리뷰많은순</option>
-        </select>
+        <Select options={sortOptions} value='latest' className='w-32' />
       </div>
 
       <ul className='grid grid-cols-3 gap-4 mt-10'>
@@ -29,11 +35,11 @@ export default function Shop() {
           <motion.div
             key={item.id}
             whileHover={{
-              y: -5,
-              scale: 1.05,
+              y: -1,
+              scale: 1.01,
               transition: { duration: 0.3, ease: 'easeOut' },
             }}
-            className='w-full'
+            className='w-full hover:shadow-xl transition-shadow duration-300 rounded-lg'
           >
             <Link to={`${routes.shopDetail}/${item.id}`}>
               <li>

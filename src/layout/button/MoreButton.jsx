@@ -1,11 +1,11 @@
-import { Button } from '../../components/ui/button';
-import { LeftChevron } from '../../asset/icons';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 export default function MoreButton() {
   return (
-    <Button className=' text-primary-200 w-fit rounded-full' variant='outline'>
-      펼치기
-      <LeftChevron className='transform -rotate-90 text-primary-200' />
-    </Button>
+    <div className='bg-black-100/50 flex w-fit items-center justify-center gap-2 text-black-100 px-8 py-2 rounded-full text-xl'>
+      <p className='text-sm text-white whitespace-nowrap'> 더보기</p>
+
+      <ChevronDownIcon className='w-4 h-4 text-white' />
+    </div>
   );
 }

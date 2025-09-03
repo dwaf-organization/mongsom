@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default:
           'bg-primary-200 text-white shadow-xs hover:bg-primary-200/90 cursor-pointer',
         outline:
-          'border border-primary-200 text-primary-200 shadow-xs hover:bg-primary-200/10 active:bg-primary-100/10 cursor-pointer',
+          'border border-primary-200 text-primary-200 shadow-xs  active:bg-primary-100/10 cursor-pointer',
         text: 'text-white hover:bg-primary-100/10 active:bg-primary-100/10 cursor-pointer',
       },
       size: {

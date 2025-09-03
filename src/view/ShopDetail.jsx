@@ -35,7 +35,7 @@ export default function ShopDetail() {
         <img
           src={product.image}
           alt={product.name}
-          className='w-full max-w-[500px] h-full object-cover'
+          className='w-full max-w-[500px] h-full rounded-lg object-cover'
         />
         <PurchaseInfo product={product} />
       </div>

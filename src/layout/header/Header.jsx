@@ -8,7 +8,7 @@ export default function Header() {
     <header className='sticky top-0 z-50  w-full bg-primary-100'>
       <div className='container mx-auto py-6 justify-between items-center h-full'>
         <div className='flex items-center'>
-          <h1 className='font-pretendard font-bold text-2xl'>
+          <h1>
             <Link to='/'>
               <img
                 src={mongsomLogo}
