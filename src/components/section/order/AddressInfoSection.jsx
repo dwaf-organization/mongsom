@@ -2,7 +2,6 @@ import AddressFormField from '../../ui/AddressFormField';
 import AddressInput from '../../ui/AddressInput';
 import { useState, useEffect } from 'react';
 import { OrderSchema } from '../../../schema/OrderSchema';
-import { useToast } from '../../../context/ToastContext';
 
 export default function AddressInfoSection({ onFormValidChange }) {
   const [formData, setFormData] = useState({
@@ -17,7 +16,6 @@ export default function AddressInfoSection({ onFormValidChange }) {
   });
 
   const [errors, setErrors] = useState({});
-  const [isFormValid, setIsFormValid] = useState(false);
 
   const handleAddressChange = newAddressData => {
     setFormData(prev => ({
@@ -38,8 +36,6 @@ export default function AddressInfoSection({ onFormValidChange }) {
   useEffect(() => {
     const result = OrderSchema.safeParse(formData);
     const isValid = result.success;
-
-    setIsFormValid(isValid);
 
     if (!result.success && result.error) {
       const newErrors = {};
