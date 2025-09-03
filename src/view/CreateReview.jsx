@@ -1,5 +1,6 @@
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import ReviewProductInfo from '../components/ui/mypage/ReviewProductInfo';
+import ReviewContents from '../components/ui/mypage/ReviewContents';
 
 export default function CreateReview() {
   return (
@@ -8,6 +9,7 @@ export default function CreateReview() {
         리뷰 작성
       </p>
       <ReviewProductInfo />
+      <ReviewContents />
     </InnerPaddingSectionWrapper>
   );
 }
