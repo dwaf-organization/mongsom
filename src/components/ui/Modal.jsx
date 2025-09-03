@@ -8,7 +8,6 @@ export default function Modal({
   size = 'md',
   className = '',
 }) {
-  // ESC 키로 모달 닫기
   useEffect(() => {
     const handleEscape = e => {
       if (e.key === 'Escape' && onClose) {
@@ -16,8 +15,13 @@ export default function Modal({
       }
     };
 
+    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleEscape);
+    };
   }, [onClose]);
 
   const getSizeClasses = () => {
@@ -34,21 +38,18 @@ export default function Modal({
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center'>
-      {/* Backdrop */}
+    <div className='fixed inset-0 z-50 flex items-center justify-center '>
       <div
         className='absolute inset-0 bg-black bg-opacity-50'
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div
-        className={`relative bg-white rounded-lg shadow-xl w-full mx-4 ${getSizeClasses()} ${className}`}
+        className={`relative bg-white rounded-lg shadow-xl border border-primary-200 ${getSizeClasses()} ${className}`}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         {title && (
-          <div className='flex items-center justify-between p-6 border-b border-gray-200'>
+          <div className='flex items-center'>
             <h3 className='text-lg font-semibold text-gray-900'>{title}</h3>
             {showCloseButton && (
               <button
@@ -61,8 +62,7 @@ export default function Modal({
           </div>
         )}
 
-        {/* Body */}
-        <div className='p-6'>{children}</div>
+        <div>{children}</div>
       </div>
     </div>
   );

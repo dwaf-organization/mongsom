@@ -19,16 +19,18 @@ export default function DeleteConfirmModal({ itemCount, cart, updateCart }) {
   };
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-4 rounded-lg py-10 px-10'>
       <p className='text-gray-700'>
         선택된 <span className='font-semibold'>{itemCount}개</span> 상품을
         삭제하시겠습니까?
       </p>
-      <div className='flex justify-end gap-3'>
-        <Button variant='outline' onClick={handleDelete}>
+      <div className='flex justify-center gap-3'>
+        <Button variant='outline' onClick={handleDelete} className='w-fit px-8'>
           취소
         </Button>
-        <Button onClick={handleConfirmDelete}>삭제</Button>
+        <Button onClick={handleConfirmDelete} className='w-fit px-8'>
+          삭제
+        </Button>
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
+import { Button } from '../../ui/button';
 import ProductHeader from '../../ui/ShopDetail/ProductHeader';
 import OptionSelector from '../../ui/ShopDetail/OptionSelector';
 import TotalPrice from '../../ui/ShopDetail/TotalPrice';
 import CartButton from '../../../layout/button/CartButton';
-import BuyButton from '../../../layout/button/BuyButton';
 
 export default function PurchaseInfo({ product }) {
   const [totalPrice, setTotalPrice] = useState(0);
@@ -29,7 +29,12 @@ export default function PurchaseInfo({ product }) {
       <TotalPrice totalPrice={totalPrice} />
       <div className='flex justify-between gap-2'>
         <CartButton selectedOptions={selectedOptions} product={product} />
-        <BuyButton />
+        <Button
+          className='w-full font-bold text-xl font-pretendard'
+          variant='default'
+        >
+          구매하기
+        </Button>
       </div>
     </div>
   );

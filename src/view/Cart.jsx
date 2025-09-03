@@ -28,8 +28,8 @@ export default function Cart() {
   };
 
   return (
-    <InnerPaddingSectionWrapper>
-      <h2 className='text-4xl font-semibold font-pretendard pb-5'>장바구니</h2>
+    <InnerPaddingSectionWrapper className='max-w-[800px]'>
+      <h2 className='text-2xl font-semibold font-pretendard pb-5'>장바구니</h2>
 
       <BreadCrumbSection currentStep='cart' />
       <AllCheckBoxSection

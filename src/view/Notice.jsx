@@ -3,17 +3,17 @@ import { notice } from '../data/Notice';
 
 export default function Notice() {
   return (
-    <InnerPaddingSectionWrapper>
+    <InnerPaddingSectionWrapper className='max-w-[800px]'>
       <h2 className='text-xl text-start font-semibold font-pretendard border-b-2 border-gray-700 pb-4'>
         공지사항
       </h2>
-      <table className='w-full bg-secondary-100/80'>
+      <table className='w-full bg-secondary-100/80 text-sm'>
         <thead>
-          <tr className='flex justify-between border-b border-gray-400 py-5'>
+          <tr className='flex justify-between border-b border-gray-400 py-3'>
             <th className='text-cneter font-montserrat font-medium w-full max-w-[100px]'>
               NO
             </th>
-            <th className='text-cneter  font-medium w-full'>제목</th>
+            <th className='text-cneter font-medium w-full'>제목</th>
             <th className='text-center font-medium w-full max-w-[120px]'>
               글쓴이
             </th>
@@ -26,7 +26,7 @@ export default function Notice() {
           {notice.map((item, index) => (
             <tr
               key={item.id || index}
-              className='flex justify-between border-b border-gray-400 py-5'
+              className='flex justify-between border-b border-gray-400 py-3'
             >
               <td className='text-cneter font-montserrat font-medium w-full max-w-[100px]'>
                 {item.id || index + 1}
