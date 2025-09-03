@@ -45,16 +45,15 @@ const Select = ({
 
   return (
     <div className={`relative ${className}`} ref={selectRef}>
-      {/* Select Trigger */}
       <button
         type='button'
         onClick={toggleOpen}
         disabled={disabled}
         className={`
-          w-full px-4 py-3 text-left bg-white border border-gray-300 rounded-lg
+          w-full px-3 py-2 text-left text-sm border border-gray-300 rounded-lg
           focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-500
           hover:border-gray-400 transition-colors duration-200
-          ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'cursor-pointer'}
+          ${disabled ? ' text-gray-400 cursor-not-allowed' : 'cursor-pointer'}
           ${selectedOption ? 'text-gray-900' : 'text-gray-500'}
           flex items-center justify-between
         `}
@@ -87,8 +86,8 @@ const Select = ({
                   key={option.value}
                   onClick={() => handleSelect(option)}
                   className={`
-                    px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors duration-150
-                    ${selectedOption?.value === option.value ? 'bg-primary-50 text-primary-700' : 'text-gray-900'}
+                    px-4 py-3 cursor-pointer transition-colors duration-150 hover:text-primary-200
+                    ${selectedOption?.value === option.value ? ' text-primary-700' : 'text-gray-900'}
                     ${index === 0 ? 'rounded-t-lg' : ''}
                     ${index === options.length - 1 ? 'rounded-b-lg' : ''}
                   `}

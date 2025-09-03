@@ -26,9 +26,9 @@ export default function TopProductSection() {
           고객들이 가장 많이 찾는 제품들을 만나보세요
         </p>
 
-        <Slider {...createSliderSettings()}>
+        <Slider {...createSliderSettings()} className='max-w-[1000px] mx-auto'>
           {topProduct.map(product => (
-            <ul key={product.id} className='px-2'>
+            <ul key={product.id}>
               <div className='rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 p-3'>
                 <li className='relative items-center justify-center'>
                   <img
