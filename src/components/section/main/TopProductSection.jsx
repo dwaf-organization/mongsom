@@ -1,11 +1,11 @@
 import Slider from 'react-slick';
+import { useRef } from 'react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
 
 import { topProduct } from '../../../data/TopProduct';
-import { createSliderSettings } from '../../../constants';
+import { createSliderSettings } from '../../../constants/sliderSettings';
 
 export default function TopProductSection() {
   const ref = useRef(null);

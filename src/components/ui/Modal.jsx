@@ -8,7 +8,6 @@ export default function Modal({
   size = 'md',
   className = '',
 }) {
-  // ESC 키로 모달 닫기
   useEffect(() => {
     const handleEscape = e => {
       if (e.key === 'Escape' && onClose) {
@@ -16,8 +15,13 @@ export default function Modal({
       }
     };
 
+    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleEscape);
+    };
   }, [onClose]);
 
   const getSizeClasses = () => {
@@ -34,14 +38,14 @@ export default function Modal({
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center'>
+    <div className='fixed inset-0 z-50 flex items-center justify-center '>
       <div
-        className='absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm'
+        className='absolute inset-0 bg-black bg-opacity-50'
         onClick={onClose}
       />
 
       <div
-        className={`relative bg-white rounded-lg shadow-xl ${getSizeClasses()} ${className}`}
+        className={`relative bg-white rounded-lg shadow-xl border border-primary-200 ${getSizeClasses()} ${className}`}
         onClick={e => e.stopPropagation()}
       >
         {title && (

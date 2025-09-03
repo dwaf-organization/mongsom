@@ -1,0 +1,15 @@
+export default function ProductActionButtons() {
+  return (
+    <div className='flex flex-col text-sm gap-2'>
+      <button className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'>
+        배송조회
+      </button>
+      <button className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'>
+        교환, 반품 신청
+      </button>
+      <button className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'>
+        리뷰 작성하기
+      </button>
+    </div>
+  );
+}
