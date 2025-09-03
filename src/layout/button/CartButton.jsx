@@ -1,10 +1,7 @@
 import { Button } from '../../components/ui/button';
-import { useModal } from '../../context/ModalContext';
-import AddCartModal from '../../components/ui/ShopDetail/AddCartModal';
 import { useToast } from '../../context/ToastContext';
 
 export default function CartButton({ selectedOptions, product }) {
-  const { openModal } = useModal();
   const { addToast } = useToast();
 
   const handleAddToCart = () => {
@@ -31,7 +28,7 @@ export default function CartButton({ selectedOptions, product }) {
 
     const updatedCart = [...existingCart, ...newCartItems];
     sessionStorage.setItem('cart', JSON.stringify(updatedCart));
-    openModal(<AddCartModal />);
+    addToast('장바구니에 추가되었습니다.', 'success');
   };
 
   return (

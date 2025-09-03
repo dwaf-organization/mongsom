@@ -38,11 +38,11 @@ export default function TopProductSection() {
                   />
                 </li>
 
-                <h3 className='text-lg text-black-100 text-start'>
+                <h3 className='text-sm text-black-100 text-start pt-2'>
                   {product.name}
                 </h3>
 
-                <span className='flex items-center text-xl font-montserrat font-semibold text-black-100'>
+                <span className='flex items-center font-montserrat font-semibold text-black-100'>
                   {product.price} won
                 </span>
               </div>

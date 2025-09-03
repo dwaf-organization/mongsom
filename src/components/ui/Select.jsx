@@ -50,7 +50,7 @@ const Select = ({
         onClick={toggleOpen}
         disabled={disabled}
         className={`
-          w-full px-3 py-2 text-left text-sm border border-gray-300 rounded-lg
+          w-full px-3 py-1 text-left text-xs border border-gray-300 rounded-md
           focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-500
           hover:border-gray-400 transition-colors duration-200
           ${disabled ? ' text-gray-400 cursor-not-allowed' : 'cursor-pointer'}

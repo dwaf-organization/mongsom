@@ -35,20 +35,17 @@ export default function Modal({
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center'>
-      {/* Backdrop */}
       <div
-        className='absolute inset-0 bg-black bg-opacity-50'
+        className='absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm'
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div
-        className={`relative bg-white rounded-lg shadow-xl w-full mx-4 ${getSizeClasses()} ${className}`}
+        className={`relative bg-white rounded-lg shadow-xl ${getSizeClasses()} ${className}`}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         {title && (
-          <div className='flex items-center justify-between p-6 border-b border-gray-200'>
+          <div className='flex items-center'>
             <h3 className='text-lg font-semibold text-gray-900'>{title}</h3>
             {showCloseButton && (
               <button
@@ -61,8 +58,7 @@ export default function Modal({
           </div>
         )}
 
-        {/* Body */}
-        <div className='p-6'>{children}</div>
+        <div>{children}</div>
       </div>
     </div>
   );

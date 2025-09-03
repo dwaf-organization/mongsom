@@ -22,12 +22,12 @@ export default function Shop() {
       <h2 className='text-4xl font-semibold font-montserrat'>Shop</h2>
       <div className='flex items-center justify-end gap-8'>
         <Button
-          className='rounded-full border border-gray-50 px-8 py-2 text-gray-50 w-fit'
+          className='rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit'
           variant='outline'
         >
           프리미엄 선물용
         </Button>
-        <Select options={sortOptions} value='latest' className='w-32' />
+        <Select options={sortOptions} value='latest' className='w-24' />
       </div>
 
       <ul className='grid grid-cols-3 gap-4 mt-10'>
@@ -39,28 +39,28 @@ export default function Shop() {
               scale: 1.01,
               transition: { duration: 0.3, ease: 'easeOut' },
             }}
-            className='w-full hover:shadow-xl transition-shadow duration-300 rounded-lg'
+            className='w-full hover:shadow-lg transition-shadow duration-300 rounded-lg'
           >
             <Link to={`${routes.shopDetail}/${item.id}`}>
-              <li>
+              <li className='roudned-lg'>
                 <img
                   src={item.image}
                   alt={item.name}
-                  className='w-full object-cover'
+                  className='w-full object-cover rounded-t-lg'
                 />
                 {!item.saleRate && (
-                  <div className='flex justify-between gap-2'>
-                    <h3 className='text-lg'>{item.name}</h3>
-                    <p className='text-lg font-semibold'>
+                  <div className='flex justify-between gap-2 px-4'>
+                    <h3 className=''>{item.name}</h3>
+                    <p className=' font-semibold'>
                       {item.price.toLocaleString()}원
                     </p>
                   </div>
                 )}
                 {item.saleRate && (
-                  <div className='flex flex-col gap-2'>
+                  <div className='flex flex-col gap-2 px-4'>
                     <div className='flex justify-between gap-2'>
-                      <h3 className='text-lg'>{item.name}</h3>
-                      <p className='text-lg font-semibold line-through text-gray-500'>
+                      <h3 className=''>{item.name}</h3>
+                      <p className=' font-semibold line-through text-gray-500'>
                         {item.price.toLocaleString()}원
                       </p>
                     </div>
