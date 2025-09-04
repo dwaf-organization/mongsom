@@ -1,3 +1,9 @@
+import MyInfoForm from './MyInfoForm';
+
 export default function MyInfoTab() {
-  return <div>MyInfoTab</div>;
+  return (
+    <div>
+      <MyInfoForm />
+    </div>
+  );
 }

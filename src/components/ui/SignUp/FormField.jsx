@@ -33,7 +33,9 @@ export default function FormField({
           />
         )}
       </label>
-      <span>{message}</span>
+      <span className='text-left pl-[170px] text-sm text-gray-500'>
+        {message}
+      </span>
       {error && <p className='text-red-500 text-xs ml-[110px]'>{error}</p>}
     </div>
   );
