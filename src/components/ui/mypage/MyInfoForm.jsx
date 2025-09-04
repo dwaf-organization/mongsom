@@ -64,7 +64,7 @@ export default function MyInfoForm() {
         />
 
         <FormField id='phone' label='휴대전화'>
-          <div className='flex items-center gap-2 max-w-[500px] w-full'>
+          <div className='flex items-center gap-2 w-full'>
             <input
               type='text'
               value={userInfo.phone1}
