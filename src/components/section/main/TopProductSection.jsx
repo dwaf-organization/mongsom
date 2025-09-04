@@ -44,8 +44,8 @@ export default function TopProductSection() {
                     {product.name}
                   </h3>
 
-                  <span className='flex items-center font-montserrat font-semibold text-black-100 px-3'>
-                    {product.price} won
+                  <span className='flex items-center font-semibold text-black-100 px-3 py-2'>
+                    {product.price} 원
                   </span>
                 </div>
               </ul>

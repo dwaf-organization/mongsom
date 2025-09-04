@@ -54,7 +54,7 @@ export default function AddressSearchButton({
       type='button'
       onClick={handleAddressSearch}
       disabled={isLoading}
-      className={`bg-black-100 text-white text-sm whitespace-nowrap h-[42px] rounded-md p-2 max-w-[168px] disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`bg-black-100 text-white whitespace-nowrap h-[48px] rounded-md p-2 max-w-[166px] w-full disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       {isLoading ? '검색중...' : buttonText}
     </button>

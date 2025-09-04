@@ -22,7 +22,7 @@ export default function Order() {
   };
 
   return (
-    <InnerPaddingSectionWrapper>
+    <InnerPaddingSectionWrapper className='max-w-[800px]'>
       <h2 className='text-4xl font-semibold font-pretendard pb-5'>주문/결제</h2>
       <BreadCrumbSection currentStep='order' />
       <OrderItemListSection selectedItems={selectedItems} />

@@ -7,7 +7,7 @@ export default function Notice() {
       <h2 className='text-xl text-start font-semibold font-pretendard border-b-2 border-gray-700 pb-4'>
         공지사항
       </h2>
-      <table className='w-full bg-secondary-100/80 text-sm'>
+      <table className='w-full bg-secondary-100/80 text-sm text-[#3A3A3A]'>
         <thead>
           <tr className='flex justify-between border-b border-gray-400 py-3'>
             <th className='text-cneter font-montserrat font-medium w-full max-w-[100px]'>

@@ -52,13 +52,13 @@ export default function AddressInput({
             {label}
             {required && <span className='text-red-500'>*</span>}
           </span>
-          <div className='flex flex-col gap-2 w-full max-w-[500px]'>
+          <div className='flex flex-col gap-3 w-full '>
             <div className='flex items-center gap-2'>
               <input
                 id={id}
                 type='text'
                 value={addressData.zonecode}
-                className='border border-gray-400 rounded-md w-full p-2 focus:outline-none'
+                className='border border-gray-400 rounded-md w-full p-3 focus:outline-none'
                 readOnly
                 placeholder='우편번호'
               />
@@ -69,7 +69,7 @@ export default function AddressInput({
               <input
                 type='text'
                 value={addressData.addressDetail}
-                className='border border-gray-400 rounded-md p-2 w-full focus:outline-none'
+                className='border border-gray-400 rounded-md p-3 w-full focus:outline-none'
                 readOnly
                 placeholder='도로명주소'
               />
@@ -79,7 +79,7 @@ export default function AddressInput({
               type='text'
               value={addressData.userDetailAddress || ''}
               onChange={handleDetailChange}
-              className={`border rounded-md p-2 w-full focus:outline-primary-200 ${
+              className={`border rounded-md p-3 w-full focus:outline-primary-200 ${
                 error ? 'border-red-500' : 'border-gray-400'
               }`}
             />
