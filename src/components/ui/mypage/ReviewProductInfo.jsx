@@ -11,6 +11,11 @@ export default function ReviewProductInfo() {
 
   return (
     <ul className='flex flex-col gap-4 pt-4 border-b border-gray-400 pb-4'>
+      <li className='text-left font-semibold text-xl pt-6'>상품품질리뷰</li>
+      <li className='text-left text-gray-500'>
+        이 상품의 품질에 대해서 얼마나 만족하시나요 ?
+      </li>
+      <hr className='border-gray-400' />
       <li className='rounded-xl px-4 py-6 flex gap-4'>
         <img
           src={

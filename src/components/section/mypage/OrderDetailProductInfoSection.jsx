@@ -41,7 +41,7 @@ export default function OrderDetailProductInfoSection() {
               </div>
             </div>
           </div>
-          <ProductActionButtons />
+          <ProductActionButtons product={item} />
         </li>
       ))}
     </ul>

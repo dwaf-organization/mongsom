@@ -1,4 +1,12 @@
-export default function ProductActionButtons() {
+import { useNavigate } from 'react-router-dom';
+
+export default function ProductActionButtons({ product }) {
+  const navigate = useNavigate();
+
+  const handleReview = () => {
+    navigate(`/create-review/${product.id}`);
+  };
+
   return (
     <div className='flex flex-col text-sm gap-2'>
       <button className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'>
@@ -7,7 +15,10 @@ export default function ProductActionButtons() {
       <button className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'>
         교환, 반품 신청
       </button>
-      <button className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'>
+      <button
+        className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'
+        onClick={handleReview}
+      >
         리뷰 작성하기
       </button>
     </div>

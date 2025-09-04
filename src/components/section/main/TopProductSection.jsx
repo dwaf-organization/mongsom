@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { motion, useInView } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 import { topProduct } from '../../../data/TopProduct';
 import { createSliderSettings } from '../../../constants/sliderSettings';
@@ -28,25 +29,27 @@ export default function TopProductSection() {
 
         <Slider {...createSliderSettings()} className='max-w-[1000px] mx-auto'>
           {topProduct.map(product => (
-            <ul key={product.id}>
-              <div className='rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 p-3'>
-                <li className='relative items-center justify-center'>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className='w-full h-full object-cover'
-                  />
-                </li>
+            <Link to={`/shop-detail/${product.id}`} key={product.id}>
+              <ul key={product.id} className='px-4'>
+                <div className='rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 gap-2 bg-white'>
+                  <li className='relative items-center justify-center'>
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className='w-full h-full object-cover rounded-lg'
+                    />
+                  </li>
 
-                <h3 className='text-sm text-black-100 text-start pt-2'>
-                  {product.name}
-                </h3>
+                  <h3 className='text-sm text-black-100 text-start pt-2 px-3'>
+                    {product.name}
+                  </h3>
 
-                <span className='flex items-center font-montserrat font-semibold text-black-100'>
-                  {product.price} won
-                </span>
-              </div>
-            </ul>
+                  <span className='flex items-center font-montserrat font-semibold text-black-100 px-3'>
+                    {product.price} won
+                  </span>
+                </div>
+              </ul>
+            </Link>
           ))}
         </Slider>
       </motion.div>

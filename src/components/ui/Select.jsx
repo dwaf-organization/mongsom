@@ -50,7 +50,7 @@ const Select = ({
         onClick={toggleOpen}
         disabled={disabled}
         className={`
-          w-full px-3 py-1 text-left text-xs border border-gray-300 rounded-md
+          w-full px-3 py-1 text-left text-sm border border-gray-300 rounded-md
           focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-500
           hover:border-gray-400 transition-colors duration-200
           ${disabled ? ' text-gray-400 cursor-not-allowed' : 'cursor-pointer'}
@@ -72,7 +72,6 @@ const Select = ({
         </span>
       </button>
 
-      {/* Dropdown Options */}
       {isOpen && (
         <div className='absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto'>
           {options.length === 0 ? (
@@ -86,7 +85,7 @@ const Select = ({
                   key={option.value}
                   onClick={() => handleSelect(option)}
                   className={`
-                    px-4 py-3 cursor-pointer transition-colors duration-150 hover:text-primary-200
+                    px-4 py-3 cursor-pointer transition-colors duration-150 hover:text-primary-200 text-xs text-left
                     ${selectedOption?.value === option.value ? ' text-primary-700' : 'text-gray-900'}
                     ${index === 0 ? 'rounded-t-lg' : ''}
                     ${index === options.length - 1 ? 'rounded-b-lg' : ''}
