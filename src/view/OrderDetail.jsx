@@ -13,7 +13,7 @@ export default function OrderDetail() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <p className='text-xl font-semibold text-left border-b border-gray-500 pb-4 pt-10 '>
+      <p className='text-2xl font-semibold text-left border-b border-gray-500 pb-4 pt-10 '>
         주문상세
       </p>
       <OrderDetailProductInfoSection order={order} />

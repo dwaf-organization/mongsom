@@ -1,7 +1,7 @@
 export default function ReviewContents() {
   return (
-    <section className='flex justify-between py-10 gap-4 border-b border-gray-400'>
-      <p className='font-semibold text-left pb-4 pt-10 whitespace-nowrap '>
+    <section className='flex items-start justify-between py-10 gap-4 border-b border-gray-400'>
+      <p className='font-semibold text-left pb-4 whitespace-nowrap '>
         상세 리뷰
       </p>
       <textarea
