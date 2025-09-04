@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import { Button } from '../components/ui/button';
@@ -32,51 +32,51 @@ export default function Shop() {
 
       <ul className='grid grid-cols-3 gap-4 mt-10'>
         {productItems.map(item => (
-          <motion.div
-            key={item.id}
-            whileHover={{
-              y: -1,
-              scale: 1.01,
-              transition: { duration: 0.3, ease: 'easeOut' },
-            }}
-            className='w-full hover:shadow-lg transition-shadow duration-300 rounded-lg'
-          >
-            <Link to={`${routes.shopDetail}/${item.id}`}>
-              <li className='roudned-lg'>
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className='w-full object-cover rounded-t-lg'
-                />
-                {!item.saleRate && (
-                  <div className='flex justify-between gap-2 px-4'>
-                    <h3 className=''>{item.name}</h3>
-                    <p className=' font-semibold'>
+          // <motion.div
+          //   key={item.id}
+          //   whileHover={{
+          //     y: -1,
+          //     scale: 1.01,
+          //     transition: { duration: 0.3, ease: 'easeOut' },
+          //   }}
+          //   className='w-full hover:shadow-lg transition-shadow duration-300 rounded-lg'
+          // >
+          <Link to={`${routes.shopDetail}/${item.id}`}>
+            <li className='roudned-lg'>
+              <img
+                src={item.image}
+                alt={item.name}
+                className='w-full object-cover rounded-t-lg'
+              />
+              {!item.saleRate && (
+                <div className='flex justify-between gap-2 px-4'>
+                  <h3 className=''>{item.name}</h3>
+                  <p className=' font-semibold'>
+                    {item.price.toLocaleString()}원
+                  </p>
+                </div>
+              )}
+              {item.saleRate && (
+                <div className='flex flex-col gap-2'>
+                  <div className='flex justify-between gap-2'>
+                    <h3 className='hover:text-gray-700'>{item.name}</h3>
+                    <p className=' font-semibold line-through text-gray-500'>
                       {item.price.toLocaleString()}원
                     </p>
                   </div>
-                )}
-                {item.saleRate && (
-                  <div className='flex flex-col gap-2 px-4'>
-                    <div className='flex justify-between gap-2'>
-                      <h3 className=''>{item.name}</h3>
-                      <p className=' font-semibold line-through text-gray-500'>
-                        {item.price.toLocaleString()}원
-                      </p>
-                    </div>
-                    <div className='flex justify-end gap-2'>
-                      <p className='flex text-lg font-semibold text-red-500 justify-start'>
-                        {item.saleRate}%
-                      </p>
-                      <p className='text-lg font-semibold text-gray-900'>
-                        {item.salePrice.toLocaleString()}원
-                      </p>
-                    </div>
+                  <div className='flex justify-end gap-2'>
+                    <p className='flex text-lg font-semibold text-red-500 justify-start'>
+                      {item.saleRate}%
+                    </p>
+                    <p className='text-lg font-semibold text-gray-900'>
+                      {item.salePrice.toLocaleString()}원
+                    </p>
                   </div>
-                )}
-              </li>
-            </Link>
-          </motion.div>
+                </div>
+              )}
+            </li>
+          </Link>
+          // </motion.div>
         ))}
       </ul>
       <Pagination totalPage={5} />

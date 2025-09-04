@@ -9,7 +9,7 @@ export default function AdditionalInfoInput() {
         className='flex items-center gap-20 border-b border-gray-500 pb-6'
       >
         <span className='min-w-[90px] text-left'>생년월일</span>
-        <div className='flex items-center gap-2 max-w-[500px] w-full'>
+        <div className='flex items-center gap-2  w-full'>
           <input
             id='birthday'
             type='text'

@@ -12,9 +12,7 @@ export default function FormField({
   onChange,
 }) {
   return (
-    <div
-      className={`flex flex-col gap-2 border-b border-gray-400 pb-6 ${className}`}
-    >
+    <div className={`flex flex-col gap-2 border-b border-gray-400 pb-6`}>
       <label htmlFor={id} className='flex items-center gap-20'>
         <span className='min-w-[90px] text-left'>
           {label}
@@ -27,9 +25,9 @@ export default function FormField({
             placeholder={placeholder}
             value={value || ''}
             onChange={onChange}
-            className={`border rounded-md p-2 max-w-[500px] w-full focus:outline-primary-200 ${
+            className={`border rounded-md p-3 max-w-[500px] w-full focus:outline-primary-200 ${
               error ? 'border-red-500' : 'border-gray-400'
-            }`}
+            }${className}`}
           />
         )}
       </label>

@@ -8,6 +8,9 @@ export default function MyInfoForm() {
     password: '••••••••',
     confirmPassword: '••••••••',
     name: '홍길동',
+    phone1: '010',
+    phone2: '1234',
+    phone3: '5678',
     email: 'hong@example.com',
     address: {
       zonecode: '12345',
@@ -27,6 +30,7 @@ export default function MyInfoForm() {
           message={'(영문 소문자/숫자 , 4~16자)'}
           value={userInfo.userId}
           readOnly
+          className='focus:outline-none'
         />
 
         <FormField
@@ -47,7 +51,6 @@ export default function MyInfoForm() {
           placeholder='비밀번호를 입력하세요'
           required
           value={userInfo.confirmPassword}
-          readOnly
         />
 
         <FormField
@@ -57,25 +60,45 @@ export default function MyInfoForm() {
           required
           value={userInfo.name}
           readOnly
+          className='focus:outline-none'
         />
+
+        <FormField id='phone' label='휴대전화'>
+          <div className='flex items-center gap-2 max-w-[500px] w-full'>
+            <input
+              type='text'
+              value={userInfo.phone1}
+              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+            />
+            <span className='text-gray-500'>-</span>
+            <input
+              type='text'
+              value={userInfo.phone2}
+              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+            />
+            <span className='text-gray-500'>-</span>
+            <input
+              type='text'
+              value={userInfo.phone3}
+              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+            />
+          </div>
+        </FormField>
 
         <AddressInput
           id='address'
           label='주소'
           value={userInfo.address}
           variant='signup'
-          readOnly
         />
 
-        <FormField
-          id='email'
-          label='이메일'
-          type='email'
-          placeholder='이메일을 입력하세요'
-          required
-          value={userInfo.email}
-          readOnly
-        />
+        <FormField id='email' label='이메일'>
+          <input
+            type='email'
+            value={userInfo.email}
+            className='border rounded-md p-3 flex-1 focus:outline-primary-200 border-gray-400'
+          />
+        </FormField>
       </section>
 
       <Button

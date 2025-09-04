@@ -15,6 +15,9 @@ export default function SignUpForm() {
     confirmPassword: '',
     name: '',
     address: { address: '', addressDetail: '', userDetailAddress: '' },
+    phone1: '',
+    phone2: '',
+    phone3: '',
     email: '',
   });
 
@@ -45,6 +48,9 @@ export default function SignUpForm() {
       'password',
       'confirmPassword',
       'name',
+      'phone1',
+      'phone2',
+      'phone3',
       'email',
     ];
     const allFieldsFilled = requiredFields.every(
@@ -148,15 +154,46 @@ export default function SignUpForm() {
           placeholder='상세주소를 입력하세요'
           variant='signup'
         />
-        <FormField
-          id='email'
-          label='이메일'
-          type='email'
-          placeholder='이메일을 입력하세요'
-          required
-          value={formData.email}
-          onChange={e => handleInputChange('email', e.target.value)}
-        />
+        <FormField id='phone' label='휴대전화' required>
+          <div className='flex items-center gap-2 w-full'>
+            <input
+              type='text'
+              value={formData.phone1}
+              onChange={e => handleInputChange('phone1', e.target.value)}
+              placeholder='010'
+              maxLength={3}
+              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+            />
+            <span className='text-gray-500'>-</span>
+            <input
+              type='text'
+              value={formData.phone2}
+              onChange={e => handleInputChange('phone2', e.target.value)}
+              placeholder='1234'
+              maxLength={4}
+              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+            />
+            <span className='text-gray-500'>-</span>
+            <input
+              type='text'
+              value={formData.phone3}
+              onChange={e => handleInputChange('phone3', e.target.value)}
+              placeholder='5678'
+              maxLength={4}
+              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+            />
+          </div>
+        </FormField>
+
+        <FormField id='email' label='이메일' required>
+          <input
+            type='email'
+            value={formData.email}
+            onChange={e => handleInputChange('email', e.target.value)}
+            placeholder='이메일을 입력하세요'
+            className='border rounded-md p-3 flex-1 focus:outline-primary-200 border-gray-400'
+          />
+        </FormField>
       </section>
 
       <AdditionalInfoInput />
