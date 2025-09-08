@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Button } from '../../ui/button';
 import ProductHeader from '../../ui/ShopDetail/ProductHeader';
@@ -29,12 +30,14 @@ export default function PurchaseInfo({ product }) {
       <TotalPrice totalPrice={totalPrice} />
       <div className='flex justify-between gap-2'>
         <CartButton selectedOptions={selectedOptions} product={product} />
-        <Button
-          className='w-full font-bold text-xl font-pretendard'
-          variant='default'
-        >
-          구매하기
-        </Button>
+        {/* <Link to='/order' className='w-full'>
+          <Button
+            className=' font-bold text-xl font-pretendard'
+            variant='default'
+          >
+            구매하기
+          </Button>
+        </Link> */}
       </div>
     </div>
   );
