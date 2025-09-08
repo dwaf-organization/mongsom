@@ -17,7 +17,7 @@ export default function Footer() {
 
         <ul className='flex gap-4 pt-3 text-sm font-pretendard'>
           <li>
-            <p>대표자: 몽솜</p>
+            <p>대표자: 김준겸</p>
           </li>
           <li>
             <p>주소: 부산광역시 강서구 녹산산단361로 42,3층(송정동)</p>
