@@ -11,7 +11,9 @@ export default function OptionSelector({
 
   useEffect(() => {
     const totalPrice = selectedOptions.reduce((total, option) => {
-      return total + product.price * option.quantity;
+      // salePrice가 있으면 salePrice 사용, 없으면 price 사용
+      const itemPrice = product.salePrice || product.price;
+      return total + itemPrice * option.quantity;
     }, 0);
 
     onTotalPriceChange(totalPrice);
@@ -20,7 +22,13 @@ export default function OptionSelector({
     if (onOptionsChange) {
       onOptionsChange(selectedOptions);
     }
-  }, [selectedOptions, product.price, onTotalPriceChange, onOptionsChange]);
+  }, [
+    selectedOptions,
+    product.price,
+    product.salePrice,
+    onTotalPriceChange,
+    onOptionsChange,
+  ]);
 
   const handleOptionChange = value => {
     const existingOptionIndex = selectedOptions.findIndex(
@@ -88,7 +96,10 @@ export default function OptionSelector({
                 />
 
                 <span className='text-gray-900 font-semibold'>
-                  {(product.price * option.quantity).toLocaleString()}원
+                  {(
+                    (product.salePrice || product.price) * option.quantity
+                  ).toLocaleString()}
+                  원
                 </span>
               </div>
             </li>

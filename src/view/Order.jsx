@@ -10,15 +10,31 @@ import PaymentButton from '../components/ui/order/PaymentButton';
 export default function Order() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState(null);
 
   useEffect(() => {
-    const sessionCart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-    const checkedItems = sessionCart.filter(item => item.checked === true);
-    setSelectedItems(checkedItems);
+    const purchaseItems = JSON.parse(
+      sessionStorage.getItem('purchaseItems') || '[]',
+    );
+
+    if (purchaseItems.length > 0) {
+      setSelectedItems(purchaseItems);
+    } else {
+      const sessionCart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+      const checkedItems = sessionCart.filter(item => item.checked === true);
+      setSelectedItems(checkedItems);
+    }
   }, []);
 
-  const handleFormValidChange = isValid => {
+  const handleFormValidChange = (isValid, customerData) => {
+    console.log('폼 유효성 변경:', {
+      isValid,
+      customerData,
+      hasName: !!customerData?.name,
+      hasEmail: !!customerData?.email,
+    });
     setIsFormValid(isValid);
+    setCustomerInfo(customerData);
   };
 
   return (
@@ -28,7 +44,11 @@ export default function Order() {
       <OrderItemListSection selectedItems={selectedItems} />
       <AddressInfoSection onFormValidChange={handleFormValidChange} />
       <OrderSummarySection items={selectedItems} />
-      <PaymentButton disabled={!isFormValid} />
+      <PaymentButton
+        selectedItems={selectedItems}
+        customerInfo={customerInfo}
+        disabled={!isFormValid}
+      />
     </InnerPaddingSectionWrapper>
   );
 }
