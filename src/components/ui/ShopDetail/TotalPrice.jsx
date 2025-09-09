@@ -1,5 +1,7 @@
 export default function TotalPrice({ totalPrice, shippingFee = 3000 }) {
-  const finalTotal = totalPrice + shippingFee;
+  // 5만원 미만일 때만 배송비 추가
+  const actualShippingFee = totalPrice < 50000 ? shippingFee : 0;
+  const finalTotal = totalPrice + actualShippingFee;
 
   return (
     <div className='flex flex-col gap-3  rounded-lg '>
@@ -13,7 +15,7 @@ export default function TotalPrice({ totalPrice, shippingFee = 3000 }) {
       <div className='flex justify-between items-center'>
         <span className='text-gray-600'>배송비</span>
         <span className='text-gray-900 font-semibold'>
-          {shippingFee.toLocaleString()}원
+          {actualShippingFee.toLocaleString()}원
         </span>
       </div>
 

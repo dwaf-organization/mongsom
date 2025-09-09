@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
+import { Link } from 'react-router-dom';
 import PurchaseBar from '../components/ui/cart/PurchaseBar';
 import {
   AllCheckBoxSection,
@@ -27,6 +28,23 @@ export default function Cart() {
     sessionStorage.setItem('cart', JSON.stringify(updatedCart));
   };
 
+  if (cart.length === 0) {
+    return (
+      <InnerPaddingSectionWrapper className='max-w-[800px]'>
+        <h2 className='text-2xl font-semibold font-pretendard pb-5'>
+          장바구니
+        </h2>
+        <BreadCrumbSection currentStep='cart' />
+        <p className='text-gray-700 py-48'>장바구니가 비었습니다.</p>
+        <Link
+          to='/shop'
+          className='bg-primary-200 text-white px-4 py-2 rounded-md'
+        >
+          쇼핑하러 가기
+        </Link>
+      </InnerPaddingSectionWrapper>
+    );
+  }
   return (
     <InnerPaddingSectionWrapper className='max-w-[800px]'>
       <h2 className='text-2xl font-semibold font-pretendard pb-5'>장바구니</h2>

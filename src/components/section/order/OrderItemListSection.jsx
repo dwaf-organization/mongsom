@@ -1,16 +1,17 @@
+import { Link } from 'react-router-dom';
+
 export default function OrderItemListSection({ selectedItems }) {
   const calculateTotalPrice = item => {
-    if (item.salePrice) {
-      return item.salePrice * item.count;
-    }
-    return item.price * item.count;
+    const quantity = item.quantity || item.count || 1;
+    // 할인가가 있으면 할인가 사용, 없으면 원가 사용
+    const itemPrice = item.salePrice || item.price;
+    return itemPrice * quantity;
   };
 
   const OriginalPrice = item => {
-    if (item.salePrice) {
-      return item.price * item.count;
-    }
-    return item.price * item.count;
+    const quantity = item.quantity || item.count || 1;
+    // 항상 원가 반환
+    return item.price * quantity;
   };
 
   return (
@@ -30,16 +31,18 @@ export default function OrderItemListSection({ selectedItems }) {
               key={item.id}
               className='flex items-start gap-4 border-t border-gray-500 pt-4'
             >
-              <img
-                src={item.image}
-                alt={item.name}
-                className='w-[200px] h-[200px] object-cover rounded-lg'
-              />
+              <Link to={`/shop-detail/${item.productId}`}>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className='w-[200px] h-[200px] object-cover rounded-lg'
+                />
+              </Link>
               <div className='flex flex-col justify-between h-[150px] px-6 font-pretendard'>
                 <div className='text-left'>
                   <h4 className='font-semibold text-xl'>{item.name}</h4>
                   <p className='text-gray-600 text-lg'>옵션 | {item.option}</p>
-                  <span>수량: {item.count}개</span>
+                  <span>수량: {item.quantity || item.count || 1}개</span>
                 </div>
                 {item.salePrice ? (
                   <ul className='flex flex-col gap-2'>
