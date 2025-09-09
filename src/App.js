@@ -12,6 +12,9 @@ import {
   SignUp,
   Mypage,
 } from './view';
+import Payment from './view/Payment';
+import PaymentSuccess from './view/PaymentSuccess';
+import PaymentFail from './view/PaymentFail';
 import { ToastProvider } from './context/ToastContext';
 import { ModalProvider } from './context/ModalContext';
 import GlobalToast from './components/ui/GlobalToast';
@@ -37,6 +40,9 @@ export default function App() {
             <Route path='/mypage' element={<Mypage />} />
             <Route path='/order-detail/:id' element={<OrderDetail />} />
             <Route path='/create-review/:id' element={<CreateReview />} />
+            <Route path='/payment' element={<Payment />} />
+            <Route path='/payment/success' element={<PaymentSuccess />} />
+            <Route path='/payment/fail' element={<PaymentFail />} />
           </Routes>
           <GlobalToast />
           <GlobalModal />

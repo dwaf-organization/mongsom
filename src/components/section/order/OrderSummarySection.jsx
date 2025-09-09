@@ -1,18 +1,22 @@
 export default function OrderSummarySection({ items }) {
   const totalPrice = items.reduce((sum, item) => {
-    return sum + item.price * item.count;
+    const quantity = item.quantity || item.count || 1;
+    // salePrice가 있으면 salePrice 사용, 없으면 price 사용
+    const itemPrice = item.salePrice || item.price;
+    return sum + itemPrice * quantity;
   }, 0);
 
   const discount = items.reduce((sum, item) => {
+    const quantity = item.quantity || item.count || 1;
     if (item.salePrice) {
-      return sum + item.price - item.salePrice * item.count;
+      return sum + (item.price - item.salePrice) * quantity;
     }
-    return sum + item.price * item.count;
+    return sum;
   }, 0);
 
   const shippingFee = totalPrice < 50000 ? 3000 : 0;
 
-  const finalPrice = totalPrice - discount + shippingFee;
+  const finalPrice = totalPrice + shippingFee;
 
   return (
     <section className='py-10 border-y-2 border-black-100'>
@@ -33,7 +37,7 @@ export default function OrderSummarySection({ items }) {
         <li className='flex justify-between'>
           <p className='text-gray-700 text-xl'>할인/부가결제</p>
           <p className='font-semibold font-montserrat text-xl text-primary-200'>
-            - {discount.toLocaleString()} won
+            {discount.toLocaleString()} won
           </p>
         </li>
       </ul>
