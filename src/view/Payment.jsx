@@ -76,7 +76,6 @@ export default function Payment() {
       });
     } catch (err) {
       console.error('결제 요청 실패:', err);
-      alert('결제 요청에 실패했습니다.');
     }
   };
 

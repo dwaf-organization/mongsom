@@ -51,7 +51,7 @@ export default function AddressInfoSection({ onFormValidChange }) {
       const customerData = isValid
         ? {
             name: formData.name,
-            email: `${formData.name}@example.com`, // 임시 이메일 생성
+            email: '',
             phone: `${formData.phone1}-${formData.phone2}-${formData.phone3}`,
             address:
               `${formData.address} ${formData.addressDetail} ${formData.userDetailAddress}`.trim(),
