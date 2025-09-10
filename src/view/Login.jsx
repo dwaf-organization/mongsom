@@ -44,7 +44,7 @@ export default function Login() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <h3 className='text-4xl font-pretendard py-20'>로그인</h3>
+      <h3 className='text-4xl font-pretendard pb-8'>로그인</h3>
       <div className='flex flex-col items-center justify-center gap-4'>
         <form
           onSubmit={handleLogin}

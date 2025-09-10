@@ -26,7 +26,7 @@ export default function PaymentButton({
       email: customerInfo?.email,
     });
 
-    if (!customerInfo || !customerInfo.name || !customerInfo.email) {
+    if (!customerInfo || !customerInfo.name) {
       alert('고객 정보를 입력해주세요.');
       return;
     }
@@ -54,8 +54,6 @@ export default function PaymentButton({
       if (error.code) {
         errorMessage += `\n오류 코드: ${error.code}`;
       }
-
-      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
