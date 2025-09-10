@@ -4,7 +4,7 @@ export default function ExchangeReturnTab({ product }) {
       <h2 class='mb-4 text-2xl font-bold'>교환/환불 안내</h2>
 
       <div class='rounded-xl border border-gray-200 bg-white p-5 shadow-sm text-left'>
-        <h3 class='mb-2 text-lg font-semibold'>1) 교환·환불 가능</h3>
+        <h3 class='mb-2 text-lg font-semibold'>1) 교환·환불 규정</h3>
         <ul class='list-disc pl-5 space-y-1'>
           <li>
             상품 수령일로부터 <b>7일 이내</b> 신청 가능합니다.
@@ -17,10 +17,6 @@ export default function ExchangeReturnTab({ product }) {
             <b>단순 변심</b> 시: 미개봉·미사용 & 구성품 완비 상태에 한해 가능
             (왕복 배송비 <b>고객 부담</b>)
           </li>
-        </ul>
-
-        <h3 class='mt-6 mb-2 text-lg font-semibold'>2) 교환·환불 불가</h3>
-        <ul class='list-disc pl-5 space-y-1'>
           <li>
             고객 부주의로 상품·포장·구성품이 훼손되거나 사용 흔적이 있는 경우
           </li>
@@ -38,6 +34,9 @@ export default function ExchangeReturnTab({ product }) {
         <ul class='list-disc pl-5 space-y-1'>
           <li>
             기본 배송비: <b>3,000원</b> (제주/도서산간 추가비용 발생)
+          </li>
+          <li>
+            배송기간: <b>3~5일 (영업일 기준)</b>
           </li>
           <li>
             하자·오배송: 왕복 배송비 <b>판매자 부담</b> / 단순 변심: 왕복 배송비{' '}
