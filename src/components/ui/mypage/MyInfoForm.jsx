@@ -100,13 +100,14 @@ export default function MyInfoForm() {
           />
         </FormField>
       </section>
-
-      <Button
-        type='button'
-        className='w-fit px-8  py-2 mt-11 mx-auto text-lg rounded-none'
-      >
-        정보 수정
-      </Button>
+      <div className='flex justify-center'>
+        <Button
+          type='button'
+          className='w-fit px-8  py-2 mt-11 mx-auto text-lg rounded-none'
+        >
+          정보 수정
+        </Button>
+      </div>
     </div>
   );
 }

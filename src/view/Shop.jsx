@@ -19,7 +19,9 @@ export default function Shop() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <h2 className='text-4xl font-semibold font-montserrat'>Shop</h2>
+      <h2 className='text-4xl font-semibold font-montserrat text-center'>
+        Shop
+      </h2>
       <div className='flex items-center justify-end gap-8'>
         <Button
           className='rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit'

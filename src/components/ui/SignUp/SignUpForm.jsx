@@ -106,15 +106,24 @@ export default function SignUpForm() {
   return (
     <form onSubmit={handleSubmit}>
       <section className='flex flex-col justify-center py-6 space-y-6 '>
-        <FormField
-          id='userId'
-          label='아이디'
-          placeholder='아이디를 입력하세요'
-          required
-          message={'(영문 소문자/숫자 , 4~16자)'}
-          value={formData.userId}
-          onChange={e => handleInputChange('userId', e.target.value)}
-        />
+        <FormField id='userId' label='아이디' required>
+          <div className='flex items-center gap-2 w-full'>
+            <input
+              type='text'
+              value={formData.userId}
+              onChange={e => handleInputChange('userId', e.target.value)}
+              placeholder='아이디를 입력하세요'
+              message={'(영문 소문자/숫자 , 4~16자)'}
+              minLength={4}
+              maxLength={16}
+              className='border rounded-md p-2 w-full max-w-[370px] focus:outline-primary-200 border-gray-400'
+            />
+            <Button type='button' className='w-fit px-8  py-2 text-lg'>
+              {' '}
+              중복확인{' '}
+            </Button>
+          </div>
+        </FormField>
 
         <FormField
           id='password'
