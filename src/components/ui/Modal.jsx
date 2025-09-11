@@ -38,18 +38,19 @@ export default function Modal({
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center '>
+    <div className='fixed inset-0 z-50 flex items-center justify-center p-4'>
       <div
-        className='absolute inset-0 bg-black bg-opacity-50'
+        className='absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm'
         onClick={onClose}
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
       />
 
       <div
-        className={`relative bg-white rounded-lg shadow-xl border border-primary-200 ${getSizeClasses()} ${className}`}
+        className={`relative bg-white rounded-lg shadow-xl border border-primary-200 ${getSizeClasses()} max-h-[90vh] overflow-hidden flex flex-col z-10 ${className}`}
         onClick={e => e.stopPropagation()}
       >
         {title && (
-          <div className='flex items-center'>
+          <div className='flex items-center justify-between p-4 border-b border-gray-200'>
             <h3 className='text-lg font-semibold text-gray-900'>{title}</h3>
             {showCloseButton && (
               <button
@@ -62,7 +63,7 @@ export default function Modal({
           </div>
         )}
 
-        <div>{children}</div>
+        <div className='flex-1 overflow-y-auto'>{children}</div>
       </div>
     </div>
   );

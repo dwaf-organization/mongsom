@@ -28,7 +28,7 @@ export default function Notice() {
               key={item.id || index}
               className='flex justify-between border-b border-gray-400 py-3'
             >
-              <td className='text-cneter font-montserrat font-medium w-full max-w-[100px]'>
+              <td className='text-cneter font-montserrat font-medium w-full max-w-[100px] text-center'>
                 {item.id || index + 1}
               </td>
               <td className='text-start font-montserrat font-medium w-full pl-4'>

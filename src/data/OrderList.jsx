@@ -4,6 +4,7 @@ export const orderList = [
     orderNumber: 'ORD-2024-001',
     orderDate: '2024-01-15',
     status: '배송완료',
+    trackingNumber: '1234567890123',
     products: [
       {
         id: 1,
@@ -41,6 +42,7 @@ export const orderList = [
     orderNumber: 'ORD-2024-002',
     orderDate: '2024-01-20',
     status: '배송중',
+    trackingNumber: '9876543210987',
     products: [
       {
         id: 3,
@@ -68,6 +70,7 @@ export const orderList = [
     orderNumber: 'ORD-2024-003',
     orderDate: '2024-01-25',
     status: '주문확인',
+    trackingNumber: '', // 송장번호 없음
     products: [
       {
         id: 4,
@@ -104,6 +107,7 @@ export const orderList = [
     orderNumber: 'ORD-2024-004',
     orderDate: '2024-01-28',
     status: '배송준비중',
+    trackingNumber: '', // 송장번호 없음
     products: [
       {
         id: 6,
