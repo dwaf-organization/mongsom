@@ -44,7 +44,9 @@ export default function Login() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <h3 className='text-4xl font-pretendard pb-8'>로그인</h3>
+      <h3 className='text-4xl font-pretendard pb-8 font-semibold text-center'>
+        로그인
+      </h3>
       <div className='flex flex-col items-center justify-center gap-4'>
         <form
           onSubmit={handleLogin}
@@ -64,12 +66,14 @@ export default function Login() {
             onChange={e => handleInputChange('password', e.target.value)}
             className='border border-gray-400 rounded-md p-3 focus:outline-primary-200 w-full'
           />
-          <Link
-            to='/'
-            className='flex justify-end w-full text-gray-500 text-xs'
-          >
-            비밀번호 찾기
-          </Link>
+          <div className='flex justify-end w-full'>
+            <Link to='/find-id' className='flex text-gray-500 text-xs'>
+              아이디 찾기 /
+            </Link>
+            <Link to='/find-password' className='flex text-gray-500 text-xs'>
+              비밀번호 찾기
+            </Link>
+          </div>
           <Button type='submit' className='w-full py-3'>
             로그인
           </Button>

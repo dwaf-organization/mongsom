@@ -22,7 +22,7 @@ export default function OrderListTable() {
         <tbody className='w-full '>
           {orderList.map(item => (
             <tr key={item.id} className='border-y border-gray-500'>
-              <td className='font-montserrat py-4'>{item.id}</td>
+              <td className='font-montserrat py-4 text-center'>{item.id}</td>
               <td className='font-montserrat py-4 px-3'>{item.orderDate}</td>
               <td className='py-4 pl-14'>
                 <div className='flex items-center gap-3'>
@@ -59,7 +59,7 @@ export default function OrderListTable() {
               <td className='text-right font-montserrat py-4'>
                 {item.shippingFee.toLocaleString()}원
               </td>
-              <td className='py-4 px-3'>{item.status}</td>
+              <td className='py-4 px-3 text-center'>{item.status}</td>
             </tr>
           ))}
         </tbody>

@@ -8,6 +8,7 @@ import Cart from './Cart';
 import Order from './Order';
 import SignUp from './SignUp';
 import Mypage from './Mypage';
+import Exchange from './Exchange';
 
 export {
   Login,
@@ -20,4 +21,5 @@ export {
   Order,
   SignUp,
   Mypage,
+  Exchange,
 };

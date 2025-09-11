@@ -1,8 +1,16 @@
 import { Link } from 'react-router-dom';
 
 import { orderList } from '../../../data/OrderList';
+import { useModal } from '../../../context/ModalContext';
+import DeliveryTrackingModal from '../DeliveryTrackingModal';
 
 export default function OrderListTab() {
+  const { openModal } = useModal();
+
+  const handleOpenModal = orderId => {
+    openModal(<DeliveryTrackingModal orderId={orderId} />);
+  };
+
   return (
     <ul>
       {orderList.map(item => (
@@ -57,7 +65,10 @@ export default function OrderListTab() {
                 </div>
               </div>
               <div className='flex flex-col gap-2'>
-                <button className='border border-gray-500 text-gray-50 rounded-lg px-6 py-1 mt-4 self-center'>
+                <button
+                  className='border border-gray-500 text-gray-50 rounded-lg px-6 py-1 mt-4 self-center'
+                  onClick={() => handleOpenModal(item.id)}
+                >
                   배송조회
                 </button>
               </div>

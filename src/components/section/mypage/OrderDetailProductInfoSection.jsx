@@ -6,6 +6,13 @@ import ProductActionButtons from '../../ui/mypage/ProductActionButtons';
 export default function OrderDetailProductInfoSection() {
   const { id } = useParams();
   const order = orderList.find(order => order.id === parseInt(id));
+
+  if (!order) {
+    return (
+      <p className='text-center text-gray-600'>주문 정보를 찾을 수 없습니다.</p>
+    );
+  }
+
   return (
     <ul className='flex flex-col gap-4 pt-4'>
       {order.products.map(item => (
@@ -41,7 +48,7 @@ export default function OrderDetailProductInfoSection() {
               </div>
             </div>
           </div>
-          <ProductActionButtons product={item} />
+          <ProductActionButtons product={item} orderId={order.id} />
         </li>
       ))}
     </ul>
