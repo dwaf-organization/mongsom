@@ -1,13 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import reportWebVitals from './reportWebVitals';
-
 import './index.css';
 import App from './App';
-import Header from './layout/header/Header.jsx';
-import Footer from './layout/footer/Footer.jsx';
-import { ToastProvider } from './context/ToastContext';
+import reportWebVitals from './reportWebVitals';
 
 // 전역 세션 관리 함수들
 window.isAuthenticated = () => {
@@ -29,13 +25,9 @@ window.logout = () => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ToastProvider>
-      <BrowserRouter>
-        <Header />
-        <App />
-        <Footer />
-      </BrowserRouter>
-    </ToastProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>,
 );
 

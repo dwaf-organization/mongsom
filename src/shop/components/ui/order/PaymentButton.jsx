@@ -60,12 +60,14 @@ export default function PaymentButton({
   };
 
   return (
-    <Button
-      className='w-fit px-10 py-2 mt-10 font-bold text-xl font-pretendard bg-black-100 text-white hover:bg-black-100/90 disabled:bg-gray-400 disabled:cursor-not-allowed'
-      onClick={handlePayment}
-      disabled={disabled || isLoading}
-    >
-      {isLoading ? '결제 처리 중...' : '결제하기'}
-    </Button>
+    <div className='flex justify-center'>
+      <Button
+        className='w-fit px-10 py-2 mt-10 font-bold text-xl font-pretendard bg-black-100 text-white hover:bg-black-100/90 disabled:bg-gray-400 disabled:cursor-not-allowed'
+        onClick={handlePayment}
+        disabled={disabled || isLoading}
+      >
+        {isLoading ? '결제 처리 중...' : '결제하기'}
+      </Button>
+    </div>
   );
 }
