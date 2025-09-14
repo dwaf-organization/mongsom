@@ -1,9 +1,12 @@
 import { shop } from '../../../data/Shop';
 import { Button } from '../../ui/button';
 import Pencil from '../../../assets/icons/Pencil';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProductTableSection() {
+  const navigate = useNavigate();
   const shippingFee = 3000;
+
   return (
     <section className='py-6'>
       <div className='flex justify-start items-center gap-2 mb-4 pt-16 pl-4'>
@@ -53,7 +56,7 @@ export default function ProductTableSection() {
                     />
                   </td>
                   <td className='px-4 py-4 whitespace-nowrap text-sm text-gray-900'>
-                    <div className='flex items-center space-x-3'>
+                    <div className='flex items-center space-x-3 w-full max-w-[400px]'>
                       <img
                         className='h-20 w-20 rounded-lg object-cover'
                         src={shop.image}
@@ -64,8 +67,8 @@ export default function ProductTableSection() {
                         {shop.option.length > 1 && (
                           <div className='text-gray-500 text-xs'>
                             <p>[옵션]</p>
-                            <div className='whitespace-pre-line'>
-                              {shop.option.join(',\n')}
+                            <div className='truncate'>
+                              {shop.option.join('/\n')}
                             </div>
                           </div>
                         )}
@@ -90,6 +93,9 @@ export default function ProductTableSection() {
                       <Button
                         variant='outline'
                         className=' border-black-100 py-3 text-black-100 w-full max-w-[152px] '
+                        onClick={() =>
+                          navigate(`/admin/edit-product-info/${shop.id}`)
+                        }
                       >
                         <Pencil />
                         수정

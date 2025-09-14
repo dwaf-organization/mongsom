@@ -1,5 +1,5 @@
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
-import AddProductInfoSection from '../components/section/addProduct/AddProductInfoSection';
+import AddProductInfoSection from '../components/section/product/AddProductInfoSection';
 
 export default function Products() {
   return (

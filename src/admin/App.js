@@ -8,6 +8,10 @@ import { ToastProvider } from './context/ToastContext';
 import { ModalProvider } from './context/ModalContext';
 import GlobalToast from './components/ui/GlobalToast';
 import GlobalModal from './components/ui/GlobalModal';
+import EditProductInfo from './view/EditProductInfo';
+import Notice from './view/Notice';
+import './index.css';
+import 'quill/dist/quill.snow.css';
 
 export default function AdminApp() {
   return (
@@ -19,8 +23,12 @@ export default function AdminApp() {
             <Route path='/products' element={<Products />} />
             <Route path='/products-list' element={<ProductList />} />
             <Route path='/orders' element={<OrderList />} />
-            <Route path='/notice' element={<div>공지 관리 페이지</div>} />
+            <Route path='/notice' element={<Notice />} />
             <Route path='/exchange-return' element={<Exchange />} />
+            <Route
+              path='/edit-product-info/:id'
+              element={<EditProductInfo />}
+            />
           </Routes>
           <GlobalToast />
           <GlobalModal />

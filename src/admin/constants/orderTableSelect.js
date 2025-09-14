@@ -6,10 +6,9 @@ export const deliveryStatusOptions = [
 ];
 
 export const courierOptions = [
-  { value: '', label: '택배사 선택' },
-  { value: 'cj', label: 'CJ대한통운' },
-  { value: 'hanjin', label: '한진택배' },
-  { value: 'lotte', label: '롯데택배' },
-  { value: 'kdexp', label: '경동택배' },
-  { value: 'kpost', label: '우체국택배' },
+  { value: 'cj', label: 'CJ' },
+  { value: 'hanjin', label: '한진' },
+  { value: 'lotte', label: '롯데' },
+  { value: 'kdexp', label: '경동' },
+  { value: 'kpost', label: '우체국' },
 ];

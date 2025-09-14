@@ -1,0 +1,9 @@
+.rt-editor .ql-container {
+  height: auto !important;
+  min-height: var(--rt-min-h, 240px);
+}
+
+/* 에디터 내부도 같은 최소 높이를 갖도록 */
+.rt-editor .ql-editor {
+  min-height: var(--rt-min-h, 240px);
+}

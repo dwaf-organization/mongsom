@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../assets/img/mongsom-admin-logo.png';
 import { navigation } from '../constants/navList';
