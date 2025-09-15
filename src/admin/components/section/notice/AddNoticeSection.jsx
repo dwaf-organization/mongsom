@@ -20,7 +20,11 @@ export default function AddNoticeSection() {
             제목
           </div>
           <div className='p-4 border-b flex flex-wrap items-center gap-3'>
-            <input placeholder='상품명을 입력하세요' name='category' />
+            <input
+              placeholder='제목을 입력하세요'
+              name='title'
+              className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+            />
           </div>
         </div>
 

@@ -4,7 +4,7 @@ const SearchForm = ({
   children,
   onSubmit,
   submitButtonText = '조회',
-  submitButtonClassName = 'w-fit py-3 px-8 mt-4',
+  submitButtonClassName = 'w-fit py-3 px-10 mt-4',
   className = '',
 }) => {
   const handleSubmit = e => {

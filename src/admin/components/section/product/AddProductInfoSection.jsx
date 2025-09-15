@@ -23,7 +23,11 @@ export default function AddProductInfoSection() {
             상품명
           </div>
           <div className='p-4 border-b flex flex-wrap items-center gap-3'>
-            <input placeholder='상품명을 입력하세요' name='category' />
+            <input
+              placeholder='상품명을 입력하세요'
+              name='productName'
+              className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+            />
           </div>
         </div>
 
@@ -56,6 +60,32 @@ export default function AddProductInfoSection() {
             <button className=' h-[100px] bg-primary-100 w-[100px] rounded-lg flex items-center justify-center'>
               <Plus />
             </button>
+          </div>
+        </div>
+      </section>
+
+      <section className='py-10'>
+        <p className='font-semibold text-xl mb-4'>표시 설정</p>
+        <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
+          <div className='bg-primary-100  font-semibold px-6 py-4 border-b whitespace-nowrap'>
+            상품분류 선택
+          </div>
+          <div className='p-6 flex items-center gap-3'>
+            <div className='flex items-start gap-3'>
+              <Button
+                className='w-fit py-2 px-4 border-gray-500 text-gray-500'
+                variant='outline'
+              >
+                프리미엄 선물용
+              </Button>
+
+              <Button
+                className='w-fit py-2 px-4 border-gray-500 text-gray-500'
+                variant='outline'
+              >
+                일반 상품
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -138,6 +168,11 @@ export default function AddProductInfoSection() {
           </div>
         </div>
       </section>
+      <div className='flex justify-center'>
+        <Button type='submit' className='w-fit px-20 py-4'>
+          상품 등록
+        </Button>
+      </div>
     </form>
   );
 }

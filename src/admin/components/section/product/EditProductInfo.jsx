@@ -23,7 +23,11 @@ export default function EditProductInfoSection() {
             상품명
           </div>
           <div className='p-4 border-b flex flex-wrap items-center gap-3'>
-            <input placeholder='상품명을 입력하세요' name='category' />
+            <input
+              placeholder='상품명을 입력하세요'
+              name='productName'
+              className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+            />
           </div>
         </div>
 

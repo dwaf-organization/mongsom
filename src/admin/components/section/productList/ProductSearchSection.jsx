@@ -1,3 +1,4 @@
+import { Button } from '../../ui/button';
 import SearchForm from '../../ui/SearchForm';
 import Select from '../../ui/Select';
 
@@ -22,7 +23,11 @@ export default function ProductSearchSection({ onSearch }) {
         </div>
 
         <div className='p-4 border-b flex flex-wrap items-center gap-3'>
-          <input placeholder='상품명을 입력하세요' name='category' />
+          <input
+            placeholder='상품명을 입력하세요'
+            name='productName'
+            className='w-full border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+          />
         </div>
       </di>
 
@@ -31,12 +36,19 @@ export default function ProductSearchSection({ onSearch }) {
           상품 분류
         </div>
 
-        <div className='p-4 border-b flex flex-wrap items-center gap-3'>
-          <Select
-            options={statusOptions}
-            placeholder='상태 선택'
-            name='status'
-          />
+        <div className='p-4 flex items-center gap-3'>
+          <Button
+            variant='outline'
+            className='border-gray-500 text-gray-500 w-fit'
+          >
+            프리미엄 선물용
+          </Button>
+          <Button
+            variant='outline'
+            className='border-gray-500 text-gray-500 w-fit'
+          >
+            일반 상품
+          </Button>
         </div>
       </div>
     </SearchForm>

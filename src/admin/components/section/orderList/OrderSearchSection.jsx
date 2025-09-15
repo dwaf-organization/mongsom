@@ -46,7 +46,7 @@ export default function OrderSearchSection({ onSearch }) {
           type='text'
           name='orderNumber'
           placeholder='주문번호를 입력하세요'
-          className='h-10 rounded-md border px-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring focus:ring-gray-300 m-4'
+          className='h-10 rounded-md border px-3 text-sm placeholder:text-gray-400 focus:outline-primary-200 m-4'
         />
       </div>
     </SearchForm>
