@@ -66,6 +66,17 @@ export default function AddressInfoSection({ onFormValidChange }) {
   return (
     <section className='py-10'>
       <h3 className='text-xl text-left font-semibold mb-4 '>배송지 정보</h3>
+      <p className='text-left mb-2'>주소록 선택</p>
+      <div className='flex items-center gap-4 mb-4'>
+        <label htmlFor='address' className='flex items-center gap-2'>
+          <input type='radio' name='address' id='address' />
+          <p>기존 배송지 정보</p>
+        </label>
+        <label htmlFor='address' className='flex items-center gap-2'>
+          <input type='radio' name='address' id='address' />
+          <p>신규 배송지 정보</p>
+        </label>
+      </div>
       <form className='flex flex-col gap-4 w-full'>
         <AddressFormField
           id='name'
