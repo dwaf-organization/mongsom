@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AddressSearchButton from './AddressSearchButton';
 
 export default function AddressInput({
@@ -11,8 +11,13 @@ export default function AddressInput({
   showExtraAddress = true,
   variant = 'signup',
   error = null,
+  readOnly,
 }) {
   const [addressData, setAddressData] = useState(value);
+
+  useEffect(() => {
+    setAddressData(value);
+  }, [value]);
 
   const handleAddressSelect = data => {
     const newAddressData = {
@@ -20,7 +25,7 @@ export default function AddressInput({
       zipCode: data.zonecode,
       roadAddress: data.roadAddress,
       jibunAddress: data.jibunAddress,
-      address2: addressData.address2 || '',
+      address2: addressData.address2,
     };
 
     setAddressData(newAddressData);
@@ -61,7 +66,9 @@ export default function AddressInput({
                 readOnly
                 placeholder='우편번호'
               />
-              <AddressSearchButton onAddressSelect={handleAddressSelect} />
+              {!readOnly && (
+                <AddressSearchButton onAddressSelect={handleAddressSelect} />
+              )}
             </div>
 
             {showExtraAddress && (
@@ -78,9 +85,10 @@ export default function AddressInput({
               type='text'
               value={addressData.address2 || ''}
               onChange={handleDetailChange}
+              readOnly={readOnly}
               className={`border rounded-md p-3 w-full focus:outline-primary-200 ${
                 error ? 'border-red-500' : 'border-gray-400'
-              }`}
+              } ${readOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             />
             {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}
           </div>
@@ -104,18 +112,24 @@ export default function AddressInput({
             id={id}
             type='text'
             value={addressData.zipCode}
-            className='border border-gray-400 rounded-md p-2 max-w-[800px] w-full focus:outline-none'
+            className={`border border-gray-400 rounded-md p-2 max-w-[800px] w-full focus:outline-none ${
+              readOnly ? 'bg-gray-100 cursor-not-allowed' : ''
+            }`}
             readOnly
             placeholder='우편번호'
           />
-          <AddressSearchButton onAddressSelect={handleAddressSelect} />
+          {!readOnly && (
+            <AddressSearchButton onAddressSelect={handleAddressSelect} />
+          )}
         </div>
 
         {showExtraAddress && (
           <input
             type='text'
             value={addressData.address}
-            className='border border-gray-400 rounded-md p-2 w-full focus:outline-none'
+            className={`border border-gray-400 rounded-md p-2 w-full focus:outline-none ${
+              readOnly ? 'bg-gray-100 cursor-not-allowed' : ''
+            }`}
             readOnly
             placeholder='도로명주소'
           />
@@ -126,7 +140,10 @@ export default function AddressInput({
           placeholder='상세주소를 입력하세요'
           value={addressData.address2 || ''}
           onChange={handleDetailChange}
-          className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 `}
+          readOnly={readOnly}
+          className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 ${
+            readOnly ? 'bg-gray-100 cursor-not-allowed' : ''
+          }`}
         />
         {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}
       </div>
