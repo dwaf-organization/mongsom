@@ -44,7 +44,7 @@ export default function CartItemListSection({ cart, updateCart }) {
             className='flex items-start justify-start gap-4 border-t border-gray-500 py-10'
           >
             <img
-              src={item.image}
+              src={item.image[0]}
               alt={item.name}
               className='max-w-[200px] max-h-[200px] object-cover rounded-lg'
             />
@@ -80,7 +80,7 @@ export default function CartItemListSection({ cart, updateCart }) {
               <p className='text-pretendart font-semibold text-xl'>
                 {calculateTotalPrice(item).toLocaleString()}원
               </p>
-              <div className='flex items-center gap-2'>
+              {/* <div className='flex items-center gap-2'>
                 <p className='text-pretendart pr-3'>수량</p>
                 <button
                   onClick={() => handleDecrease(item.id)}
@@ -97,6 +97,14 @@ export default function CartItemListSection({ cart, updateCart }) {
                 >
                   +
                 </button>
+              </div> */}
+              <div className='flex items-center gap-2'>
+                <input
+                  type='text'
+                  value={item.count}
+                  className='border border-gray-500 px-2 max-w-[70px] rounded-lg focus:outline-primary-200'
+                />
+                <span className='text-gray-500'>개</span>
               </div>
             </div>
           </li>

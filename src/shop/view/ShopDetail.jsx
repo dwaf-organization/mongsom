@@ -1,5 +1,5 @@
 import { useParams, useSearchParams } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { shop } from '../data/Shop';
 import PurchaseInfo from '../components/section/ShopDetail/PurchaseInfo';
@@ -11,6 +11,7 @@ export default function ShopDetail() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'info';
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const product = useMemo(() => {
     return shop.find(item => item.id === parseInt(id));
@@ -32,11 +33,35 @@ export default function ShopDetail() {
   return (
     <InnerPaddingSectionWrapper>
       <div className='flex flex-col md:flex-row gap-8 justify-center'>
-        <img
-          src={product.image}
-          alt={product.name}
-          className='w-full max-w-[500px] h-full rounded-lg object-cover'
-        />
+        <div className='flex flex-col gap-4'>
+          <div className='w-full max-w-[500px] h-[400px] rounded-lg overflow-hidden border border-gray-200'>
+            <img
+              src={product.image[selectedImageIndex]}
+              alt={product.name}
+              className='w-full h-full object-cover'
+            />
+          </div>
+
+          <div className='flex gap-2 flex-wrap'>
+            {product.image.map((image, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedImageIndex(index)}
+                className={`w-[50px] h-[50px] rounded-lg overflow-hidden border-2 transition-all ${
+                  selectedImageIndex === index
+                    ? 'ring-2 ring-blue-200'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <img
+                  src={image}
+                  alt={`${product.name} ${index + 1}`}
+                  className='w-full h-full object-cover'
+                />
+              </button>
+            ))}
+          </div>
+        </div>
         <PurchaseInfo product={product} />
       </div>
       <ShopDetailTabSection />

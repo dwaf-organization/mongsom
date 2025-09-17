@@ -1,12 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Nav() {
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
 
   const handleLogout = () => {
-    window.logout();
+    logout();
     navigate('/login');
   };
+
   return (
     <nav className='flex justify-between items-center h-full w-full font-pretendard font-medium'>
       <ul className='grid grid-cols-4 gap-1 justify-center items-center h-full'>
@@ -25,7 +28,7 @@ export default function Nav() {
       </ul>
 
       <ul className='flex gap-3 h-full items-center'>
-        {window.isAuthenticated() ? (
+        {isAuthenticated ? (
           <>
             <li className='text-center'>
               <button onClick={handleLogout}>로그아웃</button>
@@ -44,9 +47,6 @@ export default function Nav() {
             </li>
             <li className='text-center'>
               <Link to='/signup'>회원가입</Link>
-            </li>
-            <li className='text-center'>
-              <Link to='/cart'>장바구니</Link>
             </li>
           </>
         )}

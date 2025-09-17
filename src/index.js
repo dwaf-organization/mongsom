@@ -6,21 +6,21 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 // 전역 세션 관리 함수들
-window.isAuthenticated = () => {
-  return !!sessionStorage.getItem('userId');
-};
+// window.isAuthenticated = () => {
+//   return !!sessionStorage.getItem('userId');
+// };
 
-window.getUserId = () => {
-  return sessionStorage.getItem('userId');
-};
+// window.getUserId = () => {
+//   return sessionStorage.getItem('userId');
+// };
 
-window.login = userId => {
-  sessionStorage.setItem('userId', userId);
-};
+// window.login = userId => {
+//   sessionStorage.setItem('userId', userId);
+// };
 
-window.logout = () => {
-  sessionStorage.removeItem('userId');
-};
+// window.logout = () => {
+//   sessionStorage.removeItem('userId');
+// };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -19,27 +19,25 @@ export default function SignUpForm() {
     password: '',
     confirmPassword: '',
     name: '',
-    // 주소 키 통일 (백엔드 스펙에 맞춰 사용)
-    address: { zipcode: '', baseAddress: '', detailAddress: '' },
+    address: { zipCode: '', address: '', address2: '' }, // AddressInput과 동일
     phone1: '',
     phone2: '',
     phone3: '',
     email: '',
+    birth: '',
   });
 
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 아이디 중복확인 상태
-  // 'idle' | 'checking' | 'available' | 'taken' | 'error'
   const [idStatus, setIdStatus] = useState('idle');
   const [lastCheckedId, setLastCheckedId] = useState('');
 
   const isValidUserIdFormat = v => /^[a-z0-9]{4,16}$/.test(v);
   const onlyDigits = v => v.replace(/\D/g, '');
 
-  // 비밀번호 일치 에러
+  // 비밀번호 일치 체크
   useEffect(() => {
     if (formData.password && formData.confirmPassword) {
       if (formData.password !== formData.confirmPassword) {
@@ -57,7 +55,7 @@ export default function SignUpForm() {
     }
   }, [formData.password, formData.confirmPassword]);
 
-  // 필수값 + 주소 + 중복확인까지 포함해서 폼 활성화
+  // 버튼 활성화 조건
   useEffect(() => {
     const requiredFields = [
       'userId',
@@ -74,8 +72,8 @@ export default function SignUpForm() {
     );
 
     const addressFilled =
-      String(formData.address.zipcode ?? '').trim() !== '' &&
-      String(formData.address.baseAddress ?? '').trim() !== '';
+      String(formData.address.zipCode ?? '').trim() !== '' &&
+      String(formData.address.address ?? '').trim() !== '';
 
     const userIdTrimmed = formData.userId.trim();
 
@@ -92,7 +90,6 @@ export default function SignUpForm() {
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // 아이디가 바뀌면 중복확인 상태 초기화
     if (field === 'userId') {
       setIdStatus('idle');
       setLastCheckedId('');
@@ -114,17 +111,9 @@ export default function SignUpForm() {
       setIdStatus('checking');
       const res = await checkId(id);
 
-      // 권장: { isSuccess: true, result: { available: boolean } }
-      let available;
-      if (typeof res?.result?.available === 'boolean') {
-        available = res.result.available;
-      } else if (typeof res?.available === 'boolean') {
-        available = res.available;
-      } else if (res?.code === 409) {
-        available = false;
-      } else if (res?.code === 200) {
-        // 일부 API는 200이면 사용가능으로 간주하는 경우가 있음
-        available = true;
+      let available = null;
+      if (res?.code === 1) {
+        available = res.data === true;
       }
 
       if (available === true) {
@@ -137,6 +126,7 @@ export default function SignUpForm() {
         addToast('이미 사용 중인 아이디입니다.', 'error');
       } else {
         setIdStatus('error');
+        console.log('Unexpected response:', res);
         addToast('중복 확인 응답 형식을 확인해주세요.', 'error');
       }
     } catch (e) {
@@ -151,7 +141,6 @@ export default function SignUpForm() {
 
     const userIdTrimmed = formData.userId.trim();
 
-    // 중복확인 강제
     if (!isValidUserIdFormat(userIdTrimmed)) {
       addToast('아이디는 영소문자/숫자 4~16자입니다.', 'error');
       return;
@@ -161,13 +150,11 @@ export default function SignUpForm() {
       return;
     }
 
-    // 비밀번호 일치
     if (formData.password !== formData.confirmPassword) {
       addToast('비밀번호가 일치하지 않습니다.', 'error');
       return;
     }
 
-    // Zod 검증
     const result = SignUpSchema.safeParse({
       ...formData,
       phone: [formData.phone1, formData.phone2, formData.phone3].join('-'),
@@ -180,17 +167,26 @@ export default function SignUpForm() {
 
     setLoading(true);
     try {
-      const resp = await signUp({
-        ...result.data,
-        // 주소 shape 최종 확정 (백엔드 스펙 맞추기)
-        address: {
-          zipcode: formData.address.zipcode,
-          baseAddress: formData.address.baseAddress,
-          detailAddress: formData.address.detailAddress,
-        },
-      });
+      const payload = {
+        userId: userIdTrimmed,
+        password: formData.password,
+        name: formData.name,
+        zipCode: formData.address.zipCode,
+        address: formData.address.address,
+        address2: formData.address.address2,
+        phone: [formData.phone1, formData.phone2, formData.phone3].join(''),
+        email: formData.email,
+        birth: formData.birth?.trim() || null,
+        agreeMain: true,
+        agreeShopping: true,
+        agreeSms: true,
+        agreeEmail: true,
+        provider: 'LOCAL',
+      };
 
-      if (resp?.isSuccess) {
+      const resp = await signUp(payload);
+
+      if (resp?.code === 1) {
         addToast('회원가입이 완료되었습니다!', 'success');
         navigate('/login', { replace: true });
       } else {
@@ -246,8 +242,8 @@ export default function SignUpForm() {
           )}
           {idStatus === 'available' &&
             lastCheckedId === formData.userId.trim() && (
-              <p className='text-green-600 text-sm mt-1'>
-                이 아이디로 가입할 수 있습니다.
+              <p className='text-green-600 text-sm mt-1 whitespace-nowrap'>
+                사용 가능
               </p>
             )}
         </FormField>
@@ -293,6 +289,7 @@ export default function SignUpForm() {
           onChange={handleAddressChange}
           placeholder='상세주소를 입력하세요'
           variant='signup'
+          required
         />
 
         <FormField id='phone' label='휴대전화' required>

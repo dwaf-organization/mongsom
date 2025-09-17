@@ -1,15 +1,17 @@
 import { fetchData } from '../instance';
 
 export const signUp = async data => {
-  const response = await fetchData.post(`/api/v1/auth/sign-up`, {
+  console.log('🚀 ~ signUp ~ data:', data);
+  const response = await fetchData.post(`api/v1/auth/signup`, {
     method: 'POST',
     body: JSON.stringify(data),
   });
+  return response;
 };
 
-export const checkId = async data => {
-  const response = await fetchData.post(`/api/v1/auth/dup-check/${data}`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
+export const checkId = async userId => {
+  const response = await fetchData.get(
+    `api/v1/auth/duplication-check?userId=${encodeURIComponent(userId)}`,
+  );
+  return response;
 };
