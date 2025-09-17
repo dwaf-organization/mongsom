@@ -6,19 +6,18 @@ import { Button } from '../components/ui/button';
 import KakaoLogo from '../asset/logo/kakaoLogo.png';
 import NaverLogo from '../asset/logo/naverLogo.png';
 import { useToast } from '../context/ToastContext';
+import { userLogin } from '../api/login';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const { addToast } = useToast();
+
   const [loginData, setLoginData] = useState({
     userId: '',
     password: '',
   });
-
-  const TEMP_CREDENTIALS = {
-    userId: 'mongsom',
-    password: 'mongsom123!',
-  };
 
   const handleInputChange = (field, value) => {
     setLoginData(prev => ({
@@ -26,15 +25,30 @@ export default function Login() {
       [field]: value,
     }));
   };
-
-  const handleLogin = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
-    if (
-      loginData.userId === TEMP_CREDENTIALS.userId &&
-      loginData.password === TEMP_CREDENTIALS.password
-    ) {
-      window.login(loginData.userId);
+    const response = await userLogin(loginData);
+    // 기대형태: { code: 1, data: { userCode: 4 } }
+
+    if (!response) {
+      addToast('서버 응답이 없습니다.', 'error');
+      return;
+    }
+
+    if (response.code === 1) {
+      const userCode = response?.data?.userCode; // ★ 여기!
+      if (userCode == null) {
+        addToast('로그인 응답에 userCode가 없습니다.', 'error');
+        return;
+      }
+
+      // 세션/컨텍스트 저장
+      login({
+        userData: { userId: loginData.userId },
+        userCode,
+      });
+
       addToast('로그인에 성공했습니다!', 'success');
       navigate('/');
     } else {
@@ -49,7 +63,7 @@ export default function Login() {
       </h3>
       <div className='flex flex-col items-center justify-center gap-4'>
         <form
-          onSubmit={handleLogin}
+          onSubmit={handleSubmit}
           className='flex flex-col items-center justify-center gap-4 w-full max-w-[400px]'
         >
           <input

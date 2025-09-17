@@ -4,16 +4,42 @@ import RichEditor from '../../ui/RichEditor';
 import 'quill/dist/quill.snow.css';
 import Plus from '../../../assets/icons/Plus';
 import { Button } from '../../ui/button';
+import { useImageUpload } from '../../../../hooks/useImageUpload';
 
 export default function AddProductInfoSection() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const editorRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const {
+    handleFileInput,
+    uploadedImages,
+    uploadedImageUrls,
+    loading,
+    handleRemoveImage,
+  } = useImageUpload('products_thumbnails');
+
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    fileInputRef.current?.click();
+  };
 
   const submit = e => {
     e.preventDefault();
     const html = editorRef.current?.getHTML() || desc;
-    console.log({ name, html });
+
+    // 상품 데이터 생성
+    const productData = {
+      name,
+      description: html,
+      images: uploadedImageUrls, // 모든 이미지 URL 배열
+    };
+
+    console.log('상품 데이터:', productData);
+    console.log('이미지 URL들:', uploadedImageUrls);
   };
   return (
     <form onSubmit={submit}>
@@ -52,14 +78,45 @@ export default function AddProductInfoSection() {
             썸네일 등록
           </div>
           <div className='p-6 border-b flex flex-wrap items-center gap-3'>
-            <img
-              src='https://picsum.photos/200/300'
-              alt='product'
-              className='w-[100px] h-[100px] object-cover rounded-lg'
-            />
-            <button className=' h-[100px] bg-primary-100 w-[100px] rounded-lg flex items-center justify-center'>
-              <Plus />
+            {/* 업로드된 이미지들 표시 */}
+            {uploadedImages.length > 0 ? (
+              uploadedImages.map((url, index) => (
+                <div key={index} className='relative group'>
+                  <img
+                    src={url}
+                    alt={`product-thumbnail-${index}`}
+                    className='w-[100px] h-[100px] object-cover rounded-lg'
+                  />
+                  <button
+                    onClick={() => handleRemoveImage(index)}
+                    className='absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-600 transition-colors'
+                  >
+                    ×
+                  </button>
+                </div>
+              ))
+            ) : (
+              <></>
+            )}
+
+            <button
+              type='button'
+              className=' h-[100px] bg-primary-100 w-[100px] rounded-lg flex items-center justify-center'
+              onClick={handleButtonClick}
+              disabled={loading}
+            >
+              {loading ? '업로드 중...' : <Plus />}
             </button>
+
+            {/* 숨겨진 파일 입력 */}
+            <input
+              ref={fileInputRef}
+              type='file'
+              accept='image/*'
+              multiple
+              onChange={handleFileInput}
+              className='hidden'
+            />
           </div>
         </div>
       </section>

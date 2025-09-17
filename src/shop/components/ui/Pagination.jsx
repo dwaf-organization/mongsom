@@ -2,13 +2,17 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 
 import { LeftChevron, RightChevron } from '../../asset/icons';
 
-export default function Pagination({ totalPage }) {
+export default function Pagination({
+  totalPage,
+  currentPage: propCurrentPage,
+}) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
   const rawPage = Number(searchParams.get('page'));
-  const currentPage = isNaN(rawPage) || rawPage < 1 ? 1 : rawPage;
+  const currentPage =
+    propCurrentPage || (isNaN(rawPage) || rawPage < 1 ? 1 : rawPage);
 
   const GROUP_SIZE = 4;
   const currentGroup = Math.floor((currentPage - 1) / GROUP_SIZE);

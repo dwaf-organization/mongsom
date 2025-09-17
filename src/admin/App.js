@@ -9,6 +9,7 @@ import { ModalProvider } from './context/ModalContext';
 import GlobalToast from './components/ui/GlobalToast';
 import GlobalModal from './components/ui/GlobalModal';
 import EditProductInfo from './view/EditProductInfo';
+import UserManagement from './view/UserManagement';
 import Notice from './view/Notice';
 import './index.css';
 import 'quill/dist/quill.snow.css';
@@ -29,6 +30,7 @@ export default function AdminApp() {
               path='/edit-product-info/:id'
               element={<EditProductInfo />}
             />
+            <Route path='/user-management' element={<UserManagement />} />
           </Routes>
           <GlobalToast />
           <GlobalModal />
