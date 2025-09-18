@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 export default function OrderItemListSection({ selectedItems }) {
   const calculateTotalPrice = item => {
     const quantity = item.quantity || item.count || 1;
+    // 할인가가 있으면 할인가 사용, 없으면 원가 사용
     const itemPrice = item.salePrice || item.price;
     return itemPrice * quantity;
   };
 
   const OriginalPrice = item => {
     const quantity = item.quantity || item.count || 1;
+    // 항상 원가 반환
     return item.price * quantity;
   };
 

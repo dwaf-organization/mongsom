@@ -4,6 +4,10 @@ import { useToast } from '../../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
 import { addCart } from '../../api/cart';
 import { useAuth } from '../../context/AuthContext';
+import {
+  setInstantPurchase,
+  clearInstantPurchase,
+} from '../../utils/instantPurchase';
 
 export default function CartButton({ selectedOptions = [], product = {} }) {
   const { addToast } = useToast();
@@ -47,23 +51,42 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
       return;
     }
 
-    // 1) 세션 저장 (바로구매에서만)
-    const buyNow = buildBuyNowPayload();
-    try {
-      sessionStorage.setItem('instantPurchase', JSON.stringify(buyNow));
-    } catch (e) {
-      console.error('세션 저장 실패:', e);
-      addToast('일시적으로 구매 정보를 저장할 수 없습니다.', 'error');
+    if (!userCode) {
+      addToast('로그인이 필요합니다.', 'warning');
+      navigate('/login');
       return;
     }
 
-    // 2) 주문 페이지로 이동 (state도 함께 넘겨 리프레시 대비 이중 안전장치)
-    const itemsForOrderPage = buyNow.options.map(o => ({
-      productId: buyNow.product.productId,
-      optId: o.optId,
-      quantity: o.quantity,
-    }));
-    navigate('/order', { state: { items: itemsForOrderPage } });
+    // 1) 세션 저장 (바로구매에서만)
+    clearInstantPurchase();
+
+    // 2) 이번 주문 데이터 저장(최소필드만)
+    const productId = Number(product.productId ?? product.id);
+    const payload = {
+      product: {
+        productId,
+        name: product.name,
+        price: product.price,
+        discountPer: product.discountPer,
+        discountPrice:
+          product.discountPrice ?? product.salePrice ?? product.price,
+        productImgUrl:
+          product.productImgUrl ??
+          product.productImgUrls ??
+          product.image ??
+          [],
+      },
+      options: selectedOptions.map(opt => ({
+        optId: Number(opt.value ?? opt.optId) || null,
+        optName: opt.label ?? opt.optName ?? null,
+        quantity: Number(opt.quantity) || 1,
+      })),
+    };
+
+    setInstantPurchase(payload);
+
+    // 3) 주문 페이지로 이동
+    navigate('/order');
   };
 
   const handleAddToCart = async () => {
