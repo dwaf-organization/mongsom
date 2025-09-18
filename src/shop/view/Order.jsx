@@ -29,7 +29,6 @@ export default function Order() {
       try {
         setLoading(true);
 
-        // 장바구니와 사용자 정보를 병렬로 가져오기
         const [cartItems, userData] = await Promise.all([
           getCart(userCode),
           getUserInfo(userCode),
