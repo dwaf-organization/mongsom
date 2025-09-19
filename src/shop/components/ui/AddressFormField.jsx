@@ -9,6 +9,7 @@ export default function AddressFormField({
   value,
   onChange,
   error,
+  readOnly = false,
 }) {
   return (
     <label
@@ -26,7 +27,10 @@ export default function AddressFormField({
           placeholder={placeholder}
           value={value || ''}
           onChange={onChange}
-          className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200`}
+          readOnly={readOnly}
+          className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 ${
+            readOnly ? 'bg-gray-100 cursor-not-allowed' : ''
+          }`}
         />
       )}
       {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}

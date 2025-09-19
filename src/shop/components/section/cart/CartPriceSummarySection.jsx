@@ -1,9 +1,11 @@
 export default function CartPriceSummarySection({ cart }) {
   const selectedItems = cart.filter(item => item.checked);
+
   const totalPrice = selectedItems.reduce(
     (sum, item) => sum + item.price * item.count,
     0,
   );
+
   const shippingFee = totalPrice > 0 ? 3000 : 0;
   const finalPrice = totalPrice + shippingFee;
 

@@ -1,13 +1,5 @@
 import { Button } from '../../ui/button';
 import SearchForm from '../../ui/SearchForm';
-import Select from '../../ui/Select';
-
-const statusOptions = [
-  { value: '', label: '전체 상태' },
-  { value: 'active', label: '판매중' },
-  { value: 'inactive', label: '판매중지' },
-  { value: 'soldout', label: '품절' },
-];
 
 export default function ProductSearchSection({ onSearch }) {
   const handleSubmit = data => {

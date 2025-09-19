@@ -28,14 +28,6 @@ export default function PurchaseInfo({ product }) {
       <TotalPrice totalPrice={totalPrice} />
       <div className='flex justify-between gap-2'>
         <CartButton selectedOptions={selectedOptions} product={product} />
-        {/* <Link to='/order' className='w-full'>
-          <Button
-            className=' font-bold text-xl font-pretendard'
-            variant='default'
-          >
-            구매하기
-          </Button>
-        </Link> */}
       </div>
     </div>
   );

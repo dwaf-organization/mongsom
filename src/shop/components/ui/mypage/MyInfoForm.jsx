@@ -6,14 +6,20 @@ import { updateMyInfo } from '../../../api/myPage';
 import { toFormState, toApiPayload } from '../../../utils/formUtils';
 import { onlyDigits } from '../../../utils/phoneUtils';
 import { useToast } from '../../../context/ToastContext';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function MyInfoForm({ userData }) {
   const { addToast } = useToast();
-  const [userInfo, setUserInfo] = useState(() => toFormState(userData));
+  const { userCode } = useAuth();
+
+  // ✅ userCode를 toFormState에 함께 전달해서 폼 상태에 주입
+  const [userInfo, setUserInfo] = useState(() =>
+    toFormState(userData, userCode),
+  );
 
   useEffect(() => {
-    setUserInfo(toFormState(userData));
-  }, [userData]);
+    setUserInfo(toFormState(userData, userCode));
+  }, [userData, userCode]);
 
   const handleInputChange = (field, value) => {
     setUserInfo(prev => ({ ...prev, [field]: value }));
@@ -25,7 +31,17 @@ export default function MyInfoForm({ userData }) {
 
   const handleSave = async e => {
     e.preventDefault();
-    const payload = toApiPayload(userInfo, true);
+
+    // 선택: 새 비밀번호가 있으면 확인값 일치 검증
+    if (userInfo.password && userInfo.password !== userInfo.confirmPassword) {
+      addToast('새 비밀번호가 확인 값과 일치하지 않습니다.', 'error');
+      return;
+    }
+
+    // ✅ includePassword는 "비밀번호를 함께 보낼지"만 의미하는 불리언이에요.
+    const includePassword = Boolean(userInfo.password);
+    const payload = toApiPayload(userInfo, includePassword);
+
     const res = await updateMyInfo(payload);
     if (res?.code === 1) {
       addToast('정보 수정이 완료되었습니다.', 'success');
@@ -38,7 +54,6 @@ export default function MyInfoForm({ userData }) {
     <div>
       <section className='flex flex-col justify-center py-6 space-y-6'>
         <form
-          action='submit'
           className='flex flex-col justify-center py-6 space-y-6'
           onSubmit={handleSave}
         >
@@ -53,7 +68,6 @@ export default function MyInfoForm({ userData }) {
             className='focus:outline-none'
           />
 
-          {/* 새 비밀번호 (선택) */}
           <FormField
             id='password'
             label='비밀번호'
@@ -77,6 +91,7 @@ export default function MyInfoForm({ userData }) {
             label='이름'
             placeholder='이름을 입력하세요'
             required
+            readOnly
             value={userInfo.name}
             onChange={e => handleInputChange('name', e.target.value)}
           />
@@ -128,6 +143,7 @@ export default function MyInfoForm({ userData }) {
               onChange={e => handleInputChange('email', e.target.value)}
             />
           </FormField>
+
           <div className='flex justify-center'>
             <Button
               type='submit'

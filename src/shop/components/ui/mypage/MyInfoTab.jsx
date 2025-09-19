@@ -49,16 +49,6 @@ export default function MyInfoTab() {
       </div>
     );
 
-  // const handleDelete = async () => {
-  //   const res = await deleteUser(userCode);
-  //   if (res === 1) {
-  //     addToast('회원 탈퇴가 완료되었습니다.', 'success');
-  //     logout();
-  //   } else {
-  //     addToast(res?.data || '회원 탈퇴에 실패했습니다.', 'error');
-  //   }
-  // };
-
   const handleDelete = () => {
     openModal(<DeleteUserModal />);
   };

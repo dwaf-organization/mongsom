@@ -29,6 +29,8 @@ import GloabalLayout from './components/ui/GloabalLayout';
 import Header from './layout/header/Header.jsx';
 import Footer from './layout/footer/Footer.jsx';
 import { AuthProvider } from './context/AuthContext';
+import NoticeDetail from './view/NoticeDetail';
+import './index.css';
 
 export default function ShopApp() {
   return (
@@ -60,6 +62,7 @@ export default function ShopApp() {
                 path='/password-reset-complete'
                 element={<PasswordResetComplete />}
               />
+              <Route path='/notice-detail/:id' element={<NoticeDetail />} />
             </Routes>
             <GlobalToast />
             <GlobalModal />

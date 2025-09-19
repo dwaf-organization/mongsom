@@ -1,59 +1,143 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '../button';
+import { useAuth } from '../../../context/AuthContext';
 import {
   openPaymentWidget,
   createPaymentData,
 } from '../../../utils/tossPayments';
+import { createOrder } from '../../../api/order'; // ← 주문 생성 API (아래 포맷 따라감)
 
 export default function PaymentButton({
   selectedItems,
   customerInfo,
   disabled = false,
+  deliveryPrice: deliveryPriceProp, // 옵션: 부모가 배송비 내려줄 수 있게
 }) {
+  const { userCode } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
+  const isOptionSelected =
+    Array.isArray(selectedItems) && selectedItems.length > 0;
+
+  // 총액 계산(선택된 아이템 기준)
+  const { totalPrice, totalDiscountPrice, deliveryPrice, finalPrice } =
+    useMemo(() => {
+      const base = (selectedItems || []).reduce(
+        (acc, it) => {
+          const quantity = Number(it.quantity ?? 1);
+          const price = Number(it.price ?? 0);
+          const discountPrice = Number(it.discountPrice ?? it.price ?? 0);
+
+          acc.totalPrice += price * quantity;
+          acc.totalDiscountPrice +=
+            Math.max(0, price - discountPrice) * quantity;
+          return acc;
+        },
+        { totalPrice: 0, totalDiscountPrice: 0 },
+      );
+
+      // 배송비: 외부에서 주면 사용, 없으면 기본 0
+      const dp = typeof deliveryPriceProp === 'number' ? deliveryPriceProp : 0;
+      const finalP = base.totalPrice - base.totalDiscountPrice + dp;
+
+      return {
+        totalPrice: base.totalPrice,
+        totalDiscountPrice: base.totalDiscountPrice,
+        deliveryPrice: dp,
+        finalPrice: finalP,
+      };
+    }, [selectedItems, deliveryPriceProp]);
+
+  const buildOrderPayload = () => {
+    // 전화번호 “숫자만” 합치기
+    const phoneDigits =
+      (customerInfo?.phone && String(customerInfo.phone).replace(/\D/g, '')) ||
+      // 혹시 분할돼 있다면
+      [customerInfo?.phone1, customerInfo?.phone2, customerInfo?.phone3]
+        .filter(Boolean)
+        .join('');
+
+    return {
+      // ✅ 서버 요구 포맷에 맞춤
+      userCode: Number(userCode),
+
+      receivedUserName: customerInfo?.name ?? '',
+      receivedUserPhone: phoneDigits ?? '',
+      receivedUserZipCode:
+        customerInfo?.zipCode ?? customerInfo?.address?.zipCode ?? '',
+      receivedUserAddress:
+        customerInfo?.address ??
+        customerInfo?.addressLine ??
+        customerInfo?.address?.address ??
+        '',
+      receivedUserAddress2:
+        customerInfo?.address2 ??
+        customerInfo?.addressDetail ??
+        customerInfo?.address?.address2 ??
+        '',
+      message: customerInfo?.additionalInfo ?? '',
+
+      totalPrice,
+      deliveryPrice,
+      totalDiscountPrice,
+      finalPrice,
+      paymentAt: '2024-09-17T15:30:00',
+      paymentMethod: '카드',
+      paymentAmount: finalPrice,
+      paymentStatus: 'COMPLETED',
+      paymentKey: 'test_payment_key',
+      pgProvider: '토스페이먼츠',
+
+      // 주문 상세
+      orderDetails: (selectedItems || []).map(it => ({
+        optId: it.optId ?? null,
+        productId: it.productId,
+        quantity: Number(it.quantity ?? 1),
+        // 서버가 “개별 항목 금액”을 받는다면: 할인 적용된 금액으로 전달
+        price: Number(it.discountPrice ?? it.price ?? 0),
+      })),
+    };
+  };
+
   const handlePayment = async () => {
-    if (disabled || !selectedItems || selectedItems.length === 0) {
+    if (disabled || !isOptionSelected) {
       alert('선택된 상품이 없습니다.');
       return;
     }
-
-    console.log('고객 정보 검증:', {
-      customerInfo,
-      hasName: !!customerInfo?.name,
-      hasEmail: !!customerInfo?.email,
-      name: customerInfo?.name,
-      email: customerInfo?.email,
-    });
-
-    if (!customerInfo || !customerInfo.name) {
+    if (!userCode) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+    if (!customerInfo?.name) {
       alert('고객 정보를 입력해주세요.');
       return;
     }
 
     try {
       setIsLoading(true);
-      console.log('결제 시작 - 선택된 상품:', selectedItems);
-      console.log('고객 정보:', customerInfo);
 
-      const paymentData = createPaymentData(selectedItems, customerInfo);
-      console.log('생성된 결제 데이터:', paymentData);
+      const orderPayload = buildOrderPayload();
+      const orderData = await createOrder(orderPayload);
+      const orderId = orderData;
+
+      // if (!orderId) throw new Error('주문번호가 없습니다.');
+
+      if (!orderId) {
+        const newOrderId = `${Date.now()}`;
+        orderId = newOrderId;
+      }
+
+      const paymentData = createPaymentData(selectedItems, customerInfo, {
+        orderId,
+        amount: finalPrice,
+      });
 
       await openPaymentWidget(paymentData);
     } catch (error) {
       console.error('결제 실패:', error);
-      console.error('오류 상세:', error.message);
-      console.error('오류 스택:', error.stack);
-
-      let errorMessage = '결제 요청에 실패했습니다.';
-
-      if (error.message) {
-        errorMessage += `\n오류: ${error.message}`;
-      }
-
-      if (error.code) {
-        errorMessage += `\n오류 코드: ${error.code}`;
-      }
+      alert(
+        `결제 요청에 실패했습니다.\n${error?.message ? `오류: ${error.message}` : ''}`,
+      );
     } finally {
       setIsLoading(false);
     }

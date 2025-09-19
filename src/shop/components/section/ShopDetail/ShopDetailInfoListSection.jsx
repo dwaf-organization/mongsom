@@ -2,11 +2,11 @@ import ProductInfoTab from '../../ui/ShopDetail/ProductInfoTab';
 import ReviewTab from '../../ui/ShopDetail/ReviewTab';
 import ExchangeReturnTab from '../../ui/ShopDetail/ExchangeReturnTab';
 
-export default function ShopDetailInfoListSection({ tab, productId }) {
+export default function ShopDetailInfoListSection({ tab, product }) {
   const renderTabContent = () => {
     switch (tab) {
       case 'info':
-        return <ProductInfoTab productId={productId} />;
+        return <ProductInfoTab product={product} />;
       case 'review':
         return <ReviewTab />;
       case 'exchange':

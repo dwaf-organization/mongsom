@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-// import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
-import { Button } from '../components/ui/button';
 import Select from '../components/ui/Select';
+import ImageSkeleton from '../components/ui/ImageSkeleton';
 import { routes } from '../constants/routes';
 import Pagination from '../components/ui/Pagination';
 import { getAllProductList } from '../api/products';
-import { useSearchParams } from 'react-router-dom';
 
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,22 +21,16 @@ export default function Shop() {
   const page = searchParams.get('page') || '1';
 
   useEffect(() => {
-    console.log('API 호출 시작:', { sort, page });
-    getAllProductList(sort, page)
+    const size = sort === 'popular' ? 9 : undefined;
+    getAllProductList(sort, page, { size })
       .then(res => {
-        console.log('API 응답 data:', res);
-        console.log('API 응답 items:', res?.items);
-
         const items = res?.items || [];
-        console.log('🚀 ~ Shop ~ items:', items);
-        console.log('추출된 items:', items);
         setProductItems(items);
 
         const paginationData = res?.pagination || {
           currentPage: 1,
           totalPage: 1,
         };
-        console.log('페이지네이션 데이터:', paginationData);
         setPagination(paginationData);
       })
       .catch(error => {
@@ -48,7 +41,7 @@ export default function Shop() {
   }, [sort, page]);
 
   const sortOptions = [
-    { value: 'latest', label: '최신순' },
+    { value: 'new', label: '최신순' },
     { value: 'popular', label: '인기순' },
     { value: 'review', label: '리뷰많은순' },
   ];
@@ -64,21 +57,41 @@ export default function Shop() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <h2 className='text-4xl font-semibold font-montserrat text-center'>
-        Shop
-      </h2>
-      <div className='flex items-center justify-end gap-8'>
-        <Button
-          className='rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit'
-          variant='outline'
+      <div className='flex items-center justify-center'>
+        <Link
+          to={`${routes.shop}`}
+          className='text-4xl font-semibold font-montserrat'
+        >
+          Shop
+        </Link>
+      </div>
+      <div className='flex items-center justify-end gap-4'>
+        {sort === 'premium' && (
+          <div className='flex items-center justify-center'>
+            <Link
+              to={`${routes.shop}?sort=all`}
+              className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
+          ${sort === 'all' ? 'border-primary-200 text-primary-200' : ''}
+          `}
+            >
+              일반 상품
+            </Link>
+          </div>
+        )}
+        <Link
+          to={`${routes.shop}?sort=premium`}
+          className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
+          ${sort === 'premium' ? 'border-primary-200 text-primary-200' : ''}
+          `}
         >
           프리미엄 선물용
-        </Button>
+        </Link>
         <Select
           options={sortOptions}
           value={sort}
           onChange={handleSortChange}
           className='w-24'
+          hidden={sort === 'premium'}
         />
       </div>
 
@@ -98,28 +111,14 @@ export default function Shop() {
                   to={`${routes.shopDetail}/${item.productId}`}
                 >
                   <li className='roudned-lg'>
-                    <div className='w-full max-w-[320px] h-[320px] rounded-t-lg relative'>
-                      <div className='absolute inset-0 bg-gray-200 rounded-t-lg animate-pulse'></div>
-                      <img
-                        src={item.productImgUrls[0]}
-                        alt={item.name}
-                        className='w-full h-full object-cover rounded-t-lg relative z-10'
-                        loading='eager'
-                        decoding='async'
-                        onLoad={e => {
-                          e.target.style.opacity = '1';
-
-                          const skeleton = e.target.previousElementSibling;
-                          if (skeleton) {
-                            skeleton.style.opacity = '0';
-                          }
-                        }}
-                        style={{
-                          opacity: 0,
-                          transition: 'opacity 0.3s ease-in-out',
-                        }}
-                      />
-                    </div>
+                    <ImageSkeleton
+                      src={item.productImgUrls[0]}
+                      alt={item.name}
+                      className='w-full max-w-[320px] h-[320px] object-cover rounded-t-lg'
+                      skeletonClassName='rounded-t-lg'
+                      loading='eager'
+                      decoding='async'
+                    />
                     <div className='p-4'>
                       {!item.discountPer && (
                         <div className='flex justify-between gap-2'>

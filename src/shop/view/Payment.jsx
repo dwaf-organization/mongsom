@@ -7,7 +7,6 @@ export default function Payment() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 토스페이먼츠 SDK 초기화
   useEffect(() => {
     const initializeTossPayments = async () => {
       try {

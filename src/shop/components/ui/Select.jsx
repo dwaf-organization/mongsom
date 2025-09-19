@@ -8,6 +8,7 @@ const Select = ({
   placeholder = '선택해주세요',
   className = '',
   disabled = false,
+  hidden = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(
@@ -42,6 +43,8 @@ const Select = ({
       setIsOpen(!isOpen);
     }
   };
+
+  if (hidden) return null;
 
   return (
     <div className={`relative ${className}`} ref={selectRef}>

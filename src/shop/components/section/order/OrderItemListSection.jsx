@@ -33,15 +33,15 @@ export default function OrderItemListSection({ selectedItems }) {
             >
               <Link to={`/shop-detail/${item.productId}`}>
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={item.productImgUrl[0]}
+                  alt={item.productName}
                   className='w-[200px] h-[200px] object-cover rounded-lg'
                 />
               </Link>
               <div className='flex flex-col justify-between h-[150px] px-6 font-pretendard'>
                 <div className='text-left'>
-                  <h4 className='font-semibold text-xl'>{item.name}</h4>
-                  <p className='text-gray-600 text-lg'>옵션 | {item.option}</p>
+                  <h4 className='font-semibold text-xl'>{item.productName}</h4>
+                  <p className='text-gray-600 text-lg'>옵션 | {item.optName}</p>
                   <span>수량: {item.quantity || item.count || 1}개</span>
                 </div>
                 {item.salePrice ? (

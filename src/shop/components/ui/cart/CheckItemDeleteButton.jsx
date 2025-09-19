@@ -8,7 +8,7 @@ export default function CheckItemDeleteButton({ cart, updateCart }) {
   const { openModal } = useModal();
 
   const handleDeleteSelected = () => {
-    const selectedItems = cart.filter(item => item.checked);
+    const selectedItems = cart.filter(item => item.checkStatus);
     if (selectedItems.length === 0) {
       addToast('삭제할 상품을 선택해주세요.', 'warning');
       return;
