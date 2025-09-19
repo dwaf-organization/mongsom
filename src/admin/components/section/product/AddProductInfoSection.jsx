@@ -1,15 +1,20 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 import RichEditor from '../../ui/RichEditor';
 import 'quill/dist/quill.snow.css';
 import Plus from '../../../assets/icons/Plus';
 import { Button } from '../../ui/button';
 import { useImageUpload } from '../../../../hooks/useImageUpload';
+import { ProductSchema } from '../../../schema/ProductSchema';
+import { createProduct } from '../../../api/product';
+import { useToast } from '../../../context/ToastContext';
 
 export default function AddProductInfoSection() {
   const editorRef = useRef(null);
   const fileInputRef = useRef(null);
   const [optionInput, setOptionInput] = useState('');
+  const [errors, setErrors] = useState({});
+  const { addToast } = useToast();
 
   const [productData, setProductData] = useState({
     name: '',
@@ -21,8 +26,9 @@ export default function AddProductInfoSection() {
     salesMargin: '',
     discountPer: '',
     discountPrice: '',
-    deliveryPrice: 3000, // 고정
+    deliveryPrice: 3000,
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const {
     handleFileInput,
@@ -31,40 +37,50 @@ export default function AddProductInfoSection() {
     loading,
     handleRemoveImage,
     uploadFile,
+    resetUpload,
   } = useImageUpload('products_thumbnails');
 
-  // 에디터 이미지 업로드
-  const handleEditorImageUpload = useCallback(
-    async file => {
-      try {
-        const url = await uploadFile(file);
-        return url;
-      } catch (e) {
-        console.error('에디터 이미지 업로드 실패:', e);
-        return null;
-      }
-    },
-    [uploadFile],
-  );
+  const uploadFileRef = useRef(uploadFile);
+  useEffect(() => {
+    uploadFileRef.current = uploadFile;
+  }, [uploadFile]);
 
-  // 공통 입력 처리 + 판매가 계산
+  const handleEditorImageUpload = useCallback(async file => {
+    try {
+      return await uploadFileRef.current(file);
+    } catch (e) {
+      console.error('에디터 이미지 업로드 실패:', e);
+      return null;
+    }
+  }, []);
+
   const handleInputChange = e => {
     const { name, value } = e.target;
     setProductData(prev => {
       const updated = { ...prev, [name]: value };
-      const basePrice =
+      const base =
         (parseFloat(updated.price || 0) || 0) +
         (parseFloat(updated.salesMargin || 0) || 0);
+
       updated.discountPrice = updated.discountPer
-        ? Math.floor(
-            basePrice * (1 - (parseFloat(updated.discountPer) || 0) / 100),
-          )
-        : basePrice;
+        ? Math.floor(base * (1 - (parseFloat(updated.discountPer) || 0) / 100))
+        : base;
+
+      setErrors(prevErr => ({ ...prevErr, [name]: undefined }));
+      if (
+        name === 'price' ||
+        name === 'salesMargin' ||
+        name === 'discountPer'
+      ) {
+        setErrors(prevErr => ({ ...prevErr, discountPrice: undefined }));
+      }
+      if (name === 'name') {
+        setErrors(prevErr => ({ ...prevErr, name: undefined }));
+      }
       return updated;
     });
   };
 
-  // 옵션 추가/삭제
   const addOption = () => {
     if (!optionInput.trim()) return;
     setProductData(prev => ({
@@ -72,6 +88,7 @@ export default function AddProductInfoSection() {
       optNames: [...prev.optNames, optionInput.trim()],
     }));
     setOptionInput('');
+    setErrors(prev => ({ ...prev, optNames: undefined }));
   };
 
   const removeOption = idx => {
@@ -81,34 +98,103 @@ export default function AddProductInfoSection() {
     }));
   };
 
-  // 썸네일 업로드 버튼
   const handleButtonClick = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
     fileInputRef.current?.click();
   };
 
-  // 제출
-  const submit = e => {
+  const toErrorMap = issues => {
+    const map = {};
+    for (const issue of issues) {
+      const root = issue.path?.[0] ?? 'form';
+      const key = typeof root === 'number' ? 'form' : String(root);
+      if (!map[key]) map[key] = [];
+      map[key].push(issue.message);
+    }
+    return map;
+  };
+
+  const submit = async e => {
     e.preventDefault();
-    const html = editorRef.current?.getHTML() || '';
+
+    const html = editorRef.current?.getHTML?.() ?? '';
+
+    const base =
+      (parseFloat(productData.price || 0) || 0) +
+      (parseFloat(productData.salesMargin || 0) || 0);
+    const computedDiscountPrice = productData.discountPer
+      ? Math.floor(
+          base * (1 - (parseFloat(productData.discountPer) || 0) / 100),
+        )
+      : base;
+
     const finalData = {
       ...productData,
       contents: html,
       productImgUrls: uploadedImageUrls,
+      price: Number(productData.price || 0),
+      salesMargin: Number(productData.salesMargin || 0),
+      discountPer: Number(productData.discountPer || 0),
+      discountPrice: Number(computedDiscountPrice || 0),
+      deliveryPrice: Number(productData.deliveryPrice || 3000),
     };
-    console.log('상품 데이터:', finalData);
+
+    const result = ProductSchema.safeParse(finalData);
+    if (!result.success) {
+      const errMap = toErrorMap(result.error.issues);
+      setErrors(errMap);
+
+      const firstKey = Object.keys(errMap)[0];
+      const el = document.querySelector(`[data-field="${firstKey}"]`);
+      if (el?.scrollIntoView) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    setErrors({});
+
+    try {
+      setSubmitting(true);
+      const resp = await createProduct(result.data);
+      console.log('✅ 상품 등록 성공:', resp);
+      addToast('상품 등록이 완료되었습니다.', 'success');
+
+      setProductData({
+        name: '',
+        contents: '',
+        productImgUrls: [],
+        premium: 1,
+        optNames: [],
+        price: '',
+        salesMargin: '',
+        discountPer: '',
+        discountPrice: '',
+        deliveryPrice: 3000,
+      });
+      editorRef.current?.setHTML?.('');
+
+      resetUpload();
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (err) {
+      console.error('❌ 상품 등록 실패:', err);
+      addToast('상품 등록에 실패했습니다.', 'error');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <form onSubmit={submit}>
-      {/* === 상품명 + 설명 박스(원래 레이아웃 유지) === */}
       <div className='rounded-lg border border-gray-400 w-full max-w-[980px] h-full'>
-        {/* 상품명 */}
         <div className='grid grid-cols-[200px_1fr] rounded-2xl'>
           <div className='bg-primary-100  font-semibold px-6 py-4 border-b'>
             상품명
           </div>
-          <div className='p-4 border-b flex flex-wrap items-center gap-3'>
+          <div
+            className='p-4 border-b flex flex-wrap items-center gap-3'
+            data-field='name'
+          >
             <input
               placeholder='상품명을 입력하세요'
               name='name'
@@ -116,28 +202,35 @@ export default function AddProductInfoSection() {
               onChange={handleInputChange}
               className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
             />
+            {errors.name && (
+              <p className='text-red-500 text-sm w-full mt-2'>
+                {errors.name[0]}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* 상품 설명 */}
         <div className='grid grid-cols-[200px_1fr] h-full w-full'>
           <div className='bg-primary-100  font-semibold px-6 py-4 border-b'>
             상품 설명
           </div>
-          <RichEditor
-            ref={editorRef}
-            value={productData.contents} // 초기값만 반영(비제어형)
-            variant='full'
-            maxChars={20000}
-            minHeight={300}
-            onUploadImage={handleEditorImageUpload}
-            // onChange는 생략하여 깜빡임 방지
-          />
+          <div className='p-4 pt-0' data-field='contents'>
+            <RichEditor
+              ref={editorRef}
+              initialValue={productData.contents}
+              variant='full'
+              maxChars={20000}
+              minHeight={300}
+              onUploadImage={handleEditorImageUpload}
+            />
+            {errors.contents && (
+              <p className='text-red-500 text-sm mt-2'>{errors.contents[0]}</p>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* === 이미지 정보 === */}
-      <section className='py-10'>
+      <section className='py-10' data-field='productImgUrls'>
         <p className='font-semibold text-xl mb-4'>이미지 정보</p>
         <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
           <div className='bg-primary-100  font-semibold px-6 py-4 border-b whitespace-nowrap'>
@@ -152,6 +245,7 @@ export default function AddProductInfoSection() {
                   className='w-[100px] h-[100px] object-cover rounded-lg'
                 />
                 <button
+                  type='button'
                   onClick={() => handleRemoveImage(index)}
                   className='absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-600 transition-colors'
                 >
@@ -177,12 +271,16 @@ export default function AddProductInfoSection() {
               onChange={handleFileInput}
               className='hidden'
             />
+            {errors.productImgUrls && (
+              <p className='text-red-500 text-sm w-full mt-2'>
+                {errors.productImgUrls[0]}
+              </p>
+            )}
           </div>
         </div>
       </section>
 
-      {/* === 상품 분류 === */}
-      <section className='py-10'>
+      <section className='py-10' data-field='premium'>
         <p className='font-semibold text-xl mb-4'>표시 설정</p>
         <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
           <div className='bg-primary-100  font-semibold px-6 py-4 border-b whitespace-nowrap'>
@@ -196,7 +294,10 @@ export default function AddProductInfoSection() {
                   ? 'bg-primary-100 text-white'
                   : 'border border-gray-400 text-gray-600'
               }`}
-              onClick={() => setProductData(prev => ({ ...prev, premium: 1 }))}
+              onClick={() => {
+                setProductData(prev => ({ ...prev, premium: 1 }));
+                setErrors(prev => ({ ...prev, premium: undefined }));
+              }}
             >
               프리미엄 선물용
             </Button>
@@ -207,16 +308,23 @@ export default function AddProductInfoSection() {
                   ? 'bg-primary-100 text-white'
                   : 'border border-gray-400 text-gray-600'
               }`}
-              onClick={() => setProductData(prev => ({ ...prev, premium: 0 }))}
+              onClick={() => {
+                setProductData(prev => ({ ...prev, premium: 0 }));
+                setErrors(prev => ({ ...prev, premium: undefined }));
+              }}
             >
               일반 상품
             </Button>
+            {errors.premium && (
+              <p className='text-red-500 text-sm w-full mt-2'>
+                {errors.premium[0]}
+              </p>
+            )}
           </div>
         </div>
       </section>
 
-      {/* === 옵션 등록 === */}
-      <section className='py-10'>
+      <section className='py-10' data-field='optNames'>
         <p className='font-semibold text-xl mb-4'>옵션 등록</p>
         <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
           <div className='bg-primary-100  font-semibold px-6 py-4 border-b whitespace-nowrap'>
@@ -257,11 +365,14 @@ export default function AddProductInfoSection() {
                 </Button>
               </div>
             ))}
+
+            {errors.optNames && (
+              <p className='text-red-500 text-sm mt-2'>{errors.optNames[0]}</p>
+            )}
           </div>
         </div>
       </section>
 
-      {/* === 가격 계산 === */}
       <section className='py-10'>
         <div className='rounded-lg border border-gray-400'>
           <div className='grid grid-cols-[200px_1fr]'>
@@ -276,6 +387,7 @@ export default function AddProductInfoSection() {
                 value={productData.price}
                 onChange={handleInputChange}
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+                data-field='price'
               />
               <p>KRW</p>
               <input
@@ -283,6 +395,7 @@ export default function AddProductInfoSection() {
                 value={productData.salesMargin}
                 onChange={handleInputChange}
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+                data-field='salesMargin'
               />
               <p>KRW</p>
               <input
@@ -290,8 +403,30 @@ export default function AddProductInfoSection() {
                 value={productData.discountPer}
                 onChange={handleInputChange}
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+                data-field='discountPer'
               />
               <p>%</p>
+
+              <div className='w-full mt-2'>
+                {errors.price && (
+                  <p className='text-red-500 text-sm'>{errors.price[0]}</p>
+                )}
+                {errors.salesMargin && (
+                  <p className='text-red-500 text-sm'>
+                    {errors.salesMargin[0]}
+                  </p>
+                )}
+                {errors.discountPer && (
+                  <p className='text-red-500 text-sm'>
+                    {errors.discountPer[0]}
+                  </p>
+                )}
+                {errors.discountPrice && (
+                  <p className='text-red-500 text-sm'>
+                    {errors.discountPrice[0]}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -313,7 +448,12 @@ export default function AddProductInfoSection() {
       </section>
 
       <div className='flex justify-center'>
-        <Button type='submit' className='w-fit px-20 py-4'>
+        <Button
+          type='submit'
+          className='w-fit px-20 py-4'
+          disabled={submitting}
+        >
+          {submitting ? '등록 중…' : '등록'}
           상품 등록
         </Button>
       </div>
