@@ -26,3 +26,20 @@ export const updateCheckStatus = async data => {
   if (res.code === 1) return res;
   if (res?.code === -1) return;
 };
+
+export const updateQuantity = async data => {
+  const res = await fetchData.put(`api/v1/cart/update/quantity`, {
+    body: JSON.stringify(data),
+  });
+  if (res.code === 1) return res;
+  console.log('🚀 ~ updateQuantity ~ res:', res);
+  if (res?.code === -1) return res;
+};
+
+export const deleteCart = async data => {
+  const res = await fetchData.delete(`api/v1/cart/delete`, {
+    body: JSON.stringify(data),
+  });
+  if (res.code === 1) return res;
+  if (res?.code === -1) return res;
+};

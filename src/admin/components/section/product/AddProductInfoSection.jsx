@@ -11,6 +11,23 @@ export default function AddProductInfoSection() {
   const [desc, setDesc] = useState('');
   const editorRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [productData, setProductData] = useState({
+    name: '',
+    contents: '',
+    productImgUrls: [],
+    premium: 1,
+    optNames: [],
+    price: '',
+    salesMargin: '',
+    discountPer: '',
+    discountPrice: '',
+    deliveryPrice: '',
+  });
+
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setProductData({ ...productData, [name]: value });
+  };
 
   const {
     handleFileInput,
@@ -32,10 +49,10 @@ export default function AddProductInfoSection() {
     const html = editorRef.current?.getHTML() || desc;
 
     // 상품 데이터 생성
-    const productData = {
-      name,
-      description: html,
-      images: uploadedImageUrls, // 모든 이미지 URL 배열
+    const finalData = {
+      ...productData,
+      contents: html,
+      productImgUrls: uploadedImageUrls,
     };
 
     console.log('상품 데이터:', productData);
@@ -129,19 +146,34 @@ export default function AddProductInfoSection() {
           </div>
           <div className='p-6 flex items-center gap-3'>
             <div className='flex items-start gap-3'>
-              <Button
+              {/* <Button
                 className='w-fit py-2 px-4 border-gray-500 text-gray-500'
                 variant='outline'
               >
                 프리미엄 선물용
-              </Button>
-
-              <Button
+              </Button> */}
+              <input
+                type='button'
+                name='프리미엄 선물'
+                value='1'
+                onChange={e =>
+                  setProductData({ ...productData, premium: e.target.value })
+                }
+              />
+              {/* <Button
                 className='w-fit py-2 px-4 border-gray-500 text-gray-500'
                 variant='outline'
               >
                 일반 상품
-              </Button>
+              </Button> */}
+              <input
+                type='button'
+                name='일반 상품'
+                value='0'
+                onChange={e =>
+                  setProductData({ ...productData, premium: e.target.value })
+                }
+              />
             </div>
           </div>
         </div>
@@ -159,6 +191,9 @@ export default function AddProductInfoSection() {
                 type='text'
                 placeholder='옵션명을 입력하세요'
                 className='border rounded-md p-2 w-full max-w-[500px] focus:outline-primary-200 border-gray-400'
+                onChange={e =>
+                  setProductData({ ...productData, optNames: e.target.value })
+                }
               />
               <div className='flex flex-col gap-2'>
                 <Button className='w-fit py-2 px-4'>+ 등록</Button>

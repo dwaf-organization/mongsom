@@ -1,15 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-// import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
-import { Button } from '../components/ui/button';
 import Select from '../components/ui/Select';
 import ImageSkeleton from '../components/ui/ImageSkeleton';
 import { routes } from '../constants/routes';
 import Pagination from '../components/ui/Pagination';
 import { getAllProductList } from '../api/products';
-import { useSearchParams } from 'react-router-dom';
 
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -59,21 +57,41 @@ export default function Shop() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <h2 className='text-4xl font-semibold font-montserrat text-center'>
-        Shop
-      </h2>
-      <div className='flex items-center justify-end gap-8'>
-        <Button
-          className='rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit'
-          variant='outline'
+      <div className='flex items-center justify-center'>
+        <Link
+          to={`${routes.shop}`}
+          className='text-4xl font-semibold font-montserrat'
+        >
+          Shop
+        </Link>
+      </div>
+      <div className='flex items-center justify-end gap-4'>
+        {sort === 'premium' && (
+          <div className='flex items-center justify-center'>
+            <Link
+              to={`${routes.shop}?sort=all`}
+              className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
+          ${sort === 'all' ? 'border-primary-200 text-primary-200' : ''}
+          `}
+            >
+              일반 상품
+            </Link>
+          </div>
+        )}
+        <Link
+          to={`${routes.shop}?sort=premium`}
+          className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
+          ${sort === 'premium' ? 'border-primary-200 text-primary-200' : ''}
+          `}
         >
           프리미엄 선물용
-        </Button>
+        </Link>
         <Select
           options={sortOptions}
           value={sort}
           onChange={handleSortChange}
           className='w-24'
+          hidden={sort === 'premium'}
         />
       </div>
 

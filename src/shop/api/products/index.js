@@ -22,6 +22,7 @@ export const getAllProductList = async (sort = 'all', page = 1, opts = {}) => {
       : base;
 
   const response = await fetchData.get(url);
+  console.log('🚀 ~ getAllProductList ~ response:', response);
   return response.data; // { items, pagination } 형태라고 했던 그 data
 };
 

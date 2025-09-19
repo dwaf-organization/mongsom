@@ -118,8 +118,7 @@ export default function PaymentButton({
 
       const orderPayload = buildOrderPayload();
       const orderData = await createOrder(orderPayload);
-      const orderId =
-        orderData?.orderId ?? orderData?.id ?? orderData?.orderCode;
+      const orderId = orderData;
 
       // if (!orderId) throw new Error('주문번호가 없습니다.');
 
@@ -129,7 +128,7 @@ export default function PaymentButton({
       }
 
       const paymentData = createPaymentData(selectedItems, customerInfo, {
-        orderId: '123456',
+        orderId,
         amount: finalPrice,
       });
 

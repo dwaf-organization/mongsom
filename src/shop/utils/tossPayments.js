@@ -45,10 +45,11 @@ export const createPaymentData = (items = [], customer = {}, override = {}) => {
     items.length > 1 ? `${firstName} 외 ${items.length - 1}개` : firstName;
 
   // 서버 주문번호가 오면 그걸 사용
-  const orderId = String(
-    override.orderId ??
-      `ORDER_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
-  );
+  // const orderId = String(
+  //   override.orderId ??
+  //     `ORDER_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
+  // );
+  const orderId = '123456';
 
   const defaultSuccess = `${window.location.origin}/payment/success?orderId=${encodeURIComponent(orderId)}`;
   const defaultFail = `${window.location.origin}/payment/fail?orderId=${encodeURIComponent(orderId)}`;

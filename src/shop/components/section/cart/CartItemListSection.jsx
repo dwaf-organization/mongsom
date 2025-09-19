@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import CheckBox from '../../ui/CheckBox';
 import CheckItemDeleteButton from '../../ui/cart/CheckItemDeleteButton';
 import ImageSkeleton from '../../ui/ImageSkeleton';
-import { updateCheckStatus } from '../../../api/cart';
+import { updateCheckStatus, updateQuantity } from '../../../api/cart';
 import { useToast } from '../../../context/ToastContext';
 import { useAuth } from '../../../context/AuthContext';
 
@@ -10,6 +10,17 @@ export default function CartItemListSection({ cart = [], updateCart }) {
   const { userCode } = useAuth();
   const { addToast } = useToast();
   const [pendingIds, setPendingIds] = useState(new Set());
+
+  const [editingQty, setEditingQty] = useState({});
+  const lastSyncedQtyRef = useRef({});
+
+  useEffect(() => {
+    cart.forEach(item => {
+      if (lastSyncedQtyRef.current[item.cartId] === undefined) {
+        lastSyncedQtyRef.current[item.cartId] = Number(item.quantity || 1);
+      }
+    });
+  }, [cart]);
 
   const onlyDigits = v => String(v).replace(/\D/g, '');
 
@@ -28,11 +39,11 @@ export default function CartItemListSection({ cart = [], updateCart }) {
     updateCart(next);
   };
 
+  // 체크박스 변경
   const handleCheckboxChange = async (item, nextChecked) => {
     if (!userCode) return;
 
-    const prev = cart; // 롤백용
-    // 낙관적 업데이트
+    const prev = cart;
     updateOne(item.cartId, { checkStatus: Boolean(nextChecked) });
     setPending(item.cartId, true);
 
@@ -42,9 +53,7 @@ export default function CartItemListSection({ cart = [], updateCart }) {
         productId: item.productId,
         optId: item.optId ?? null,
       });
-      // 성공 시 끝
     } catch (e) {
-      // 실패 → 롤백
       updateCart(prev);
       addToast('체크 상태 변경에 실패했습니다.', 'error');
     } finally {
@@ -53,8 +62,70 @@ export default function CartItemListSection({ cart = [], updateCart }) {
   };
 
   const handleQuantityInput = (cartId, value) => {
-    const n = Number(onlyDigits(value));
-    updateOne(cartId, { quantity: Math.max(1, n || 1) });
+    const digits = onlyDigits(value);
+    setEditingQty(prev => ({ ...prev, [cartId]: digits })); // '' 가능
+  };
+
+  const commitQuantity = async item => {
+    if (!userCode) return;
+
+    const buf = editingQty[item.cartId];
+    if (buf === undefined) return;
+
+    const parsed = parseInt(buf, 10);
+    if (!buf || Number.isNaN(parsed) || parsed < 1) {
+      // 복원
+      addToast('수량을 1개 이상으로 입력해주세요.', 'error');
+      const prev = lastSyncedQtyRef.current[item.cartId] ?? item.quantity ?? 1;
+      setEditingQty(prevState => {
+        const copy = { ...prevState };
+        delete copy[item.cartId];
+        return copy;
+      });
+      updateOne(item.cartId, { quantity: prev });
+      return;
+    }
+
+    const newQty = parsed;
+    const prevQty = lastSyncedQtyRef.current[item.cartId];
+
+    if (newQty === prevQty) {
+      setEditingQty(prevState => {
+        const copy = { ...prevState };
+        delete copy[item.cartId];
+        return copy;
+      });
+      return;
+    }
+
+    updateOne(item.cartId, { quantity: newQty });
+    setPending(item.cartId, true);
+
+    try {
+      const res = await updateQuantity({
+        userCode,
+        productId: item.productId,
+        optId: item.optId ?? null,
+        quantity: newQty,
+      });
+
+      if (res?.code === 1) {
+        lastSyncedQtyRef.current[item.cartId] = newQty;
+        setEditingQty(prevState => {
+          const copy = { ...prevState };
+          delete copy[item.cartId];
+          return copy;
+        });
+      } else {
+        updateOne(item.cartId, { quantity: prevQty });
+        addToast(res?.message || '수량 변경에 실패했습니다.', 'error');
+      }
+    } catch (e) {
+      updateOne(item.cartId, { quantity: prevQty });
+      addToast('수량 변경 중 오류가 발생했습니다.', 'error');
+    } finally {
+      setPending(item.cartId, false);
+    }
   };
 
   const calcTotalPrice = item => {
@@ -74,6 +145,11 @@ export default function CartItemListSection({ cart = [], updateCart }) {
             ? item.productImgUrl[0]
             : '';
           const busy = pendingIds.has(item.cartId);
+
+          const displayQty =
+            editingQty[item.cartId] !== undefined
+              ? editingQty[item.cartId]
+              : String(item.quantity ?? 1);
 
           return (
             <li
@@ -133,13 +209,26 @@ export default function CartItemListSection({ cart = [], updateCart }) {
                 <div className='flex items-center gap-3'>
                   <input
                     type='text'
-                    value={item.quantity}
+                    inputMode='numeric'
+                    pattern='[0-9]*'
+                    value={displayQty}
+                    disabled={busy}
                     onChange={e =>
                       handleQuantityInput(item.cartId, e.target.value)
                     }
+                    onBlur={() => commitQuantity(item)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') e.currentTarget.blur(); // blur로 commit
+                      if (e.key === 'Escape') {
+                        setEditingQty(prev => {
+                          const copy = { ...prev };
+                          delete copy[item.cartId];
+                          return copy;
+                        });
+                      }
+                    }}
                     className='border border-gray-500 px-2 max-w-[70px] rounded-lg focus:outline-primary-200 text-center'
                   />
-
                   <span className='text-gray-500'>개</span>
                 </div>
               </div>

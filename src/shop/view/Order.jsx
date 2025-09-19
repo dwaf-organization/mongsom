@@ -1,4 +1,3 @@
-// pages/Order.jsx
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
@@ -12,7 +11,6 @@ import { useAuth } from '../context/AuthContext';
 import { getCart } from '../api/cart';
 import { getUserInfo } from '../api/myPage';
 
-// (유틸) 세션에서 1회용으로 꺼내기
 function popInstantPurchase() {
   const KEY = 'instantPurchase';
   const raw = sessionStorage.getItem(KEY);
@@ -20,7 +18,7 @@ function popInstantPurchase() {
   try {
     const parsed = JSON.parse(raw);
     sessionStorage.removeItem(KEY); // 읽자마자 삭제 (1회용)
-    return parsed?.data ?? parsed ?? null; // data 래핑/미래 대응
+    return parsed?.data ?? parsed ?? null;
   } catch {
     sessionStorage.removeItem(KEY);
     return null;
@@ -40,15 +38,13 @@ export default function Order() {
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingCart, setLoadingCart] = useState(true);
 
-  // pop은 최초 1회만 수행하도록 가드
   const poppedRef = useRef(false);
 
-  // 1) 세션의 즉시구매 아이템 로드 → 화면용 스키마로 매핑
   useEffect(() => {
     if (poppedRef.current) return;
     poppedRef.current = true;
 
-    const instant = popInstantPurchase(); // { product, options } 형태(권장)
+    const instant = popInstantPurchase();
 
     if (instant?.product && Array.isArray(instant.options)) {
       const product = instant.product;
@@ -88,7 +84,6 @@ export default function Order() {
 
       setBuyNowItems(mapped);
     } else {
-      // 세션이 없으면 빈 배열 유지
       setBuyNowItems([]);
     }
   }, []);
@@ -122,7 +117,6 @@ export default function Order() {
   useEffect(() => {
     let cancelled = false;
 
-    // 바로구매면 카트 로딩 스킵
     if (!userCode || buyNowItems.length > 0) {
       setCart([]);
       setLoadingCart(false);
@@ -148,7 +142,6 @@ export default function Order() {
 
   const loading = loadingUser || loadingCart;
 
-  // 4) 최종 주문 대상
   const selectedItems = useMemo(() => {
     if (buyNowItems.length > 0) return buyNowItems;
     return (cart || []).filter(i => i.checkStatus);

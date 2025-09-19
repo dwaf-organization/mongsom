@@ -1,13 +1,9 @@
 import { splitPhone } from './phoneUtils';
 
-/**
- * 사용자 데이터를 폼 상태로 변환하는 함수
- * @param {Object} userData - 사용자 데이터 객체
- * @returns {Object} - 폼 상태 객체
- */
-export function toFormState(userData) {
+export function toFormState(userData, userCode) {
   if (!userData) {
     return {
+      userCode: userCode ?? '',
       userId: '',
       password: '',
       confirmPassword: '',
@@ -23,6 +19,7 @@ export function toFormState(userData) {
   const { p1, p2, p3 } = splitPhone(userData.phone);
 
   return {
+    userCode: userCode ?? '',
     userId: userData.userId ?? '',
     password: '',
     confirmPassword: '',
@@ -39,14 +36,9 @@ export function toFormState(userData) {
   };
 }
 
-/**
- * 폼 데이터를 API 페이로드로 변환하는 함수
- * @param {Object} formData - 폼 데이터
- * @param {boolean} includePassword - 비밀번호 포함 여부
- * @returns {Object} - API 페이로드 객체
- */
 export function toApiPayload(formData, includePassword = false) {
   const payload = {
+    userCode: formData.userCode, // ← 폼 상태에서 온 값
     userId: formData.userId,
     name: formData.name,
     phone: [formData.phone1, formData.phone2, formData.phone3].join(''),
@@ -54,6 +46,7 @@ export function toApiPayload(formData, includePassword = false) {
     zipCode: formData.address.zipCode,
     address: formData.address.address,
     address2: formData.address.address2,
+    password: formData.password,
   };
 
   if (includePassword && formData.password) {

@@ -19,31 +19,31 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
     Array.isArray(selectedOptions) && selectedOptions.length > 0;
 
   // 세션에 저장할 페이로드 생성 (상품 전체 정보 + 선택 옵션들)
-  const buildBuyNowPayload = () => {
-    return {
-      createdAt: Date.now(),
-      product: {
-        productId,
-        name: product.name ?? product.productName ?? '',
-        price: Number(product.price ?? 0),
-        discountPer: Number(product.discountPer ?? 0),
-        discountPrice: Number(
-          product.discountPrice ?? product.salePrice ?? product.price ?? 0,
-        ),
-        // 이미지 배열 키들 중 존재하는 걸 우선 사용
-        productImgUrl:
-          product.productImgUrl ??
-          product.productImgUrls ??
-          product.image ??
-          [],
-      },
-      options: selectedOptions.map(opt => ({
-        optId: Number(opt.value ?? opt.optId),
-        optName: opt.label ?? opt.name ?? opt.optName ?? null,
-        quantity: Number(opt.quantity) || 1,
-      })),
-    };
-  };
+  // const buildBuyNowPayload = () => {
+  //   return {
+  //     createdAt: Date.now(),
+  //     product: {
+  //       productId,
+  //       name: product.name ?? product.productName ?? '',
+  //       price: Number(product.price ?? 0),
+  //       discountPer: Number(product.discountPer ?? 0),
+  //       discountPrice: Number(
+  //         product.discountPrice ?? product.salePrice ?? product.price ?? 0,
+  //       ),
+  //       // 이미지 배열 키들 중 존재하는 걸 우선 사용
+  //       productImgUrl:
+  //         product.productImgUrl ??
+  //         product.productImgUrls ??
+  //         product.image ??
+  //         [],
+  //     },
+  //     options: selectedOptions.map(opt => ({
+  //       optId: Number(opt.value ?? opt.optId),
+  //       optName: opt.label ?? opt.name ?? opt.optName ?? null,
+  //       quantity: Number(opt.quantity) || 1,
+  //     })),
+  //   };
+  // };
 
   const handleBuy = () => {
     if (!isOptionSelected) {
