@@ -1,24 +1,44 @@
-// src/components/RichEditor.jsx
+// src/admin/components/ui/RichEditor.jsx
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
-import ReactQuill from 'react-quill-new'; // React 19 호환 포크
+import ReactQuill from 'react-quill-new';
 import 'quill/dist/quill.snow.css';
 
+/**
+ * 비제어형 에디터: defaultValue만 사용. 깜빡임 방지.
+ * ref로 getHTML/getText/insertImage 제공.
+ */
 const RichEditor = forwardRef(function RichEditor(
   {
-    value,
-    onChange,
+    value = '', // 초기 HTML (mount 시 1회만 반영)
+    onChange, // 필요하면 콜백만 호출 (state 연결 금지)
     variant = 'full',
-    onUploadImage,
-    onUploadFile,
-    onUploadVideo,
+    onUploadImage, // (file) => Promise<url>
+    onUploadFile, // (file) => Promise<url>
+    onUploadVideo, // (file) => Promise<url>
     maxChars,
     placeholder = '내용을 입력하세요…',
-    minHeight = 240, // 숫자(px) 또는 '480px' 문자열 모두 허용
+    minHeight = 240,
     className = '',
   },
   ref,
 ) {
   const quillRef = useRef(null);
+
+  // 외부에서 HTML을 읽을 수 있도록 노출
+  useImperativeHandle(ref, () => ({
+    getHTML: () => quillRef.current?.getEditor()?.root?.innerHTML ?? '',
+    getText: () => quillRef.current?.getEditor()?.getText() ?? '',
+    insertImage: url => {
+      const quill = quillRef.current?.getEditor();
+      if (!quill || !url) return;
+      const range = quill.getSelection(true) || {
+        index: quill.getLength(),
+        length: 0,
+      };
+      quill.insertEmbed(range.index, 'image', url, 'user');
+      quill.setSelection(range.index + 1);
+    },
+  }));
 
   const pickFile = (accept, cb) => {
     const input = document.createElement('input');
@@ -79,32 +99,56 @@ const RichEditor = forwardRef(function RichEditor(
           image: function () {
             if (!onUploadImage) return;
             pickFile('image/*', async file => {
-              const url = await onUploadImage(file);
-              const quill = quillRef.current?.getEditor();
-              const range = quill.getSelection(true);
-              quill.insertEmbed(range.index, 'image', url, 'user');
-              quill.setSelection(range.index + 1);
+              try {
+                const url = await onUploadImage(file);
+                if (!url) return;
+                const quill = quillRef.current?.getEditor();
+                const range = quill.getSelection(true) || {
+                  index: quill.getLength(),
+                  length: 0,
+                };
+                quill.insertEmbed(range.index, 'image', url, 'user');
+                quill.setSelection(range.index + 1);
+              } catch (e) {
+                console.error('이미지 업로드 실패:', e);
+              }
             });
           },
           video: function () {
             if (!onUploadVideo) return;
             pickFile('video/*', async file => {
-              const url = await onUploadVideo(file);
-              const quill = quillRef.current?.getEditor();
-              const range = quill.getSelection(true);
-              quill.insertEmbed(range.index, 'video', url, 'user');
-              quill.setSelection(range.index + 1);
+              try {
+                const url = await onUploadVideo(file);
+                if (!url) return;
+                const quill = quillRef.current?.getEditor();
+                const range = quill.getSelection(true) || {
+                  index: quill.getLength(),
+                  length: 0,
+                };
+                quill.insertEmbed(range.index, 'video', url, 'user');
+                quill.setSelection(range.index + 1);
+              } catch (e) {
+                console.error('비디오 업로드 실패:', e);
+              }
             });
           },
           file: function () {
             if (!onUploadFile) return;
             pickFile('', async file => {
-              const url = await onUploadFile(file);
-              const quill = quillRef.current?.getEditor();
-              const range = quill.getSelection(true);
-              const text = file.name;
-              quill.insertText(range.index, text, 'link', url, 'user');
-              quill.setSelection(range.index + text.length);
+              try {
+                const url = await onUploadFile(file);
+                if (!url) return;
+                const quill = quillRef.current?.getEditor();
+                const range = quill.getSelection(true) || {
+                  index: quill.getLength(),
+                  length: 0,
+                };
+                const text = file.name;
+                quill.insertText(range.index, text, 'link', url, 'user');
+                quill.setSelection(range.index + text.length);
+              } catch (e) {
+                console.error('파일 업로드 실패:', e);
+              }
             });
           },
         },
@@ -140,10 +184,10 @@ const RichEditor = forwardRef(function RichEditor(
         return;
       }
     }
+    // 외부 상태를 굳이 갱신할 필요는 없지만, 콜백은 열어둔다
     onChange?.(html);
   };
 
-  // CSS 변수 값 만들기
   const minH =
     typeof minHeight === 'number' ? `${minHeight}px` : minHeight || '240px';
 
@@ -155,18 +199,20 @@ const RichEditor = forwardRef(function RichEditor(
         '[&_.ql-toolbar]:rounded-t-md [&_.ql-container]:rounded-b-md',
         className,
       ].join(' ')}
-      style={{ ['--rt-min-h']: minH }}
+      // wrapper 높이는 auto, 실제 편집 영역 minHeight만 보장
+      style={{ height: 'auto' }}
     >
       <ReactQuill
         ref={quillRef}
         theme='snow'
-        value={value}
-        onChange={handleChange}
+        defaultValue={value} // ✅ 비제어형: 최초 1회만 반영
+        onChange={handleChange} // ✅ 콜백만, 상태 연결 금지
         modules={modules}
         formats={formats}
         placeholder={placeholder}
-        style={{ height: 'auto' }}
       />
+      {/* 편집 영역만 최소 높이 적용 */}
+      <style>{`.rt-editor .ql-editor { min-height: ${minH}; }`}</style>
     </div>
   );
 });
