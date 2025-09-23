@@ -84,7 +84,7 @@ export default function PaymentButton({
       paymentAt: '2024-09-17T15:30:00',
       paymentMethod: '카드',
       paymentAmount: finalPrice,
-      paymentStatus: 'COMPLETED',
+      paymentStatus: 'PAUSE',
       paymentKey: 'test_payment_key',
       pgProvider: '토스페이먼츠',
 

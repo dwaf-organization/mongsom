@@ -29,7 +29,6 @@ export default function Login() {
     e.preventDefault();
 
     const response = await userLogin(loginData);
-    // 기대형태: { code: 1, data: { userCode: 4 } }
 
     if (!response) {
       addToast('서버 응답이 없습니다.', 'error');
@@ -37,7 +36,7 @@ export default function Login() {
     }
 
     if (response.code === 1) {
-      const userCode = response?.data?.userCode; // ★ 여기!
+      const userCode = response?.data?.userCode;
       if (userCode == null) {
         addToast('로그인 응답에 userCode가 없습니다.', 'error');
         return;

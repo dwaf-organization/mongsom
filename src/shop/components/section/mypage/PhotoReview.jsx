@@ -1,8 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Button } from '../../ui/button';
 import { useImageUpload } from '../../../../hooks/useImageUpload';
 
-export default function PhotoReview() {
+// props: onUrlsChange(urls: string[])
+export default function PhotoReview({ onUrlsChange }) {
   const fileInputRef = useRef(null);
   const {
     handleFileInput,
@@ -12,11 +13,13 @@ export default function PhotoReview() {
     handleRemoveImage,
   } = useImageUpload('review_images');
 
+  // 업로드된 URL이 바뀔 때마다 부모에게 알려주기
+  useEffect(() => {
+    onUrlsChange?.(uploadedImageUrls || []);
+  }, [uploadedImageUrls, onUrlsChange]);
+
   const handleButtonClick = () => {
-    // input value 초기화
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
     fileInputRef.current?.click();
   };
 
@@ -60,7 +63,7 @@ export default function PhotoReview() {
 
         {/* 업로드된 이미지들 표시 */}
         <div className='flex items-center gap-4'>
-          {uploadedImages.length > 0 ? (
+          {uploadedImages.length > 0 &&
             uploadedImages.map((url, index) => (
               <div key={index} className='relative group'>
                 <img
@@ -76,10 +79,7 @@ export default function PhotoReview() {
                   ×
                 </button>
               </div>
-            ))
-          ) : (
-            <></>
-          )}
+            ))}
         </div>
       </div>
     </section>
