@@ -1,6 +1,7 @@
 import { fetchData } from '../instance';
 
 export const addCart = async cart => {
+  console.log('🚀 ~ addCart ~ cart:', cart);
   const response = await fetchData.post('api/v1/cart/add', {
     body: JSON.stringify(cart),
   });

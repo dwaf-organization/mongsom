@@ -1,4 +1,5 @@
-export default function RecipientInfoSection() {
+export default function RecipientInfoSection({ order }) {
+  console.log('🚀 ~ RecipientInfoSection ~ order:', order);
   return (
     <section>
       <p className='text-lg font-semibold text-left border-b border-gray-500 pb-4 pt-10 '>
@@ -12,10 +13,13 @@ export default function RecipientInfoSection() {
           <li>배송 메시지</li>
         </ul>
         <ul className='flex flex-col gap-4 text-left px-4'>
-          <li>홍길동</li>
-          <li>010-1234-5678</li>
-          <li>서울시 강남구 역삼동</li>
-          <li>배송메시지</li>
+          <li>{order.receivedUserName}</li>
+          <li>{order.receivedUserPhone}</li>
+          <li>
+            ({order.receivedUserZipCode}){order.receivedUserAddress}
+            {order.receivedUserAddress2}
+          </li>
+          <li>{order.message || '-'}</li>
         </ul>
       </div>
     </section>

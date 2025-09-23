@@ -108,11 +108,12 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
             optId: Number(opt.value ?? opt.optId),
             productId,
             quantity: Number(opt.quantity) || 1,
-            checkStatus: true,
+            checkStatus: 1,
           };
           return addCart(payload);
         }),
       );
+      console.log('🚀 ~ handleAddToCart ~ results:', results);
 
       const ok = results.every(r => r?.code === 1);
       if (ok) addToast('장바구니에 담았습니다.', 'success');

@@ -31,3 +31,13 @@ export const deleteUser = async userCode => {
     return response;
   }
 };
+
+export const getOrderDeliveryStatus = async userCode => {
+  const response = await fetchData.get(`api/v1/my/delivery/number/${userCode}`);
+  if (response.code === 1) {
+    return response.data;
+  }
+  if (response.code === -1) {
+    return response;
+  }
+};

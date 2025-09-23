@@ -20,7 +20,7 @@ export default function Cart() {
     Number(sessionStorage.getItem('userCode')) ||
     null;
 
-  const [cart, setCart] = useState([]); // 서버 items 그대로
+  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function Cart() {
     (async () => {
       try {
         setLoading(true);
-        const items = await getCart(userCode); // [{ cartId, productName, ... }]
+        const items = await getCart(userCode);
         if (!cancelled) setCart(items);
       } catch (e) {
         console.error(e);
@@ -50,26 +50,26 @@ export default function Cart() {
 
   const updateCart = next => setCart(Array.isArray(next) ? next : []);
 
-  const allChecked = cart.length > 0 && cart.every(i => i.checkStatus === true);
+  const allChecked = cart.length > 0 && cart.every(i => i.checkStatus === 1);
 
   const handleAllCheckChange = checked => {
-    updateCart(cart.map(i => ({ ...i, checkStatus: Boolean(checked) })));
+    updateCart(cart.map(i => ({ ...i, checkStatus: Number(checked) })));
   };
 
-  const { totalPrice, totalSalePrice, totalQty } = useMemo(() => {
-    const sel = cart.filter(i => i.checkStatus);
-    const qty = sel.reduce((s, i) => s + Number(i.quantity || 0), 0);
-    const price = sel.reduce(
-      (s, i) => s + Number(i.price || 0) * Number(i.quantity || 0),
-      0,
-    );
-    const sale = sel.reduce(
-      (s, i) =>
-        s + Number(i.discountPrice ?? i.price ?? 0) * Number(i.quantity || 0),
-      0,
-    );
-    return { totalPrice: price, totalSalePrice: sale, totalQty: qty };
-  }, [cart]);
+  // const { totalPrice, totalSalePrice, totalQty } = useMemo(() => {
+  //   const sel = cart.filter(i => i.checkStatus === 1);
+  //   const qty = sel.reduce((s, i) => s + Number(i.quantity || 0), 0);
+  //   const price = sel.reduce(
+  //     (s, i) => s + Number(i.price || 0) * Number(i.quantity || 0),
+  //     0,
+  //   );
+  //   const sale = sel.reduce(
+  //     (s, i) =>
+  //       s + Number(i.discountPrice ?? i.price ?? 0) * Number(i.quantity || 0),
+  //     0,
+  //   );
+  //   return { totalPrice: price, totalSalePrice: sale, totalQty: qty };
+  // }, [cart]);
 
   if (!userCode) {
     return (

@@ -17,7 +17,7 @@ function popInstantPurchase() {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw);
-    sessionStorage.removeItem(KEY); // 읽자마자 삭제 (1회용)
+    sessionStorage.removeItem(KEY);
     return parsed?.data ?? parsed ?? null;
   } catch {
     sessionStorage.removeItem(KEY);

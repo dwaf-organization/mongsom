@@ -1,8 +1,9 @@
 export default function CartPriceSummarySection({ cart }) {
-  const selectedItems = cart.filter(item => item.checked);
+  console.log('🚀 ~ CartPriceSummarySection ~ cart:', cart);
+  const selectedItems = cart.filter(item => item.checkStatus === 1);
 
   const totalPrice = selectedItems.reduce(
-    (sum, item) => sum + item.price * item.count,
+    (sum, item) => sum + item.price * item.quantity,
     0,
   );
 
