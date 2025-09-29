@@ -1,5 +1,4 @@
-// src/.../RichEditor.jsx
-import React, {
+import {
   forwardRef,
   useMemo,
   useRef,
@@ -12,20 +11,15 @@ import 'quill/dist/quill.snow.css';
 
 const RichEditorInner = forwardRef(function RichEditor(
   {
-    /** 최초 1회 세팅할 HTML (비제어). 바뀌는 값을 반영하고 싶으면 부모에서 ref.setHTML 사용 */
     initialValue = '',
-    /** 'full' | 'minimal' | 'title' */
     variant = 'full',
-    /** 업로드 콜백들(없으면 해당 버튼 숨김) */
     onUploadImage,
     onUploadFile,
     onUploadVideo,
-    /** 최대 입력 글자수(텍스트 기준). 초과 시 잘라냄 */
     maxChars,
     placeholder = '내용을 입력하세요…',
     minHeight = 240,
     className = '',
-    /** 선택: 에디터가 blur될 때 최종 HTML을 알려줌 */
     onChangeHTML,
   },
   ref,
@@ -218,8 +212,8 @@ const RichEditorInner = forwardRef(function RichEditor(
     q.root.innerHTML = initialValue || '';
   }, [initialValue]);
 
-  const minH =
-    typeof minHeight === 'number' ? `${minHeight}px` : minHeight || '240px';
+  // const minH =
+  //   typeof minHeight === 'number' ? `${minHeight}px` : minHeight || '240px';
 
   return (
     <div
@@ -229,7 +223,7 @@ const RichEditorInner = forwardRef(function RichEditor(
         '[&_.ql-toolbar]:rounded-t-md [&_.ql-container]:rounded-b-md',
         className,
       ].join(' ')}
-      style={{ ['--rt-min-h']: minH }}
+      // style={{ ['--rt-min-h']: minH }}
     >
       <ReactQuill
         ref={quillRef}

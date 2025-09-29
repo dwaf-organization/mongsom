@@ -3,11 +3,10 @@ import { useState } from 'react';
 
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import { Button } from '../components/ui/button';
-import KakaoLogo from '../asset/logo/kakaoLogo.png';
-import NaverLogo from '../asset/logo/naverLogo.png';
 import { useToast } from '../context/ToastContext';
 import { userLogin } from '../api/login';
 import { useAuth } from '../context/AuthContext';
+import SnsLogIn from '../components/section/login/SnsLogIn';
 
 export default function Login() {
   const { login } = useAuth();
@@ -96,29 +95,7 @@ export default function Login() {
             회원가입
           </Button>
         </Link>
-        <div className='flex items-center w-full max-w-[400px] my-4'>
-          <hr className='flex-grow border-t border-gray-300' />
-          <span className='mx-4 text-gray-500 whitespace-nowrap'>
-            SNS로 로그인
-          </span>
-          <hr className='flex-grow border-t border-gray-300' />
-        </div>
-        <div className='flex gap-6'>
-          <Link>
-            <img
-              src={KakaoLogo}
-              alt='Mongsom Logo'
-              className='h-10 w-10 rounded-full'
-            />
-          </Link>
-          <Link>
-            <img
-              src={NaverLogo}
-              alt='naver Logo'
-              className='h-10 w-10 rounded-full'
-            />
-          </Link>
-        </div>
+        <SnsLogIn />
       </div>
     </InnerPaddingSectionWrapper>
   );

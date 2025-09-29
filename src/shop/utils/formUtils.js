@@ -46,11 +46,16 @@ export function toApiPayload(formData, includePassword = false) {
     zipCode: formData.address.zipCode,
     address: formData.address.address,
     address2: formData.address.address2,
-    password: formData.password,
+    password:
+      formData.password && formData.password.trim() !== ''
+        ? formData.password
+        : null,
   };
 
-  if (includePassword && formData.password) {
+  if (includePassword && formData.password && formData.password.trim() !== '') {
     payload.password = formData.password;
+  } else {
+    payload.password = null;
   }
 
   return payload;

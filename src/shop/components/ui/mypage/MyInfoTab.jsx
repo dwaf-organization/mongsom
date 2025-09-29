@@ -2,17 +2,13 @@ import MyInfoForm from './MyInfoForm';
 import { useAuth } from '../../../context/AuthContext';
 import { getUserInfo } from '../../../api/myPage';
 import { useEffect, useState } from 'react';
-import { deleteUser } from '../../../api/myPage';
-import { useToast } from '../../../context/ToastContext';
 import { useModal } from '../../../context/ModalContext';
 import DeleteUserModal from './DeleteUserModal';
 
 export default function MyInfoTab() {
-  const { logout } = useAuth();
   const { userCode } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { addToast } = useToast();
   const { openModal } = useModal();
 
   useEffect(() => {

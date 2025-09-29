@@ -6,11 +6,14 @@ import Pagination from '../Pagination';
 import { Link } from 'react-router-dom';
 import { formatDate } from '../../../utils/dateUtils';
 import { pickFirstImageUrl } from '../../../utils/dateUtils';
+import { useModal } from '../../../context/ModalContext';
+import ReviewDeleteModal from './ReviewDeleteModal';
 
 export default function CompletedReviewTab() {
   const { userCode } = useAuth();
   const [searchParams] = useSearchParams();
   const page = Number(searchParams.get('page') || '1');
+  const { openModal } = useModal();
 
   const [expandedReviews, setExpandedReviews] = useState({});
   const [reviews, setReviews] = useState([]);
@@ -71,6 +74,10 @@ export default function CompletedReviewTab() {
     ));
   };
 
+  const handleDeleteReview = reviewId => {
+    openModal(<ReviewDeleteModal reviewId={reviewId} userCode={userCode} />);
+  };
+
   const toggleReviewExpansion = reviewKey => {
     setExpandedReviews(prev => ({ ...prev, [reviewKey]: !prev[reviewKey] }));
   };
@@ -80,12 +87,6 @@ export default function CompletedReviewTab() {
     const s = String(text);
     return s.length <= maxLength ? s : s.slice(0, maxLength) + '...';
   };
-
-  // const pickFirstImageUrl = arr => {
-  //   if (!Array.isArray(arr)) return '';
-  //   const first = arr.find(u => typeof u === 'string' && u.startsWith('http'));
-  //   return first || '';
-  // };
 
   if (loading) {
     return (
@@ -127,12 +128,12 @@ export default function CompletedReviewTab() {
             >
               <div className='flex items-center justify-between mb-2 border-b w-full border-gray-300 pb-4 '>
                 <div className='flex items-center gap-4'>
-                  <Link to={`/product/${review.productId}`}>
+                  <Link to={`/shop-detail/${review.productId}`}>
                     {firstImg ? (
                       <img
                         src={firstImg}
                         alt={review.productName}
-                        className='w-[80px] h-[80px] object-cover'
+                        className='w-[100px] h-[100px] object-cover rounded-lg'
                       />
                     ) : (
                       <div className='w-[80px] h-[80px] bg-gray-100' />
@@ -142,9 +143,12 @@ export default function CompletedReviewTab() {
                     {review.productName ?? review.name ?? '상품명'}
                   </p>
                 </div>
-                <p className='text-primary-200 cursor-pointer select-none'>
+                <button
+                  className='text-primary-200 cursor-pointer select-none'
+                  onClick={() => handleDeleteReview(review.reviewId)}
+                >
                   삭제
-                </p>
+                </button>
               </div>
 
               <article className='px-2'>
@@ -179,7 +183,7 @@ export default function CompletedReviewTab() {
                             key={i}
                             src={image}
                             alt={`리뷰 이미지 ${i + 1}`}
-                            className='max-w-[75px] max-h-[75px] object-cover'
+                            className='max-w-[70px] max-h-[70px] object-cover'
                           />
                         ) : null,
                       )}

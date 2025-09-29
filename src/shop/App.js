@@ -30,6 +30,7 @@ import Header from './layout/header/Header.jsx';
 import Footer from './layout/footer/Footer.jsx';
 import { AuthProvider } from './context/AuthContext';
 import NoticeDetail from './view/NoticeDetail';
+import KakaoCallback from './view/auth/KaKaoCallback';
 import './index.css';
 
 export default function ShopApp() {
@@ -58,6 +59,7 @@ export default function ShopApp() {
               <Route path='/payment/fail' element={<PaymentFail />} />
               <Route path='/find-id' element={<FindId />} />
               <Route path='/find-password' element={<FindPassword />} />
+              <Route path='/auth/kakao/callback' element={<KakaoCallback />} />
               <Route
                 path='/password-reset-complete'
                 element={<PasswordResetComplete />}

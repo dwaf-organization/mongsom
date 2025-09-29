@@ -1,16 +1,19 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import PurchaseInfo from '../components/section/ShopDetail/PurchaseInfo';
 import ShopDetailTabSection from '../components/section/ShopDetail/ShopDetailTabSection';
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import ShopDetailInfoListSection from '../components/section/ShopDetail/ShopDetailInfoListSection';
 import { getProductDetail } from '../api/products';
+import { Button } from '../components/ui/button';
 
 export default function ShopDetail() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'info';
+  const navigate = useNavigate();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [product, setProduct] = useState(null);
@@ -64,14 +67,17 @@ export default function ShopDetail() {
       </div>
     );
   }
-  if (!product) {
+  if (!product || product.deleteStatus === 1) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <div className='text-center'>
-          <h1 className='text-2xl font-bold text-gray-800 mb-4'>
+          <h2 className='text-2xl font-bold text-gray-800 mb-4'>
             상품을 찾을 수 없습니다
-          </h1>
-          <p className='text-gray-600'>요청하신 상품이 존재하지 않습니다.</p>
+          </h2>
+          <p className='text-gray-600 mb-4'>
+            요청하신 상품이 존재하지 않습니다.
+          </p>
+          <Button onClick={() => navigate('/shop')}>상품목록으로 이동</Button>
         </div>
       </div>
     );

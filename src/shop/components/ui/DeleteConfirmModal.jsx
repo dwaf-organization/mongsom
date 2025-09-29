@@ -1,8 +1,14 @@
 import { Button } from './button';
 import { useModal } from '../../context/ModalContext';
 import { useToast } from '../../context/ToastContext';
+import { deleteCart } from '../../api/cart';
 
-export default function DeleteConfirmModal({ itemCount, cart, updateCart }) {
+export default function DeleteConfirmModal({
+  itemCount,
+  cart,
+  updateCart,
+  userCode,
+}) {
   const { closeModal } = useModal();
   const { addToast } = useToast();
 
@@ -10,12 +16,20 @@ export default function DeleteConfirmModal({ itemCount, cart, updateCart }) {
     closeModal();
   };
 
-  const handleConfirmDelete = () => {
-    const updatedCart = cart.filter(item => !item.checked);
-    updateCart(updatedCart);
-    sessionStorage.setItem('cart', JSON.stringify(updatedCart));
-    addToast('선택된 상품이 삭제되었습니다.', 'success');
-    closeModal();
+  const handleConfirmDelete = async () => {
+    const res = await deleteCart(userCode, cart.productId, cart.optId);
+    if (res.code === 1) {
+      addToast('상품이 삭제되었습니다.', 'success');
+      closeModal();
+    } else {
+      addToast(res?.data || '상품 삭제에 실패했습니다.', 'error');
+      closeModal();
+    }
+    // const updatedCart = cart.filter(item => !item.checked);
+    // updateCart(updatedCart);
+    // sessionStorage.setItem('cart', JSON.stringify(updatedCart));
+    // addToast('선택된 상품이 삭제되었습니다.', 'success');
+    // closeModal();
   };
 
   return (

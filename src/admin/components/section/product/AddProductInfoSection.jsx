@@ -289,9 +289,10 @@ export default function AddProductInfoSection() {
           <div className='p-6 flex items-center gap-3'>
             <Button
               type='button'
+              variant={productData.premium === 1 ? 'default' : 'outline'}
               className={`w-fit py-2 px-4 ${
                 productData.premium === 1
-                  ? 'bg-primary-100 text-white'
+                  ? ' text-white'
                   : 'border border-gray-400 text-gray-600'
               }`}
               onClick={() => {
@@ -303,9 +304,10 @@ export default function AddProductInfoSection() {
             </Button>
             <Button
               type='button'
+              variant={productData.premium === 0 ? 'default' : 'outline'}
               className={`w-fit py-2 px-4 ${
                 productData.premium === 0
-                  ? 'bg-primary-100 text-white'
+                  ? ' text-white'
                   : 'border border-gray-400 text-gray-600'
               }`}
               onClick={() => {

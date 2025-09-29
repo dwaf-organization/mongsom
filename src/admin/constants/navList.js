@@ -1,5 +1,5 @@
 export const navigation = [
-  { name: '주문 조회', href: '/admin' },
+  { name: '주문 조회', href: '/admin/orders' },
   { name: '상품 등록', href: '/admin/products' },
   { name: '상품 목록', href: '/admin/products-list' },
   { name: '공지 등록', href: '/admin/notice' },

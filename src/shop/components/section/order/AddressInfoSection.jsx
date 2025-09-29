@@ -2,7 +2,7 @@ import AddressFormField from '../../ui/AddressFormField';
 import AddressInput from '../../ui/AddressInput';
 import { useState, useEffect } from 'react';
 import { OrderSchema } from '../../../schema/OrderSchema';
-import { toFormState, toApiPayload } from '../../../utils/formUtils';
+import { toFormState } from '../../../utils/formUtils';
 
 export default function AddressInfoSection({ onFormValidChange, userInfo }) {
   const [formData, setFormData] = useState({

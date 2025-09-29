@@ -7,8 +7,6 @@ import { Link } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getAllProductList } from '../../../api/products';
-
-import { topProduct } from '../../../data/TopProduct';
 import { createSliderSettings } from '../../../constants/sliderSettings';
 import { routes } from '../../../constants/routes';
 
@@ -16,12 +14,8 @@ export default function TopProductSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: '-100px' });
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [productItems, setProductItems] = useState([]);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPage: 1,
-  });
 
   const sort = searchParams.get('sort') || 'all';
   const page = searchParams.get('page') || '1';
@@ -32,17 +26,10 @@ export default function TopProductSection() {
       .then(res => {
         const items = res?.items || [];
         setProductItems(items);
-
-        const paginationData = res?.pagination || {
-          currentPage: 1,
-          totalPage: 1,
-        };
-        setPagination(paginationData);
       })
       .catch(error => {
         console.error('상품 목록을 불러오는데 실패했습니다:', error);
         setProductItems([]);
-        setPagination({ currentPage: 1, totalPage: 1 });
       });
   }, [sort, page]);
 

@@ -1,5 +1,4 @@
-// src/context/AuthContext.js
-import React, {
+import {
   createContext,
   useContext,
   useEffect,
@@ -9,14 +8,13 @@ import React, {
 } from 'react';
 
 const AuthContext = createContext(null);
-const SS_KEY = 'auth_session'; // 세션에 저장할 키
+const SS_KEY = 'auth_session';
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // { userId, ... }
-  const [userCode, setUserCode] = useState(null); // number | string
+  const [user, setUser] = useState(null);
+  const [userCode, setUserCode] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 새로고침 시 sessionStorage에서 복원
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(SS_KEY);
@@ -30,7 +28,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const isAuthenticated = !!userCode; // userCode 존재 여부로 로그인 판별(간단 버전)
+  const isAuthenticated = !!userCode;
 
   const login = useCallback(({ userData, userCode }) => {
     setUser(userData || null);

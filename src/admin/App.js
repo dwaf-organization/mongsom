@@ -10,9 +10,11 @@ import GlobalToast from './components/ui/GlobalToast';
 import GlobalModal from './components/ui/GlobalModal';
 import EditProductInfo from './view/EditProductInfo';
 import UserManagement from './view/UserManagement';
+import OrderDetail from './view/OrderDetail';
 import Notice from './view/Notice';
 import './index.css';
 import 'quill/dist/quill.snow.css';
+import Login from './view/Login';
 
 export default function AdminApp() {
   return (
@@ -20,7 +22,8 @@ export default function AdminApp() {
       <ModalProvider>
         <AdminLayout>
           <Routes>
-            <Route path='/' element={<OrderList />} />
+            <Route path='/' element={<Login />} />
+            <Route path='/orders' element={<OrderList />} />
             <Route path='/products' element={<Products />} />
             <Route path='/products-list' element={<ProductList />} />
             <Route path='/orders' element={<OrderList />} />
@@ -31,6 +34,7 @@ export default function AdminApp() {
               element={<EditProductInfo />}
             />
             <Route path='/user-management' element={<UserManagement />} />
+            <Route path='/orders/:id' element={<OrderDetail />} />
           </Routes>
           <GlobalToast />
           <GlobalModal />

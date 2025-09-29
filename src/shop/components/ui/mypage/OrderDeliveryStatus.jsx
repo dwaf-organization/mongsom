@@ -1,5 +1,4 @@
 import { RightChevron } from '../../../asset/icons';
-import { statusList } from '../../../constants/orderStatus';
 
 export default function OrderDeliveryStatus({ orderDeliveryStatus }) {
   console.log(

@@ -5,13 +5,12 @@ import {
   openPaymentWidget,
   createPaymentData,
 } from '../../../utils/tossPayments';
-import { createOrder } from '../../../api/order'; // ← 주문 생성 API (아래 포맷 따라감)
-
+import { createOrder } from '../../../api/order';
 export default function PaymentButton({
   selectedItems,
   customerInfo,
   disabled = false,
-  deliveryPrice: deliveryPriceProp, // 옵션: 부모가 배송비 내려줄 수 있게
+  deliveryPrice: deliveryPriceProp,
 }) {
   const { userCode } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +18,6 @@ export default function PaymentButton({
   const isOptionSelected =
     Array.isArray(selectedItems) && selectedItems.length > 0;
 
-  // 총액 계산(선택된 아이템 기준)
   const { totalPrice, totalDiscountPrice, deliveryPrice, finalPrice } =
     useMemo(() => {
       const base = (selectedItems || []).reduce(
@@ -36,7 +34,6 @@ export default function PaymentButton({
         { totalPrice: 0, totalDiscountPrice: 0 },
       );
 
-      // 배송비: 외부에서 주면 사용, 없으면 기본 0
       const dp = typeof deliveryPriceProp === 'number' ? deliveryPriceProp : 0;
       const finalP = base.totalPrice - base.totalDiscountPrice + dp;
 
@@ -49,16 +46,13 @@ export default function PaymentButton({
     }, [selectedItems, deliveryPriceProp]);
 
   const buildOrderPayload = () => {
-    // 전화번호 “숫자만” 합치기
     const phoneDigits =
       (customerInfo?.phone && String(customerInfo.phone).replace(/\D/g, '')) ||
-      // 혹시 분할돼 있다면
       [customerInfo?.phone1, customerInfo?.phone2, customerInfo?.phone3]
         .filter(Boolean)
         .join('');
 
     return {
-      // ✅ 서버 요구 포맷에 맞춤
       userCode: Number(userCode),
 
       receivedUserName: customerInfo?.name ?? '',
@@ -88,12 +82,10 @@ export default function PaymentButton({
       paymentKey: 'test_payment_key',
       pgProvider: '토스페이먼츠',
 
-      // 주문 상세
       orderDetails: (selectedItems || []).map(it => ({
         optId: it.optId ?? null,
         productId: it.productId,
         quantity: Number(it.quantity ?? 1),
-        // 서버가 “개별 항목 금액”을 받는다면: 할인 적용된 금액으로 전달
         price: Number(it.discountPrice ?? it.price ?? 0),
       })),
     };
@@ -120,12 +112,10 @@ export default function PaymentButton({
       const orderData = await createOrder(orderPayload);
       const orderId = orderData;
 
-      // if (!orderId) throw new Error('주문번호가 없습니다.');
-
-      if (!orderId) {
-        const newOrderId = `${Date.now()}`;
-        orderId = newOrderId;
-      }
+      // if (!orderId) {
+      //   const newOrderId = `${Date.now()}`;
+      //   orderId = newOrderId;
+      // }
 
       const paymentData = createPaymentData(selectedItems, customerInfo, {
         orderId,

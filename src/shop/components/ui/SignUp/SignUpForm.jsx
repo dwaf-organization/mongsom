@@ -342,7 +342,7 @@ export default function SignUpForm() {
             onChange={e => handleInputChange('email', e.target.value)}
             placeholder='이메일을 입력하세요'
             autoComplete='email'
-            className='border rounded-md p-3 flex-1 focus:outline-primary-200 border-gray-400'
+            className='border rounded-md p-3 flex-1 w-full focus:outline-primary-200 border-gray-400'
           />
         </FormField>
       </section>

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const [paymentInfo, setPaymentInfo] = useState(null);
+  const { userCode } = useAuth();
 
   useEffect(() => {
     const orderId = searchParams.get('orderId');
@@ -13,6 +15,7 @@ export default function PaymentSuccess() {
     if (orderId && paymentKey && amount) {
       setPaymentInfo({
         orderId,
+        userCode,
         paymentKey,
         amount: parseInt(amount),
       });

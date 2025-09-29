@@ -8,7 +8,7 @@ export default function SignUp() {
       <h2 className='text-4xl font-semibold font-pretendard text-center'>
         회원가입
       </h2>
-      <SnsSignUpSection />
+      {/* <SnsSignUpSection /> */}
       <SingUpFormSection />
     </InnerPaddingSectionWrapper>
   );
