@@ -13,6 +13,7 @@ export default function PaymentButton({
   disabled = false,
   deliveryPrice: deliveryPriceProp,
 }) {
+  console.log('🚀 ~ PaymentButton ~ selectedItems:', selectedItems);
   const { userCode } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,8 +36,10 @@ export default function PaymentButton({
         },
         { totalPrice: 0, totalDiscountPrice: 0 },
       );
-      const dp = typeof deliveryPriceProp === 'number' ? deliveryPriceProp : 0;
+      const dp =
+        typeof deliveryPriceProp === 'number' ? deliveryPriceProp : 3000;
       const finalP = base.totalPrice - base.totalDiscountPrice + dp;
+      console.log('🚀 ~ PaymentButton ~ finalP:', finalP);
       return {
         totalPrice: base.totalPrice,
         totalDiscountPrice: base.totalDiscountPrice,
@@ -44,6 +47,7 @@ export default function PaymentButton({
         finalPrice: finalP,
       };
     }, [selectedItems, deliveryPriceProp]);
+  console.log('🚀 ~ PaymentButton ~ totalPrice:', totalPrice);
 
   // 네가 준 스키마에 1:1 매핑
   const buildOrderPayload = () => {
@@ -53,6 +57,9 @@ export default function PaymentButton({
         .filter(Boolean)
         .join('');
 
+    console.log('🚀 ~ buildOrderPayload ~ finalPrice:', finalPrice);
+    console.log('🚀 ~ buildOrderPayload ~ totalPrice:', totalPrice);
+    console.log('🚀 ~ buildOrderPayload ~ finalPrice:', finalPrice);
     return {
       userCode: Number(userCode),
 
@@ -89,7 +96,7 @@ export default function PaymentButton({
         optId: it.optId ?? null,
         productId: it.productId,
         quantity: Number(it.quantity ?? 1),
-        price: Number(it.discountPrice ?? it.salePrice ?? it.price ?? 0),
+        price: Number(it.discountPrice ?? it.price ?? 0),
       })),
     };
   };
@@ -122,7 +129,8 @@ export default function PaymentButton({
         const msg = orderRes?.message || '서버에서 orderId를 받지 못했습니다.';
         throw new Error(msg);
       }
-
+      // const totalPrice = discountPrice ? discountPrice : totalPrice;
+      const amount = totalPrice + deliveryPrice;
       // 2) 결제 데이터 구성(서버 orderId 필수)
       const paymentData = createPaymentData(selectedItems, customerInfo, {
         orderId,

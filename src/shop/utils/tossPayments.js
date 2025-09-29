@@ -44,7 +44,7 @@ export const createPaymentData = (items = [], customer = {}, override = {}) => {
   const orderId = String(override.orderId);
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const defaultSuccess = `${origin}/payment/success?orderId=${encodeURIComponent(orderId)}`;
-  const defaultFail = `${origin}/payment/fail?orderId=${encodeURIComponent(orderId)}`;
+  const defaultFail = `${origin}/payment/fail/${encodeURIComponent(orderId)}`;
 
   return {
     orderId,

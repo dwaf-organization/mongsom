@@ -23,7 +23,7 @@ export default function Main() {
         <BestReviewSection />
         <BrandStorySection />
       </motion.div>
-      <ChatFlutingButton />
+      {/* <ChatFlutingButton /> */}
     </Mainwrapper>
   );
 }
