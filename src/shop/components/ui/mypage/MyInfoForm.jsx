@@ -12,7 +12,6 @@ export default function MyInfoForm({ userData }) {
   const { addToast } = useToast();
   const { userCode } = useAuth();
 
-  // ✅ userCode를 toFormState에 함께 전달해서 폼 상태에 주입
   const [userInfo, setUserInfo] = useState(() =>
     toFormState(userData, userCode),
   );
@@ -32,21 +31,20 @@ export default function MyInfoForm({ userData }) {
   const handleSave = async e => {
     e.preventDefault();
 
-    // 선택: 새 비밀번호가 있으면 확인값 일치 검증
     if (userInfo.password && userInfo.password !== userInfo.confirmPassword) {
       addToast('새 비밀번호가 확인 값과 일치하지 않습니다.', 'error');
       return;
     }
 
-    // ✅ includePassword는 "비밀번호를 함께 보낼지"만 의미하는 불리언이에요.
     const includePassword = Boolean(userInfo.password);
     const payload = toApiPayload(userInfo, includePassword);
 
     const res = await updateMyInfo(payload);
+    console.log('🚀 ~ handleSave ~ res:', res);
     if (res?.code === 1) {
       addToast('정보 수정이 완료되었습니다.', 'success');
     } else {
-      addToast(res?.message || '정보 수정에 실패했습니다.', 'error');
+      addToast(res?.data || '정보 수정에 실패했습니다.', 'error');
     }
   };
 
@@ -130,7 +128,7 @@ export default function MyInfoForm({ userData }) {
           <AddressInput
             id='address'
             label='주소'
-            value={userInfo.address} // { zipCode, address, address2 }
+            value={userInfo.address}
             variant='signup'
             onChange={handleAddressChange}
           />

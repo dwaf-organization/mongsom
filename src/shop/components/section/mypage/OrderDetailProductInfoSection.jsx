@@ -1,7 +1,9 @@
 import ProductActionButtons from '../../ui/mypage/ProductActionButtons';
 import { pickFirstImageUrl } from '../../../utils/dateUtils';
+import { useNavigate } from 'react-router-dom';
 
 export default function OrderDetailProductInfoSection({ order }) {
+  const navigate = useNavigate();
   if (!order || !Array.isArray(order.details)) {
     return (
       <p className='text-center text-gray-600'>주문 정보를 찾을 수 없습니다.</p>
@@ -14,6 +16,10 @@ export default function OrderDetailProductInfoSection({ order }) {
     const num = Number(n);
     if (!Number.isFinite(num)) return '-';
     return `${num.toLocaleString()}원`;
+  };
+
+  const handleProductClick = productId => {
+    navigate(`/shop-detail/${productId}`);
   };
 
   return (
@@ -57,7 +63,10 @@ export default function OrderDetailProductInfoSection({ order }) {
             <div className='flex flex-col gap-4'>
               <p className='text-gray-500 text-left'>주문번호 : {orderNo}</p>
 
-              <div className='flex items-start gap-4'>
+              <button
+                className='flex items-start gap-4'
+                onClick={() => handleProductClick(d.productId)}
+              >
                 {image ? (
                   <img
                     src={image}
@@ -80,7 +89,7 @@ export default function OrderDetailProductInfoSection({ order }) {
                     <span>수량: {quantity}개</span>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
 
             <ProductActionButtons

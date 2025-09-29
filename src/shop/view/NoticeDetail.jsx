@@ -11,6 +11,7 @@ export default function NoticeDetail() {
   useEffect(() => {
     const fetchNoticeDetail = async () => {
       const res = await getNoticeDetail(id);
+      console.log('🚀 ~ fetchNoticeDetail ~ res:', res);
       setNotice(res);
     };
     fetchNoticeDetail();
@@ -37,9 +38,9 @@ export default function NoticeDetail() {
 
       <div
         className='pt-10'
-        // dangerouslySetInnerHTML={{ __html: notice.content }}
+        dangerouslySetInnerHTML={{ __html: notice && notice.contents }}
       >
-        {notice && notice.contents}
+        {/* {notice && notice.contents} */}
       </div>
     </InnerPaddingSectionWrapper>
   );

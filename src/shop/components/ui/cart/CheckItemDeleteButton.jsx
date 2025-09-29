@@ -2,10 +2,12 @@ import { Button } from '../button';
 import DeleteConfirmModal from '../DeleteConfirmModal';
 import { useModal } from '../../../context/ModalContext';
 import { useToast } from '../../../context/ToastContext';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function CheckItemDeleteButton({ cart, updateCart }) {
   const { addToast } = useToast();
   const { openModal } = useModal();
+  const { userCode } = useAuth();
 
   const handleDeleteSelected = () => {
     const selectedItems = cart.filter(item => item.checkStatus);
@@ -16,6 +18,7 @@ export default function CheckItemDeleteButton({ cart, updateCart }) {
 
     openModal(
       <DeleteConfirmModal
+        userCode={userCode}
         itemCount={selectedItems.length}
         cart={cart}
         updateCart={updateCart}

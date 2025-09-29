@@ -1,13 +1,4 @@
-// props: value, onChange, rating, onChangeRating
-export default function ReviewContents({
-  value,
-  onChange,
-  rating,
-  onChangeRating,
-}) {
-  // 간단한 별점 UI (★/☆)
-  const stars = [1, 2, 3, 4, 5];
-
+export default function ReviewContents({ value, onChange }) {
   return (
     <section className='flex items-start justify-between py-10 gap-4 border-b border-gray-400'>
       <p className='font-semibold text-left pb-4 whitespace-nowrap '>

@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 import { useModal } from '../../../context/ModalContext';
 import DeliveryTrackingModal from '../DeliveryTrackingModal';
 import { useAuth } from '../../../context/AuthContext';
@@ -91,7 +89,6 @@ export default function OrderListTab() {
         const name = first.productName || '-';
         const optName = first.optName || '-';
         const others = Math.max(details.length - 1, 0);
-        const qty = details.length || 1;
         const totalAmount = Number(order.finalPrice || 0);
 
         return (

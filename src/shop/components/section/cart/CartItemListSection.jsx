@@ -5,6 +5,7 @@ import ImageSkeleton from '../../ui/ImageSkeleton';
 import { updateCheckStatus, updateQuantity } from '../../../api/cart';
 import { useToast } from '../../../context/ToastContext';
 import { useAuth } from '../../../context/AuthContext';
+import { deleteCart } from '../../../api/cart';
 
 export default function CartItemListSection({ cart = [], updateCart }) {
   const { userCode } = useAuth();
@@ -39,7 +40,6 @@ export default function CartItemListSection({ cart = [], updateCart }) {
     updateCart(next);
   };
 
-  // 체크박스 변경
   const handleCheckboxChange = async (item, nextChecked) => {
     if (!userCode) return;
 
@@ -59,6 +59,16 @@ export default function CartItemListSection({ cart = [], updateCart }) {
     } finally {
       setPending(item.cartId, false);
     }
+  };
+
+  const handleDelete = async (productId, optId) => {
+    const res = await deleteCart(userCode, productId, optId);
+    if (res.code === 1) {
+      addToast('상품이 삭제되었습니다.', 'success');
+    } else {
+      addToast(res?.data || '상품 삭제에 실패했습니다.', 'error');
+    }
+    addToast('상품이 삭제되었습니다.', 'success');
   };
 
   const handleQuantityInput = (cartId, value) => {
@@ -135,7 +145,7 @@ export default function CartItemListSection({ cart = [], updateCart }) {
 
   return (
     <>
-      <ul className='flex flex-col items-start justify-start gap-4 w-full'>
+      <ul className='flex flex-col items-start justify-start gap-4 w-full border-b border-gray-500 pb-10 mb-4'>
         {cart.map(item => {
           const hasDiscount =
             Number(item.discountPer ?? 0) > 0 &&
@@ -171,13 +181,20 @@ export default function CartItemListSection({ cart = [], updateCart }) {
                   <p className='text-xl font-semibold whitespace-nowrap'>
                     {item.productName}
                   </p>
-
-                  <CheckBox
-                    id={`checkbox-${item.cartId}`}
-                    checked={Boolean(item.checkStatus)}
-                    disabled={busy}
-                    onChange={v => handleCheckboxChange(item, v)}
-                  />
+                  <div className='flex items-center gap-2'>
+                    <button
+                      className='text-pretendart text-gray-500'
+                      onClick={() => handleDelete(item.productId, item.optId)}
+                    >
+                      삭제 |
+                    </button>
+                    <CheckBox
+                      id={`checkbox-${item.cartId}`}
+                      checked={Boolean(item.checkStatus)}
+                      disabled={busy}
+                      onChange={v => handleCheckboxChange(item, v)}
+                    />
+                  </div>
                 </div>
 
                 <div className='flex items-center gap-2'>
@@ -237,9 +254,9 @@ export default function CartItemListSection({ cart = [], updateCart }) {
         })}
       </ul>
 
-      <div>
+      {/* <div>
         <CheckItemDeleteButton cart={cart} updateCart={updateCart} />
-      </div>
+      </div> */}
     </>
   );
 }

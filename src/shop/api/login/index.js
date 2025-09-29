@@ -19,3 +19,12 @@ export const findId = async data => {
     return response;
   }
 };
+
+export const findPassword = async data => {
+  console.log('🚀 ~ findPassword ~ data:', data);
+  const response = await fetchData.post(`api/v1/auth/find-pw`, {
+    body: JSON.stringify(data),
+  });
+  console.log('🚀 ~ findPassword ~ response:', response);
+  return response;
+};

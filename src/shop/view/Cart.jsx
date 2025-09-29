@@ -1,5 +1,4 @@
-// src/pages/Cart.jsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import { Link } from 'react-router-dom';
 import PurchaseBar from '../components/ui/cart/PurchaseBar';

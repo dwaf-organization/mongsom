@@ -16,8 +16,9 @@ export const updateMyInfo = async payload => {
   const response = await fetchData.post(`api/v1/auth/update`, {
     body: JSON.stringify(payload),
   });
+  console.log('🚀 ~ updateMyInfo ~ response:', response);
   if (response.code === 1) {
-    return response.data;
+    return response;
   }
 };
 

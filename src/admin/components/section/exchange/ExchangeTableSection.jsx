@@ -1,15 +1,13 @@
 import { useState, Fragment } from 'react';
 import { orderList } from '../../../data/OrderList';
 import { Button } from '../../ui/button';
+import { useSearchParams } from 'react-router-dom';
 
 const COLS = 7;
-export default function ExchangeTableSection({ activeTab }) {
+export default function ExchangeTableSection() {
+  const [tab] = useSearchParams();
+  const activeTab = tab.get('tab') || 'exchange';
   const [openId, setOpenId] = useState(null);
-
-  const filteredOrderList =
-    activeTab === 'exchange'
-      ? orderList
-      : orderList.filter(order => order.status === 'return');
 
   return (
     <section>
@@ -47,7 +45,6 @@ export default function ExchangeTableSection({ activeTab }) {
                 const isOpen = openId === order.id;
                 return (
                   <Fragment key={order.id}>
-                    {/* 메인 행 */}
                     <tr>
                       <td className='px-2 py-4 whitespace-nowrap text-sm text-gray-900'>
                         {order.orderDate}

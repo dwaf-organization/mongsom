@@ -37,10 +37,17 @@ export const updateQuantity = async data => {
   if (res?.code === -1) return res;
 };
 
-export const deleteCart = async data => {
-  const res = await fetchData.delete(`api/v1/cart/delete`, {
-    body: JSON.stringify(data),
-  });
+export const deleteCart = async (userCode, productId, optId) => {
+  console.log(
+    '🚀 ~ deleteCart ~ userCode, productId, optId:',
+    userCode,
+    productId,
+    optId,
+  );
+  const res = await fetchData.delete(
+    `api/v1/cart/delete/${userCode}/${productId}/${optId}`,
+  );
+  console.log('🚀 ~ deleteCart ~ res:', res);
   if (res.code === 1) return res;
   if (res?.code === -1) return res;
 };

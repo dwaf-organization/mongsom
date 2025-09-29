@@ -4,6 +4,17 @@ import { navigation } from '../constants/navList';
 
 export default function AdminLayout({ children }) {
   const location = useLocation();
+  const isLoginPage = location.pathname === '/admin';
+
+  if (isLoginPage) {
+    return (
+      <div className='w-full min-h-screen'>
+        <main>
+          <div className='w-full'>{children}</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className='flex'>

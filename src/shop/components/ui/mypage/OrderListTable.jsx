@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { getOrderList } from '../../../api/order';
 import { useNavigate } from 'react-router-dom';
@@ -97,8 +97,8 @@ export default function OrderListTable() {
             const thumb = pickFirstImageUrl(first.productImgUrls);
             const name = first.productName || '-';
             const opt = first.optName ? `옵션 | ${first.optName}` : '옵션 | -';
-            const totalQty = details.length || 1;
             const shippingFee = 3000;
+
             return (
               <tr
                 key={order.orderId}
