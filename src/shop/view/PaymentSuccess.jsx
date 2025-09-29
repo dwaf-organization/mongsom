@@ -1,4 +1,3 @@
-// src/pages/PaymentSuccess.jsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { paymentConfirm } from '../api/payment';
@@ -9,7 +8,6 @@ export default function PaymentSuccess() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(null);
 
-  // 쿼리 파라미터는 메모이제이션해서 의존성 깔끔하게
   const orderId = useMemo(
     () => searchParams.get('orderId') || '',
     [searchParams],
@@ -23,12 +21,10 @@ export default function PaymentSuccess() {
     return raw ? parseInt(raw, 10) : NaN;
   }, [searchParams]);
 
-  // 더블 호출 방지 (StrictMode나 재렌더에서 두번 날리는 거 방어)
   const calledRef = useRef(false);
 
   useEffect(() => {
     const run = async () => {
-      // 필수 파라미터 검증
       if (!orderId || !paymentKey || !Number.isFinite(amount)) {
         setErr('필수 결제 파라미터가 없습니다. (orderId/paymentKey/amount)');
         return;
@@ -41,25 +37,19 @@ export default function PaymentSuccess() {
 
       const payload = { orderId, paymentKey, amount };
 
-      // try {
-      //   // 화면 표시용 state는 따로 세팅
-      //   setPaymentInfo(payload);
+      try {
+        setPaymentInfo(payload);
 
-      //   // 실제 결제 승인 확인 호출
-      //   const res = await paymentConfirm(payload);
-      //   // 네 API 응답 형식에 맞춰 처리
-      //   // 예: if (res.code !== 1) throw new Error(res.message || '승인 실패');
-      //   // 콘솔 확인
-      //   console.log('🚀 paymentConfirm res:', res);
+        const res = await paymentConfirm(payload);
+        console.log('🚀 ~ run ~ res:', res);
 
-      //   // 장바구니 등 세션 데이터 정리
-      //   sessionStorage.removeItem('purchaseItems');
-      // } catch (e) {
-      //   console.error(e);
-      //   setErr(e?.message || '결제 확인 중 오류가 발생했습니다.');
-      // } finally {
-      //   setLoading(false);
-      // }
+        sessionStorage.removeItem('purchaseItems');
+      } catch (e) {
+        console.error(e);
+        setErr(e?.message || '결제 확인 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     run();

@@ -1,4 +1,3 @@
-// pages/OrderList.jsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import OrderSearchSection from '../components/section/orderList/OrderSearchSection';

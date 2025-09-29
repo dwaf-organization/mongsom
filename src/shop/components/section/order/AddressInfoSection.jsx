@@ -103,7 +103,7 @@ export default function AddressInfoSection({ onFormValidChange, userInfo }) {
 
       onFormValidChange(isValid, customerData);
     }
-  }, [formData]);
+  }, [formData, onFormValidChange]);
 
   return (
     <section className='py-10'>

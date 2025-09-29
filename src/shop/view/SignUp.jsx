@@ -1,5 +1,4 @@
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
-import SnsSignUpSection from '../components/section/signUp/SnsSignUpSection';
 import SingUpFormSection from '../components/section/signUp/SingUpFormSection';
 
 export default function SignUp() {

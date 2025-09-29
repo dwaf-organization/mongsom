@@ -17,7 +17,7 @@ export default function ProductList() {
     premium: 2,
   });
 
-  const [size, setSize] = useState(5);
+  const size = 5;
 
   const [rows, setRows] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -70,7 +70,7 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchList();
-  }, [page, size, query]);
+  }, [page, query]);
 
   const handleSearch = values => {
     setQuery({

@@ -10,8 +10,6 @@ export default function OrderPaymentInfo({ order }) {
   const fmtPrice = n =>
     typeof n === 'number' ? n.toLocaleString() + '원' : (n ?? '').toString();
 
-  const shippingFee = 3000;
-
   const rows = [
     { label: '결제 수단', value: order.paymentMethod },
     { label: '결제 일자', value: formatDate(order.paymentAt) },

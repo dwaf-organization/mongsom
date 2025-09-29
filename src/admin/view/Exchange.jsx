@@ -30,9 +30,13 @@ export default function Exchange() {
           : Array.isArray(res?.changeItems)
             ? res.changeItems
             : [];
+        const pagination = res?.pagination ?? {
+          currentPage: currentPage,
+          totalPage: Number(res?.totalPage ?? 1),
+        };
         setExchangeList(items);
-        setPagination(items.pagination);
-        console.log('🚀 ~ Exchange ~ items.pagination:', items.pagination);
+        setPagination(pagination);
+        console.log('🚀 ~ Exchange ~ items.pagination:', pagination);
       })
       .catch(() => {
         setExchangeList([]);
@@ -47,10 +51,6 @@ export default function Exchange() {
     setSearchParams({ tab: tabKey, page: '1' });
   };
 
-  const handlePageChange = pageNum => {
-    setSearchParams({ tab: activeTab, page: String(pageNum) });
-  };
-
   if (loading) {
     return <div>교환/반품 내역을 불러오는 중입니다.</div>;
   }
@@ -63,7 +63,7 @@ export default function Exchange() {
 
       <ExchangeTableSection activeTab={activeTab} exchangeList={exchangeList} />
 
-      <Pagination totalPage={pagination} />
+      <Pagination totalPage={pagination.totalPage} />
     </InnerPaddingSectionWrapper>
   );
 }

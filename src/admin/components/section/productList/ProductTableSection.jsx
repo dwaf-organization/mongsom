@@ -1,26 +1,16 @@
 import { Button } from '../../ui/button';
 import Pencil from '../../../assets/icons/Pencil';
 import { useNavigate } from 'react-router-dom';
-import { deleteProduct } from '../../../api/product';
-import { useToast } from '../../../context/ToastContext';
 import { useModal } from '../../../context/ModalContext';
 import ProductDeleteModal from './ProductDeleteModal';
 
 export default function ProductTableSection({ rows, loading }) {
   const navigate = useNavigate();
-  const { addToast } = useToast();
   const { openModal } = useModal();
   const safeRows = Array.isArray(rows) ? rows : [];
 
   const handleDelete = async id => {
     openModal(<ProductDeleteModal productId={id} />);
-    // const res = await deleteProduct(id);
-    // console.log('🚀 ~ handleDelete ~ res:', res);
-    // if (res.code === 1) {
-    //   addToast('상품이 삭제되었습니다.', 'success');
-    // } else {
-    //   addToast(res?.data || '상품 삭제에 실패했습니다.', 'error');
-    // }
   };
 
   return (

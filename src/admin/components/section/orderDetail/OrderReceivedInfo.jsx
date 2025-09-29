@@ -1,16 +1,9 @@
-import { formatDate } from '../../../utils/dateUtils';
-
 export default function OrderReceivedInfo({ order }) {
   if (!order) {
     return (
       <div className='py-10 text-sm text-gray-500'>주문 정보가 없습니다.</div>
     );
   }
-
-  const fmtPrice = n =>
-    typeof n === 'number' ? n.toLocaleString() + '원' : (n ?? '').toString();
-
-  const shippingFee = 3000;
 
   const rows = [
     { label: '받는 사람', value: order.receivedUserName },

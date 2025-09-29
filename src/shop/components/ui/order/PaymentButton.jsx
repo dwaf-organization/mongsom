@@ -39,7 +39,6 @@ export default function PaymentButton({
       const dp =
         typeof deliveryPriceProp === 'number' ? deliveryPriceProp : 3000;
       const finalP = base.totalPrice - base.totalDiscountPrice + dp;
-      console.log('🚀 ~ PaymentButton ~ finalP:', finalP);
       return {
         totalPrice: base.totalPrice,
         totalDiscountPrice: base.totalDiscountPrice,
@@ -47,9 +46,7 @@ export default function PaymentButton({
         finalPrice: finalP,
       };
     }, [selectedItems, deliveryPriceProp]);
-  console.log('🚀 ~ PaymentButton ~ totalPrice:', totalPrice);
 
-  // 네가 준 스키마에 1:1 매핑
   const buildOrderPayload = () => {
     const phoneDigits =
       (customerInfo?.phone && String(customerInfo.phone).replace(/\D/g, '')) ||
@@ -57,9 +54,6 @@ export default function PaymentButton({
         .filter(Boolean)
         .join('');
 
-    console.log('🚀 ~ buildOrderPayload ~ finalPrice:', finalPrice);
-    console.log('🚀 ~ buildOrderPayload ~ totalPrice:', totalPrice);
-    console.log('🚀 ~ buildOrderPayload ~ finalPrice:', finalPrice);
     return {
       userCode: Number(userCode),
 
@@ -101,14 +95,14 @@ export default function PaymentButton({
     };
   };
 
-  const extractOrderId = res => {
-    // 서버가 주는 형태에 맞춰 안전하게 추출
-    return (
-      res?.orderId ??
-      res?.result?.orderId ??
-      (typeof res === 'string' ? res : null)
-    );
-  };
+  // const extractOrderId = res => {
+  //   // 서버가 주는 형태에 맞춰 안전하게 추출
+  //   return (
+  //     res?.orderId ??
+  //     res?.result?.orderId ??
+  //     (typeof res === 'string' ? res : null)
+  //   );
+  // };
 
   const handlePayment = async () => {
     if (isLoading) return; // 연타 방지
@@ -129,18 +123,13 @@ export default function PaymentButton({
         const msg = orderRes?.message || '서버에서 orderId를 받지 못했습니다.';
         throw new Error(msg);
       }
-      // const totalPrice = discountPrice ? discountPrice : totalPrice;
-      const amount = totalPrice + deliveryPrice;
-      // 2) 결제 데이터 구성(서버 orderId 필수)
+
       const paymentData = createPaymentData(selectedItems, customerInfo, {
         orderId,
         amount: finalPrice,
-        // successUrl/failUrl 커스텀 필요하면 여기서 지정
       });
 
-      // 3) 토스 위젯 오픈
       await openPaymentWidget(paymentData);
-      // 위젯이 success/fail URL로 넘겨줌. 성공 핸들러에서 서버 승인 처리 (paymentKey+orderId+amount).
     } catch (error) {
       console.error('결제 실패:', error);
       alert(

@@ -34,7 +34,6 @@ export default function EditProductInfoSection({ product }) {
   const fileInputRef = useRef(null);
   const { addToast } = useToast();
 
-  // 업로드 훅
   const {
     handleFileInput,
     uploadedImages,

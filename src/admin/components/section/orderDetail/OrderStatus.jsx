@@ -54,7 +54,6 @@ export default function OrderStatus({ order, saving = false }) {
   const [form, setForm] = useState(initial);
   const [submitting, setSubmitting] = useState(false);
 
-  // ✅ 주문 취소 여부를 정규화된 값으로 판단
   const isCancelled = useMemo(
     () => normalizeStatus(order?.deliveryStatus) === '주문 취소',
     [order],
