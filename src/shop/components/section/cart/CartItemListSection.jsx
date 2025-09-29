@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
 import CheckBox from '../../ui/CheckBox';
-import CheckItemDeleteButton from '../../ui/cart/CheckItemDeleteButton';
 import ImageSkeleton from '../../ui/ImageSkeleton';
 import { updateCheckStatus, updateQuantity } from '../../../api/cart';
 import { useToast } from '../../../context/ToastContext';

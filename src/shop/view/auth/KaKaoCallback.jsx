@@ -28,7 +28,6 @@ export default function KaKaoCallback() {
       }
 
       try {
-        // ⚠️ 여기에 "REST API 키"를 프론트에 노출합니다(보안상 취약)
         const clientId = process.env.REACT_APP_REST_API_KEY;
         const redirectUri = `${window.location.origin}/auth/kakao/callback`;
 

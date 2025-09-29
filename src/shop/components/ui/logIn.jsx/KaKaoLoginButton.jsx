@@ -1,4 +1,3 @@
-// KaKaoLoginButton.jsx
 import { useEffect, useState } from 'react';
 import KakaoLogo from '../../../asset/logo/kakaoLogo.png';
 
@@ -38,7 +37,11 @@ export default function KaKaoLoginButton() {
 
   return (
     <button onClick={handleLogin} disabled={!ready}>
-      <img src={KakaoLogo} alt='' className='h-10 w-10 rounded-full' />
+      <img
+        src={KakaoLogo}
+        alt='카카오 로고'
+        className='h-10 w-10 rounded-full'
+      />
     </button>
   );
 }

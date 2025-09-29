@@ -1,7 +1,3 @@
-import { Link } from 'react-router-dom';
-
-import KakaoLogo from '../../../asset/logo/kakaoLogo.png';
-import NaverLogo from '../../../asset/logo/naverLogo.png';
 import KaKaoLoginButton from '../../ui/logIn.jsx/KaKaoLoginButton';
 import NaverLoginButton from '../../ui/logIn.jsx/NaverLoginButton';
 

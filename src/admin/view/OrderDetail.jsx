@@ -22,12 +22,21 @@ export default function OrderDetail() {
       console.log(response);
       if (response.code === 1) {
         setOrder(response.data);
+        setLoading(false);
       } else {
         setOrder(null);
+        setLoading(false);
       }
     };
     fetchOrderDetail();
   }, [id]);
+  if (loading) {
+    return (
+      <InnerPaddingSectionWrapper>
+        <div className='py-6 text-center text-gray-500'>불러오는 중…</div>
+      </InnerPaddingSectionWrapper>
+    );
+  }
 
   return (
     <InnerPaddingSectionWrapper>

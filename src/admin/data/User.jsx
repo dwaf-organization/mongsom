@@ -4,10 +4,8 @@ export const user = [
     name: '홍길동',
     userId: 'hong123',
     phone: '010-1234-5678',
-    email: 'hong@example.com',
     address: '서울특별시 강남구 테헤란로 123',
     detailAddress: 'ABC빌딩 10층',
-    name: 'John Doe',
     email: 'john.doe@example.com',
   },
   {
