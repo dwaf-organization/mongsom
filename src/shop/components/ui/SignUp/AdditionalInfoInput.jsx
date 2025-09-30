@@ -1,6 +1,6 @@
 export default function AdditionalInfoInput() {
   return (
-    <div className='flex flex-col gap-4 max-w-[980px] mx-auto'>
+    <div className='flex flex-col gap-4 max-w-[980px]'>
       <h3 className='text-xl font-semibold text-start font-pretendard border-b border-gray-500 pb-6'>
         추가 정보 (선택)
       </h3>

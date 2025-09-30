@@ -142,7 +142,7 @@ export default function AddressInfoSection({ onFormValidChange, userInfo }) {
           value={formData.name}
           onChange={e => handleInputChange('name', e.target.value)}
           error={errors.name}
-          readOnly={selectedAddressType === 'existing'}
+          // readOnly={selectedAddressType === 'existing'}
         />
 
         <AddressFormField id='phonenumber' label='휴대전화' required>
@@ -153,7 +153,7 @@ export default function AddressInfoSection({ onFormValidChange, userInfo }) {
               maxLength={3}
               value={formData.phone1}
               onChange={e => handleInputChange('phone1', e.target.value)}
-              readOnly={selectedAddressType === 'existing'}
+              // readOnly={selectedAddressType === 'existing'}
               className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 ${
                 selectedAddressType === 'existing'
                   ? 'bg-gray-100 cursor-not-allowed'
@@ -167,7 +167,7 @@ export default function AddressInfoSection({ onFormValidChange, userInfo }) {
               maxLength={4}
               value={formData.phone2}
               onChange={e => handleInputChange('phone2', e.target.value)}
-              readOnly={selectedAddressType === 'existing'}
+              // readOnly={selectedAddressType === 'existing'}
               className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 ${
                 selectedAddressType === 'existing'
                   ? 'bg-gray-100 cursor-not-allowed'
@@ -181,7 +181,7 @@ export default function AddressInfoSection({ onFormValidChange, userInfo }) {
               maxLength={4}
               value={formData.phone3}
               onChange={e => handleInputChange('phone3', e.target.value)}
-              readOnly={selectedAddressType === 'existing'}
+              // readOnly={selectedAddressType === 'existing'}
               className={`border border-gray-400 rounded-md p-2 w-full focus:outline-primary-200 ${
                 selectedAddressType === 'existing'
                   ? 'bg-gray-100 cursor-not-allowed'
@@ -208,7 +208,7 @@ export default function AddressInfoSection({ onFormValidChange, userInfo }) {
           }}
           onChange={handleAddressChange}
           error={errors.address || errors.userDetailAddress}
-          readOnly={selectedAddressType === 'existing'}
+          // readOnly={selectedAddressType === 'existing'}
         />
 
         <label

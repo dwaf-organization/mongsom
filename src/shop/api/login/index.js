@@ -28,3 +28,18 @@ export const findPassword = async data => {
   console.log('🚀 ~ findPassword ~ response:', response);
   return response;
 };
+
+export const kakaoLoginCheck = async ({ email, nickname }) => {
+  const qs = new URLSearchParams({
+    email: String(email).trim(),
+    nickname: String(nickname || '').trim(),
+  });
+  console.log('🚀 ~ kakaoLoginCheck ~ email, nickname:', email, nickname);
+  console.log('🚀 ~ kakaoLoginCheck ~ qs:', qs);
+
+  const url = `api/v1/auth/kakao/login?${qs.toString()}`;
+
+  const res = await fetchData.get(url);
+
+  return res;
+};
