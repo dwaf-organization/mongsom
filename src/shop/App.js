@@ -33,7 +33,9 @@ import NoticeDetail from './view/NoticeDetail';
 import KakaoCallback from './view/auth/KaKaoCallback';
 import NaverCallback from './view/auth/NaverCallback';
 import './index.css';
-
+import OnlyGuests from './routes/OnlyGuests';
+import RequireAuth from './routes/RequireAuth';
+import EssentialInfo from './view/EssentialInfo';
 export default function ShopApp() {
   return (
     <AuthProvider>
@@ -42,32 +44,40 @@ export default function ShopApp() {
           <Header />
           <GloabalLayout>
             <Routes>
-              <Route path='/login' element={<Login />} />
-              <Route path='/signup' element={<SignUp />} />
               <Route path='/' element={<Main />} />
               <Route path='/brand' element={<Brand />} />
               <Route path='/shop' element={<Shop />} />
               <Route path='/shop-detail/:id' element={<ShopDetail />} />
               <Route path='/notice' element={<Notice />} />
-              <Route path='/cart' element={<Cart />} />
-              <Route path='/order' element={<Order />} />
-              <Route path='/mypage' element={<Mypage />} />
-              <Route path='/order-detail/:id' element={<OrderDetail />} />
-              <Route path='/exchange/:orderId' element={<Exchange />} />
-              <Route path='/create-review/:id' element={<CreateReview />} />
-              <Route path='/payment' element={<Payment />} />
-              <Route path='/payment/success' element={<PaymentSuccess />} />
-              <Route path='/payment/fail' element={<PaymentFail />} />
-              <Route path='/find-id' element={<FindId />} />
-              <Route path='/find-password' element={<FindPassword />} />
+              <Route path='/notice-detail/:id' element={<NoticeDetail />} />
               <Route path='/auth/kakao/callback' element={<KakaoCallback />} />
               <Route path='/auth/naver/callback' element={<NaverCallback />} />
               <Route
                 path='/password-reset-complete'
                 element={<PasswordResetComplete />}
               />
-              <Route path='/notice-detail/:id' element={<NoticeDetail />} />
+
+              <Route element={<OnlyGuests />}>
+                <Route path='/login' element={<Login />} />
+                <Route path='/signup' element={<SignUp />} />
+                <Route path='/find-id' element={<FindId />} />
+                <Route path='/find-password' element={<FindPassword />} />
+                <Route path='/essential-info' element={<EssentialInfo />} />
+              </Route>
+
+              <Route element={<RequireAuth />}>
+                <Route path='/cart' element={<Cart />} />
+                <Route path='/order' element={<Order />} />
+                <Route path='/mypage' element={<Mypage />} />
+                <Route path='/order-detail/:id' element={<OrderDetail />} />
+                <Route path='/exchange/:orderId' element={<Exchange />} />
+                <Route path='/create-review/:id' element={<CreateReview />} />
+                <Route path='/payment' element={<Payment />} />
+                <Route path='/payment/success' element={<PaymentSuccess />} />
+                <Route path='/payment/fail' element={<PaymentFail />} />
+              </Route>
             </Routes>
+
             <GlobalToast />
             <GlobalModal />
           </GloabalLayout>

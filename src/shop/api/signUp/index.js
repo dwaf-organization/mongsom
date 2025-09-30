@@ -6,6 +6,7 @@ export const signUp = async data => {
     method: 'POST',
     body: JSON.stringify(data),
   });
+  console.log('🚀 ~ signUp ~ response:', response);
   return response;
 };
 

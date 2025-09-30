@@ -35,8 +35,7 @@ export default function MypageMain() {
     return () => {
       cancelled = true;
     };
-  }, [userCode]); // ✅ userCode를 의존성에 넣어야 로그인 복원 후 재요청됩니다.
-
+  }, [userCode]);
   if (loading) {
     return (
       <section className='pt-10'>

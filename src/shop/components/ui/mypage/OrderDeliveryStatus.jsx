@@ -21,15 +21,14 @@ export default function OrderDeliveryStatus({ orderDeliveryStatus }) {
 
       <ul className='flex items-center justify-between text-center pt-6 pb-5 px-8'>
         {statusList.map((status, idx) => (
-          <div className='flex-1 relative'>
+          <div key={idx} className='flex-1 relative'>
             <li className='text-3xl font-semibold font-inter text-gray-50'>
               {status.count}
             </li>
             <li className='mt-2 text-lg font-medium text-foreground'>
               {status.label}
             </li>
-            {orderDeliveryStatus.paymentCompleted <
-              orderDeliveryStatus.delivered && (
+            {status.label !== '배송완료' && (
               <li className='absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 '>
                 <RightChevron />
               </li>

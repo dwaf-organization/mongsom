@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
 import { useAuth } from '../../../context/AuthContext';
 import { getOrderList } from '../../../api/order';
-import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../utils/dateUtils';
 import { pickFirstImageUrl } from '../../../utils/dateUtils';
 
@@ -51,9 +52,12 @@ export default function OrderListTable() {
   if (loading) {
     return (
       <section className='pt-10'>
-        <p className='text-xl font-semibold text-left border-b border-gray-500 pb-4'>
-          주문내역 조회
-        </p>
+        <div className='flex items-center justify-between border-b border-gray-500 pb-4'>
+          <p className='text-xl font-semibold text-left '>주문내역 조회</p>
+          <Link to='/mypage?tab=orderList' className='text-sm text-gray-50'>
+            주문내역 전체보기
+          </Link>
+        </div>
         <div className='py-6 text-center text-gray-500'>불러오는 중…</div>
       </section>
     );
@@ -74,9 +78,12 @@ export default function OrderListTable() {
 
   return (
     <section className='pt-10'>
-      <p className='text-xl font-semibold text-left border-b border-gray-500 pb-4'>
-        주문내역 조회
-      </p>
+      <div className='flex items-center justify-between border-b border-gray-500 pb-4'>
+        <p className='text-xl font-semibold text-left '>주문내역 조회</p>
+        <Link to='/mypage?tab=orderList' className='text-sm text-gray-50'>
+          주문내역 전체보기
+        </Link>
+      </div>
 
       <table className='w-full'>
         <thead>
@@ -91,7 +98,7 @@ export default function OrderListTable() {
         </thead>
 
         <tbody className='w-full'>
-          {orderList.map(order => {
+          {orderList.slice(0, 5).map(order => {
             const details = Array.isArray(order.details) ? order.details : [];
             const first = details[0] || {};
             const thumb = pickFirstImageUrl(first.productImgUrls);
