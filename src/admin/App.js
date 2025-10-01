@@ -12,6 +12,7 @@ import EditProductInfo from './view/EditProductInfo';
 import UserManagement from './view/UserManagement';
 import OrderDetail from './view/OrderDetail';
 import Notice from './view/Notice';
+import InquireList from '../admin/view/InquireList';
 import './index.css';
 import 'quill/dist/quill.snow.css';
 import Login from './view/Login';
@@ -22,6 +23,7 @@ export default function AdminApp() {
   return (
     <AuthProvider>
       <ToastProvider>
+        s
         <ModalProvider>
           <AdminLayout>
             <Routes>
@@ -33,6 +35,7 @@ export default function AdminApp() {
                 <Route path='/orders' element={<OrderList />} />
                 <Route path='/notice' element={<Notice />} />
                 <Route path='/exchange-return' element={<Exchange />} />
+                <Route path='/inquire-list' element={<InquireList />}></Route>
                 <Route
                   path='/edit-product-info/:id'
                   element={<EditProductInfo />}
