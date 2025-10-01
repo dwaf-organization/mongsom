@@ -1,5 +1,5 @@
 const BASE_URL =
-  (typeof process !== 'undefined' && process.env?.BASE_API_URL) ||
+  (typeof process !== 'undefined' && process.env?.REACT_APP_BASE_API_URL) ||
   'http://localhost:8000/';
 
 /**

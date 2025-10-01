@@ -1,8 +1,7 @@
 // 토스페이먼츠 테스트 키값들
 export const TOSS_PAYMENTS_CONFIG = {
-  CLIENT_KEY: 'test_ck_mBZ1gQ4YVXY9WXMKOZvXrl2KPoqN',
-  SECRET_KEY: 'test_sk_LlDJaYngrojJ9APzMLyNVezGdRpX',
-  SECURITY_KEY:
-    '07a4f6d9ec28a1464bd413e336b3f5dc6bc631f175b57d00a0d03c77345802c1',
-  BASE_URL: 'https://api.tosspayments.com/v1',
+  CLIENT_KEY: process.env.REACT_APP_TOSS_CLIENT_KEY,
+  SECRET_KEY: process.env.REACT_APP_TOSS_SECRET_KEY,
+  SECURITY_KEY: process.env.REACT_APP_TOSS_SECURITY_KEY,
+  BASE_URL: process.env.REACT_APP_TOSS_BASE_URL,
 };
