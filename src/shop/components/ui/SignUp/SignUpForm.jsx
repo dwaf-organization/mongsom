@@ -2,29 +2,35 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '../../ui/button';
-import AdditionalInfoInput from './AdditionalInfoInput';
 import FormField from './FormField';
 import AddressInput from '../AddressInput';
 
 import { SignUpSchema } from '../../../schema/SignUpSchema';
 import { useToast } from '../../../context/ToastContext';
 import { signUp, checkId } from '../../../api/signUp';
+import { useModal } from '../../../context/ModalContext';
+import AgreeModal from '../AgreeModal';
 
 export default function SignUpForm() {
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { openModal } = useModal();
 
   const [formData, setFormData] = useState({
     userId: '',
     password: '',
     confirmPassword: '',
     name: '',
-    address: { zipCode: '', address: '', address2: '' }, // AddressInput과 동일
+    address: { zipCode: '', address: '', address2: '' },
     phone1: '',
     phone2: '',
     phone3: '',
     email: '',
     birth: '',
+    agreeMain: false,
+    agreeShopping: false,
+    agreeSms: false,
+    agreeEmail: false,
   });
 
   const [errors, setErrors] = useState({});
@@ -37,7 +43,6 @@ export default function SignUpForm() {
   const isValidUserIdFormat = v => /^[a-z0-9]{4,16}$/.test(v);
   const onlyDigits = v => v.replace(/\D/g, '');
 
-  // 비밀번호 일치 체크
   useEffect(() => {
     if (formData.password && formData.confirmPassword) {
       if (formData.password !== formData.confirmPassword) {
@@ -55,7 +60,6 @@ export default function SignUpForm() {
     }
   }, [formData.password, formData.confirmPassword]);
 
-  // 버튼 활성화 조건
   useEffect(() => {
     const requiredFields = [
       'userId',
@@ -70,21 +74,26 @@ export default function SignUpForm() {
     const allFieldsFilled = requiredFields.every(
       field => String(formData[field] ?? '').trim() !== '',
     );
-
     const addressFilled =
       String(formData.address.zipCode ?? '').trim() !== '' &&
       String(formData.address.address ?? '').trim() !== '';
 
     const userIdTrimmed = formData.userId.trim();
-
     const idReady =
       idStatus === 'available' &&
       lastCheckedId &&
       lastCheckedId === userIdTrimmed &&
       isValidUserIdFormat(userIdTrimmed);
 
+    const agreed =
+      formData.agreeMain === true && formData.agreeShopping === true;
+
     setIsFormValid(
-      allFieldsFilled && addressFilled && !errors.confirmPassword && idReady,
+      allFieldsFilled &&
+        addressFilled &&
+        !errors.confirmPassword &&
+        idReady &&
+        agreed,
     );
   }, [formData, errors.confirmPassword, idStatus, lastCheckedId]);
 
@@ -100,6 +109,10 @@ export default function SignUpForm() {
     setFormData(prev => ({ ...prev, address: addressData }));
   };
 
+  const handleToggleAgree = field => {
+    setFormData(prev => ({ ...prev, [field]: !prev[field] }));
+  };
+
   const handleCheckUserId = async () => {
     const id = formData.userId.trim();
     if (!id) return addToast('아이디를 입력해주세요.', 'error');
@@ -110,11 +123,8 @@ export default function SignUpForm() {
     try {
       setIdStatus('checking');
       const res = await checkId(id);
-
       let available = null;
-      if (res?.code === 1) {
-        available = res.data === true;
-      }
+      if (res?.code === 1) available = res.data === true;
 
       if (available === true) {
         setIdStatus('available');
@@ -126,13 +136,16 @@ export default function SignUpForm() {
         addToast('이미 사용 중인 아이디입니다.', 'error');
       } else {
         setIdStatus('error');
-        console.log('Unexpected response:', res);
         addToast('중복 확인 응답 형식을 확인해주세요.', 'error');
       }
-    } catch (e) {
+    } catch {
       setIdStatus('error');
       addToast('중복 확인 중 오류가 발생했습니다.', 'error');
     }
+  };
+
+  const handleClick = () => {
+    openModal(<AgreeModal />);
   };
 
   const handleSubmit = async e => {
@@ -140,7 +153,6 @@ export default function SignUpForm() {
     if (loading) return;
 
     const userIdTrimmed = formData.userId.trim();
-
     if (!isValidUserIdFormat(userIdTrimmed)) {
       addToast('아이디는 영소문자/숫자 4~16자입니다.', 'error');
       return;
@@ -149,9 +161,17 @@ export default function SignUpForm() {
       addToast('아이디 중복확인을 먼저 진행해주세요.', 'error');
       return;
     }
-
     if (formData.password !== formData.confirmPassword) {
       addToast('비밀번호가 일치하지 않습니다.', 'error');
+      return;
+    }
+    if (!formData.agreeMain) {
+      addToast('이용 약관에 동의해야 회원가입이 가능합니다.', 'error');
+      return;
+    }
+
+    if (!formData.agreeShopping) {
+      addToast('이용 약관에 동의해야 회원가입이 가능합니다.', 'error');
       return;
     }
 
@@ -177,23 +197,21 @@ export default function SignUpForm() {
         phone: [formData.phone1, formData.phone2, formData.phone3].join(''),
         email: formData.email,
         birth: formData.birth?.trim() || null,
-        agreeMain: true,
-        agreeShopping: true,
-        agreeSms: true,
-        agreeEmail: true,
+        agreeMain: formData.agreeMain,
+        agreeShopping: formData.agreeShopping,
+        agreeSms: formData.agreeSms,
+        agreeEmail: formData.agreeEmail,
         provider: 'LOCAL',
       };
 
       const resp = await signUp(payload);
-
       if (resp?.code === 1) {
         addToast('회원가입이 완료되었습니다!', 'success');
         navigate('/login', { replace: true });
       } else {
         addToast(resp?.message || '회원가입에 실패했습니다.', 'error');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       addToast('회원가입 중 오류가 발생했습니다.', 'error');
     } finally {
       setLoading(false);
@@ -202,14 +220,14 @@ export default function SignUpForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <section className='flex flex-col justify-center py-6 space-y-6 '>
+      <section className='flex flex-col justify-center space-y-6 py-6'>
         <FormField
           id='userId'
           label='아이디'
           required
           message='(영문 소문자/숫자 , 4~16자)'
         >
-          <div className='flex items-center gap-2 w-full'>
+          <div className='flex w-full items-center gap-2'>
             <input
               type='text'
               value={formData.userId}
@@ -218,7 +236,7 @@ export default function SignUpForm() {
               minLength={4}
               maxLength={16}
               autoComplete='username'
-              className='border rounded-md p-2 w-full max-w-[370px] focus:outline-primary-200 border-gray-400'
+              className='w-full max-w-[370px] rounded-md border border-gray-400 p-2 focus:outline-primary-200'
             />
             <Button
               type='button'
@@ -226,7 +244,7 @@ export default function SignUpForm() {
               disabled={
                 !isValidUserIdFormat(formData.userId) || idStatus === 'checking'
               }
-              className='w-fit px-8  py-2 text-lg'
+              className='w-fit px-8 py-2 text-lg'
             >
               {idStatus === 'checking'
                 ? '확인 중...'
@@ -236,13 +254,13 @@ export default function SignUpForm() {
             </Button>
           </div>
           {idStatus === 'taken' && (
-            <p className='text-red-500 text-sm mt-1'>
+            <p className='mt-1 text-sm text-red-500'>
               이미 사용 중인 아이디입니다.
             </p>
           )}
           {idStatus === 'available' &&
             lastCheckedId === formData.userId.trim() && (
-              <p className='text-green-600 text-sm mt-1 whitespace-nowrap'>
+              <p className='mt-1 whitespace-nowrap text-sm text-green-600'>
                 사용 가능
               </p>
             )}
@@ -259,7 +277,6 @@ export default function SignUpForm() {
           onChange={e => handleInputChange('password', e.target.value)}
           autoComplete='new-password'
         />
-
         <FormField
           id='confirmPassword'
           label='비밀번호 확인'
@@ -293,7 +310,7 @@ export default function SignUpForm() {
         />
 
         <FormField id='phone' label='휴대전화' required>
-          <div className='flex items-center gap-2 w-full'>
+          <div className='flex w-full items-center gap-2'>
             <input
               type='text'
               inputMode='numeric'
@@ -304,7 +321,7 @@ export default function SignUpForm() {
               placeholder='010'
               maxLength={3}
               autoComplete='tel-local-prefix'
-              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+              className='flex-1 rounded-md border border-gray-400 p-2 focus:outline-primary-200'
             />
             <span className='text-gray-500'>-</span>
             <input
@@ -317,7 +334,7 @@ export default function SignUpForm() {
               placeholder='1234'
               maxLength={4}
               autoComplete='tel-local-suffix'
-              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+              className='flex-1 rounded-md border border-gray-400 p-2 focus:outline-primary-200'
             />
             <span className='text-gray-500'>-</span>
             <input
@@ -330,7 +347,7 @@ export default function SignUpForm() {
               placeholder='5678'
               maxLength={4}
               autoComplete='tel-local-suffix'
-              className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
+              className='flex-1 rounded-md border border-gray-400 p-2 focus:outline-primary-200'
             />
           </div>
         </FormField>
@@ -342,24 +359,68 @@ export default function SignUpForm() {
             onChange={e => handleInputChange('email', e.target.value)}
             placeholder='이메일을 입력하세요'
             autoComplete='email'
-            className='border rounded-md p-3 flex-1 w-full focus:outline-primary-200 border-gray-400'
+            className='flex-1 w-full rounded-md border border-gray-400 p-3 focus:outline-primary-200'
           />
         </FormField>
       </section>
 
-      <AdditionalInfoInput />
+      {/* <AdditionalInfoInput /> */}
 
-      <section>
-        <label htmlFor='agreeMain'>
-          <input type='checkbox' />
-          이용 약관
+      <section className='mt-6 space-y-3 rounded-md border border-gray-200 p-4'>
+        <label className='flex items-center gap-2 text-sm'>
+          <input
+            type='checkbox'
+            checked={formData.agreeMain}
+            onChange={() => handleToggleAgree('agreeMain')}
+          />
+          <sapn>
+            이용 약관 동의 <span className='text-red-500'>(필수)</span>
+          </sapn>
+
+          <button
+            className='ml-auto text-xs text-gray-500 underline'
+            type='button'
+            onClick={handleClick}
+          >
+            약관 보기
+          </button>
+        </label>
+
+        <label className='flex items-center gap-2 text-sm'>
+          <input
+            type='checkbox'
+            checked={formData.agreeShopping}
+            onChange={() => handleToggleAgree('agreeShopping')}
+          />
+          <sapn>
+            개인정보 수집 및 이용 약관 동의
+            <span className='text-red-500'>(필수)</span>
+          </sapn>
+        </label>
+
+        <label className='flex items-center gap-2 text-sm'>
+          <input
+            type='checkbox'
+            checked={formData.agreeSms}
+            onChange={() => handleToggleAgree('agreeSms')}
+          />
+          <span>SMS 수신 동의</span>
+        </label>
+
+        <label className='flex items-center gap-2 text-sm'>
+          <input
+            type='checkbox'
+            checked={formData.agreeEmail}
+            onChange={() => handleToggleAgree('agreeEmail')}
+          />
+          <span>이메일 수신 동의</span>
         </label>
       </section>
 
       <Button
         type='submit'
-        className={`w-full p-4 mt-11 mx-auto text-2xl ${
-          !isFormValid || loading ? 'opacity-50 cursor-not-allowed' : ''
+        className={`mx-auto mt-11 w-full p-4 text-2xl ${
+          !isFormValid || loading ? 'cursor-not-allowed opacity-50' : ''
         }`}
         disabled={!isFormValid || loading}
       >

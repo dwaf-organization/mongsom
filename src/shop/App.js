@@ -45,7 +45,7 @@ export default function ShopApp() {
           <GloabalLayout>
             <Routes>
               <Route path='/' element={<Main />} />
-              <Route path='/brand' element={<Brand />} />
+              {/* <Route path='/brand' element={<Brand />} /> */}
               <Route path='/shop' element={<Shop />} />
               <Route path='/shop-detail/:id' element={<ShopDetail />} />
               <Route path='/notice' element={<Notice />} />

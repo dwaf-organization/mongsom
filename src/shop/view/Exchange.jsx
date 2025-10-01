@@ -16,6 +16,11 @@ export default function Exchange() {
   const [exchangeReason, setExchangeReason] = useState('');
   const [exchangeType, setExchangeType] = useState('exchange');
 
+  // ✅ 반품 전용 입력값
+  const [refundBank, setRefundBank] = useState(''); // 은행명
+  const [refundAccount, setRefundAccount] = useState(''); // 계좌번호(숫자만)
+  const onlyDigits = v => (v || '').replace(/\D/g, '');
+
   useEffect(() => {
     let cancel = false;
     if (!orderId) {
@@ -67,11 +72,7 @@ export default function Exchange() {
         quantity: d.quantity ?? 1,
         totalPrice:
           typeof d.price === 'number' ? d.price : (order.finalPrice ?? 0),
-
-        // 진행 상태
         changeStatus: d.changeStatus ?? null,
-
-        // 주문 공통
         orderId: order.orderId ?? order.id,
         orderNumber: order.orderNumber ?? order.orderId,
         orderDate: order.paymentAt ?? order.orderDate,
@@ -83,7 +84,7 @@ export default function Exchange() {
   const handleProductSelect = productId => {
     const target = allProducts.find(p => p.id === productId);
     if (!target) return;
-    const isDisabled = target.changeStatus != null; // 진행 중이면 선택 불가
+    const isDisabled = target.changeStatus != null;
     if (isDisabled) return;
     setSelectedProduct(productId);
   };
@@ -98,6 +99,18 @@ export default function Exchange() {
       return;
     }
 
+    // ✅ 반품일 때 은행/계좌 필수
+    if (exchangeType === 'return') {
+      if (!refundBank.trim()) {
+        addToast('환불 은행을 입력해주세요.');
+        return;
+      }
+      if (!refundAccount.trim()) {
+        addToast('환불 계좌번호를 입력해주세요.');
+        return;
+      }
+    }
+
     const target = allProducts.find(p => p.id === selectedProduct);
     if (!target) {
       addToast('선택한 상품 정보를 찾을 수 없습니다.');
@@ -108,10 +121,16 @@ export default function Exchange() {
       return;
     }
 
+    // ✅ contents 조합: 사유 + (반품이면) 은행/계좌 문구 추가
+    const contents =
+      exchangeType === 'return'
+        ? `${exchangeReason.trim()}\n[환불 계좌]\n- 은행: ${refundBank.trim()}\n- 계좌: ${refundAccount.trim()}`
+        : exchangeReason.trim();
+
     const payloadBase = {
       orderDetailId: target.orderDetailId ?? selectedProduct,
       orderId,
-      contents: exchangeReason,
+      contents,
       userCode,
     };
 
@@ -173,20 +192,23 @@ export default function Exchange() {
           <div className='space-y-2 max-h-96 overflow-y-auto mb-6'>
             {allProducts.map(product => {
               const isDisabled = product.changeStatus != null;
-
               return (
                 <div
                   key={`${product.orderId}-${product.id}`}
-                  className={`flex items-center gap-4 p-4 cursor-pointer transition-colors rounded-lg
-                    ${isDisabled ? 'opacity-60 cursor-not-allowed bg-gray-300' : ''}`}
+                  className={`flex items-center gap-4 p-4 cursor-pointer transition-colors rounded-lg ${
+                    isDisabled
+                      ? 'opacity-60 cursor-not-allowed bg-gray-300'
+                      : 'hover:bg-gray-50'
+                  }`}
                   onClick={() => handleProductSelect(product.id)}
                   aria-disabled={isDisabled}
                 >
-                  {/* 라디오(선택용 원) */}
                   <div
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
-                      ${selectedProduct === product.id ? 'bg-primary-200 border-primary-200' : 'border-gray-300'}
-                      ${isDisabled ? 'opacity-50' : ''}`}
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      selectedProduct === product.id
+                        ? 'bg-primary-200 border-primary-200'
+                        : 'border-gray-300'
+                    } ${isDisabled ? 'opacity-50' : ''}`}
                   >
                     {selectedProduct === product.id && (
                       <div className='w-2 h-2 bg-white rounded-full' />
@@ -264,6 +286,37 @@ export default function Exchange() {
               placeholder={`${exchangeType === 'exchange' ? '교환' : '반품'} 사유를 입력해주세요.`}
               className='w-full h-24 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none'
             />
+
+            {/* ✅ 반품일 때만 은행/계좌 입력 노출 */}
+            {exchangeType === 'return' && (
+              <div className='mt-3 grid grid-cols-1 gap-3 md:grid-cols-2'>
+                <div>
+                  <label className='mb-1 block text-sm font-medium'>
+                    환불 은행
+                  </label>
+                  <input
+                    type='text'
+                    value={refundBank}
+                    onChange={e => setRefundBank(e.target.value)}
+                    placeholder='예: 국민은행'
+                    className='w-full rounded-lg border border-gray-300 p-2 focus:outline-primary-200'
+                  />
+                </div>
+                <div>
+                  <label className='mb-1 block text-sm font-medium'>
+                    환불 계좌번호
+                  </label>
+                  <input
+                    type='text'
+                    inputMode='numeric'
+                    value={refundAccount}
+                    onChange={e => setRefundAccount(onlyDigits(e.target.value))}
+                    placeholder='숫자만 입력'
+                    className='w-full rounded-lg border border-gray-300 p-2 focus:outline-primary-200'
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className='flex gap-4 justify-end'>
@@ -272,6 +325,8 @@ export default function Exchange() {
               onClick={() => {
                 setSelectedProduct(null);
                 setExchangeReason('');
+                setRefundBank('');
+                setRefundAccount('');
                 navigate(-1);
               }}
               className='py-2'

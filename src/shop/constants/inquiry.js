@@ -1,5 +1,7 @@
+import EngravingIcon from '../asset/icons/EngravingIcon';
 import Gift from '../asset/icons/GIft';
 import HandShake from '../asset/icons/HandShake';
+import Promotion from '../asset/icons/Promotion';
 
 export const PRICE_OPTIONS = [
   { id: 'lt200', label: '200만원 이하', min: 0, max: 2_000_000 },
@@ -12,6 +14,6 @@ export const PRICE_OPTIONS = [
 export const CATEGORY_OPTIONS = [
   { id: 'premium', label: '프리미엄 선물', Icon: Gift },
   { id: 'return', label: '답례품', Icon: HandShake },
-  { id: 'promo', label: '판촉물/홍보용', Icon: HandShake },
-  { id: 'engrave', label: '각인서비스', Icon: HandShake },
+  { id: 'promo', label: '판촉물/홍보용', Icon: Promotion },
+  { id: 'engrave', label: '각인서비스', Icon: EngravingIcon },
 ];
