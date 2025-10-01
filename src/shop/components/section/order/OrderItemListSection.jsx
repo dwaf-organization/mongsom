@@ -4,7 +4,7 @@ export default function OrderItemListSection({ selectedItems }) {
   const calculateTotalPrice = item => {
     const quantity = item.quantity || item.count || 1;
     // 할인가가 있으면 할인가 사용, 없으면 원가 사용
-    const itemPrice = item.salePrice || item.price;
+    const itemPrice = item.discountPrice || item.price;
     return itemPrice * quantity;
   };
 
@@ -33,22 +33,22 @@ export default function OrderItemListSection({ selectedItems }) {
             >
               <Link to={`/shop-detail/${item.productId}`}>
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={item.productImgUrl[0]}
+                  alt={item.productName}
                   className='w-[200px] h-[200px] object-cover rounded-lg'
                 />
               </Link>
               <div className='flex flex-col justify-between h-[150px] px-6 font-pretendard'>
                 <div className='text-left'>
-                  <h4 className='font-semibold text-xl'>{item.name}</h4>
-                  <p className='text-gray-600 text-lg'>옵션 | {item.option}</p>
+                  <h4 className='font-semibold text-xl'>{item.productName}</h4>
+                  <p className='text-gray-600 text-lg'>옵션 | {item.optName}</p>
                   <span>수량: {item.quantity || item.count || 1}개</span>
                 </div>
-                {item.salePrice ? (
+                {item.discountPrice ? (
                   <ul className='flex flex-col gap-2'>
                     <li className='flex items-center gap-2'>
                       <p className='text-pretendart text-primary-200 font-semibold'>
-                        {item.saleRate}%
+                        {item.discountPer}%
                       </p>
                       <p className='text-pretendart text-gray-500 line-through'>
                         {OriginalPrice(item).toLocaleString()}원

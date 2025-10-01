@@ -1,18 +1,80 @@
-import { orderList } from '../../data/OrderList';
+import { getOrderDeliveryInfo } from '../../api/order';
+import { useEffect, useState, useMemo } from 'react';
+import { useToast } from '../../context/ToastContext';
 
 export default function DeliveryTrackingModal({ orderId }) {
-  const order = orderList.find(order => order.id === orderId);
+  console.log('🚀 ~ DeliveryTrackingModal ~ orderId:', orderId);
+  const { addToast } = useToast();
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // 송장번호가 있는지 확인 (실제로는 order 객체에 trackingNumber 필드가 있어야 함)
-  const hasTrackingNumber =
-    order?.trackingNumber && order.trackingNumber !== '';
+  // API 키 이름이 다를 수도 있으니 정규화
+  const normalized = useMemo(() => {
+    if (!deliveryInfo) return null;
+    return {
+      invoiceNumber:
+        deliveryInfo.invoiceNumber ??
+        deliveryInfo.invoiceNum ??
+        deliveryInfo.trackingNumber ??
+        '',
+      deliveryCom: deliveryInfo.deliveryCom ?? deliveryInfo.courier ?? '',
+      ...deliveryInfo,
+    };
+  }, [deliveryInfo]);
 
-  if (!order) {
+  useEffect(() => {
+    if (!orderId) return;
+    let ignore = false;
+
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await getOrderDeliveryInfo(orderId); // ← await!
+        // console.log('res:', res);
+
+        if (!ignore) {
+          if (res?.code === -2) {
+            addToast('요청 중 오류가 발생했습니다.', 'error');
+            setDeliveryInfo(null);
+          } else {
+            setDeliveryInfo(res?.data ?? res); // 백엔드 응답 형태에 맞춰 조정
+          }
+        }
+      } catch (e) {
+        if (!ignore) {
+          addToast('네트워크 오류로 배송 정보를 불러오지 못했습니다.', 'error');
+          setDeliveryInfo(null);
+        }
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    })();
+
+    return () => {
+      ignore = true;
+    };
+  }, [orderId, addToast]);
+
+  if (loading) {
     return (
-      <div className='space-y-4 rounded-lg py-6 px-6 max-w-2xl'>
-        <h2 className='text-2xl font-bold text-center mb-6'>배송 조회</h2>
-        <p className='text-center text-gray-600'>
-          주문 정보를 찾을 수 없습니다.
+      <div className='text-center py-8 px-10'>
+        <p className='text-sm text-gray-500'>배송 정보를 불러오는 중…</p>
+      </div>
+    );
+  }
+
+  const hasTrackingNumber =
+    normalized?.invoiceNumber && normalized.invoiceNumber !== '';
+
+  if (!hasTrackingNumber) {
+    return (
+      <div className='text-center py-8 px-10'>
+        <div className='text-6xl mb-4'>📦</div>
+        <p className='text-lg text-gray-600 mb-2'>
+          조회 가능한 배송 정보가 없습니다
+        </p>
+        <p className='text-sm text-gray-500'>
+          아직 배송이 시작되지 않았거나 송장번호가 발급되지 않았습니다.
         </p>
       </div>
     );
@@ -22,96 +84,19 @@ export default function DeliveryTrackingModal({ orderId }) {
     <div className='space-y-6 p-6'>
       <h2 className='text-2xl font-bold text-center mb-6'>배송 조회</h2>
 
-      {/* 송장번호 정보 */}
       <div className='bg-blue-50 p-4 rounded-lg'>
         <h3 className='font-semibold text-lg mb-3'>송장번호</h3>
-        {hasTrackingNumber ? (
-          <div className='space-y-2'>
-            <p className='font-montserrat bg-white p-3 rounded border'>
-              {order.trackingNumber}
-            </p>
-            <p className='text-sm text-gray-600'>
-              위 송장번호로 택배사에서 배송 조회가 가능합니다.
-            </p>
-            <div className='flex gap-2 mt-3'>
-              {/* <button
-                className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
-                onClick={() => {
-                  // 실제로는 택배사 API 연동
-                  window.open(
-                    `https://www.cjlogistics.com/ko/tool/parcel/tracking?gnb_inner_parcel`,
-                    '_blank',
-                  );
-                }}
-              >
-                CJ대한통운 조회
-              </button>
-              <button
-                className='px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600'
-                onClick={() => {
-                  window.open(
-                    `https://www.hanjin.co.kr/kor/CMS/DeliveryMgr/WaybillResult.do?mCode=AD038`,
-                    '_blank',
-                  );
-                }}
-              >
-                한진택배 조회
-              </button> */}
-            </div>
-          </div>
-        ) : (
-          <div className='text-center py-8'>
-            <div className='text-6xl mb-4'>📦</div>
-            <p className='text-lg text-gray-600 mb-2'>
-              조회 가능한 배송 정보가 없습니다
-            </p>
-            <p className='text-sm text-gray-500'>
-              아직 배송이 시작되지 않았거나 송장번호가 발급되지 않았습니다.
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* 주문 상품 내역 */}
-      <div>
-        <h3 className='font-semibold mb-2'>주문 상품 내역</h3>
-        <div className='space-y-3'>
-          {order.products.map((product, index) => (
-            <div
-              key={product.id}
-              className='flex items-center gap-4 p-4 border border-gray-200 rounded-lg'
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                className='w-16 h-16 object-cover rounded-lg'
-              />
-              <div className='flex-1'>
-                <h4 className=''>{product.name}</h4>
-                <p className='text-gray-600 text-sm'>옵션: {product.option}</p>
-                <p className='text-gray-600 text-sm'>
-                  수량: {product.quantity}개
-                </p>
-              </div>
-              <div className='text-right'>
-                <p className='font-semibold '>
-                  {product.totalPrice.toLocaleString()}원
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className='font-semibold mb-2'>배송지 정보</h3>
-        <div className='p-4 rounded-lg border border-gray-300'>
-          <p className='font-semibold'>{order.shippingAddress.name}</p>
-          <p className='text-gray-600'>{order.shippingAddress.phone}</p>
-          <p className='text-gray-600'>
-            {order.shippingAddress.address}{' '}
-            {order.shippingAddress.detailAddress}
+        <div className='space-y-2'>
+          <p className='font-montserrat bg-white p-3 rounded border'>
+            {normalized.invoiceNumber}
           </p>
+          <p className='text-sm text-gray-600'>
+            위 송장번호로 택배사에서 배송 조회가 가능합니다.
+          </p>
+          <div className='flex gap-2 mt-3'>
+            <p>택배사</p>
+            <p>{normalized.deliveryCom || '-'}</p>
+          </div>
         </div>
       </div>
     </div>

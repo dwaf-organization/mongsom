@@ -1,5 +1,4 @@
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
-import SnsSignUpSection from '../components/section/signUp/SnsSignUpSection';
 import SingUpFormSection from '../components/section/signUp/SingUpFormSection';
 
 export default function SignUp() {
@@ -8,7 +7,7 @@ export default function SignUp() {
       <h2 className='text-4xl font-semibold font-pretendard text-center'>
         회원가입
       </h2>
-      <SnsSignUpSection />
+      {/* <SnsSignUpSection /> */}
       <SingUpFormSection />
     </InnerPaddingSectionWrapper>
   );

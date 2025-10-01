@@ -33,20 +33,19 @@ export default function Modal({
       case 'xl':
         return 'max-w-4xl';
       default:
-        return 'max-w-lg';
+        return 'max-w-3xl';
     }
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center p-4'>
+    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden'>
       <div
-        className='absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm'
+        className='absolute inset-0 bg-black-50 bg-opacity-60'
         onClick={onClose}
-        style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
       />
 
       <div
-        className={`relative bg-white rounded-lg shadow-xl border border-primary-200 ${getSizeClasses()} max-h-[90vh] overflow-hidden flex flex-col z-10 ${className}`}
+        className={`relative bg-white rounded-lg shadow-xl border border-primary-200 ${getSizeClasses()} w-full max-h-[90vh] overflow-hidden flex flex-col z-10 ${className}`}
         onClick={e => e.stopPropagation()}
       >
         {title && (
@@ -63,7 +62,9 @@ export default function Modal({
           </div>
         )}
 
-        <div className='flex-1 overflow-y-auto'>{children}</div>
+        <div className='flex-1 overflow-y-auto overflow-x-hidden'>
+          {children}
+        </div>
       </div>
     </div>
   );

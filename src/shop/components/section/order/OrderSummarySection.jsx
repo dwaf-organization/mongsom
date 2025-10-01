@@ -2,7 +2,7 @@ export default function OrderSummarySection({ items }) {
   const totalPrice = items.reduce((sum, item) => {
     const quantity = item.quantity || item.count || 1;
     // salePrice가 있으면 salePrice 사용, 없으면 price 사용
-    const itemPrice = item.salePrice || item.price;
+    const itemPrice = item.discountPrice || item.price;
     return sum + itemPrice * quantity;
   }, 0);
 
@@ -14,7 +14,7 @@ export default function OrderSummarySection({ items }) {
     return sum;
   }, 0);
 
-  const shippingFee = totalPrice < 50000 ? 3000 : 0;
+  const shippingFee = 3000;
 
   const finalPrice = totalPrice + shippingFee;
 

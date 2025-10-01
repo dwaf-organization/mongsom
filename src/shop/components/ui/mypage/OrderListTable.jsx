@@ -1,67 +1,161 @@
-import { orderList } from '../../../data/OrderList';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useAuth } from '../../../context/AuthContext';
+import { getOrderList } from '../../../api/order';
+import { formatDate } from '../../../utils/dateUtils';
+import { pickFirstImageUrl } from '../../../utils/dateUtils';
 
 export default function OrderListTable() {
+  const { userCode } = useAuth();
+  const [orderList, setOrderList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const handleOrderDetail = orderId => {
+    navigate(`/order-detail/${orderId}`);
+  };
+
+  useEffect(() => {
+    if (!userCode) {
+      setOrderList([]);
+      setLoading(false);
+      return;
+    }
+
+    let cancel = false;
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await getOrderList(userCode);
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.items)
+            ? data.items
+            : Array.isArray(data?.data?.items)
+              ? data.data.items
+              : [];
+        if (!cancel) setOrderList(list);
+      } catch (e) {
+        console.error('주문 리스트 조회 실패:', e);
+        if (!cancel) setOrderList([]);
+      } finally {
+        if (!cancel) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancel = true;
+    };
+  }, [userCode]);
+
+  if (loading) {
+    return (
+      <section className='pt-10'>
+        <div className='flex items-center justify-between border-b border-gray-500 pb-4'>
+          <p className='text-xl font-semibold text-left '>주문내역 조회</p>
+          <Link to='/mypage?tab=orderList' className='text-sm text-gray-50'>
+            주문내역 전체보기
+          </Link>
+        </div>
+        <div className='py-6 text-center text-gray-500'>불러오는 중…</div>
+      </section>
+    );
+  }
+
+  if (!orderList.length) {
+    return (
+      <section className='pt-10'>
+        <p className='text-xl font-semibold text-left border-b border-gray-500 pb-4'>
+          주문내역 조회
+        </p>
+        <div className='py-6 text-center text-gray-500'>
+          주문 내역이 없습니다.
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section>
-      <p className='text-xl font-semibold text-left border-b border-gray-500 pb-4 pt-10 '>
-        주문내역 조회
-      </p>
+    <section className='pt-10'>
+      <div className='flex items-center justify-between border-b border-gray-500 pb-4'>
+        <p className='text-xl font-semibold text-left '>주문내역 조회</p>
+        <Link to='/mypage?tab=orderList' className='text-sm text-gray-50'>
+          주문내역 전체보기
+        </Link>
+      </div>
 
       <table className='w-full'>
         <thead>
           <tr>
-            <th className='font-montserrat py-4 px-3'>NO</th>
-            <th>주문일자</th>
-            <th>상품정보/선택옵션</th>
-            <th>수량</th>
-            <th>주문금액</th>
-            <th>배송비</th>
-            <th>상태</th>
+            <th className='py-4 px-3'>NO</th>
+            <th className='text-center'>주문일자</th>
+            <th className='text-center'>상품정보/선택옵션</th>
+            <th className='text-center'>주문금액</th>
+            <th className='text-right'>배송비</th>
+            <th className='text-center'>상태</th>
           </tr>
         </thead>
-        <tbody className='w-full '>
-          {orderList.map(item => (
-            <tr key={item.id} className='border-y border-gray-500'>
-              <td className='font-montserrat py-4 text-center'>{item.id}</td>
-              <td className='font-montserrat py-4 px-3'>{item.orderDate}</td>
-              <td className='py-4 pl-14'>
-                <div className='flex items-center gap-3'>
-                  <img
-                    src={item.products[0].image}
-                    alt={item.products[0].name}
-                    className='w-[80px] h-[80px] object-cover rounded-lg '
-                  />
-                  <div className='flex flex-col justify-between text-left gap-2'>
-                    <div className='flex items-center gap-2'>
-                      <p className='font-medium'>{item.products[0].name}</p>
-                      {item.products.length > 1 && (
-                        <p className='text-sm text-gray-600'>
-                          외 {item.products.length - 1}개
-                        </p>
-                      )}
+
+        <tbody className='w-full'>
+          {orderList.slice(0, 5).map(order => {
+            const details = Array.isArray(order.details) ? order.details : [];
+            const first = details[0] || {};
+            const thumb = pickFirstImageUrl(first.productImgUrls);
+            const name = first.productName || '-';
+            const opt = first.optName ? `옵션 | ${first.optName}` : '옵션 | -';
+            const shippingFee = 3000;
+
+            return (
+              <tr
+                key={order.orderId}
+                className='border-y border-gray-500 px-3 cursor-pointer'
+                onClick={() => handleOrderDetail(order.orderId)}
+              >
+                <td className='font-montserrat py-4 text-center'>
+                  {order.orderId}
+                </td>
+                <td className='font-montserrat py-4 px-3 text-center'>
+                  {formatDate(order.paymentAt)}
+                </td>
+
+                <td className='py-4 pl-14 max-w-[250px] truncate'>
+                  <div className='flex items-center gap-3'>
+                    {thumb ? (
+                      <img
+                        src={thumb}
+                        alt={name}
+                        className='w-[80px] h-[80px] object-cover rounded-lg'
+                      />
+                    ) : (
+                      <div className='w-[80px] h-[80px] rounded-lg bg-gray-100' />
+                    )}
+                    <div className='flex flex-col justify-between text-left gap-2'>
+                      <div className='flex items-center gap-2'>
+                        <p className='font-medium truncate'>{name}</p>
+                        {details.length > 1 && (
+                          <p className='text-sm text-gray-600'>
+                            외 {details.length - 1}개
+                          </p>
+                        )}
+                      </div>
+                      <p className='text-sm text-gray-500'>{opt}</p>
                     </div>
-                    <p className='text-sm text-gray-500'>
-                      옵션 | {item.products[0].option}
-                    </p>
                   </div>
-                </div>
-              </td>
-              <td className='py-4'>
-                {item.products.reduce(
-                  (total, product) => total + product.quantity,
-                  0,
-                )}
-                개
-              </td>
-              <td className='font-montserrat py-4'>
-                {item.totalAmount.toLocaleString()}원
-              </td>
-              <td className='text-right font-montserrat py-4'>
-                {item.shippingFee.toLocaleString()}원
-              </td>
-              <td className='py-4 px-3 text-center'>{item.status}</td>
-            </tr>
-          ))}
+                </td>
+
+                <td className='font-montserrat py-4 text-center'>
+                  {Number(order.finalPrice || 0).toLocaleString()}원
+                </td>
+                <td className='text-right font-montserrat py-4'>
+                  {Number(shippingFee).toLocaleString()}원
+                </td>
+                <td className='py-4 px-3 text-center'>
+                  {order.deliveryStatus || '-'}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </section>

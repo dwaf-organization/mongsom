@@ -5,7 +5,7 @@ import MyReviewTabWrapper from '../../section/mypage/MyReviewTabWrapper';
 
 export default function MyReviewManagementTab({ activeMyreview }) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('myreview') || 'reviewWrite';
+  const activeTab = searchParams.get('myreview') || 'myReviewWrite';
 
   const handleTabChange = tabId => {
     setSearchParams(prev => {

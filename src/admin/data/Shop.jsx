@@ -13,19 +13,19 @@ export const shop = [
       '프리미엄 선물용 행주 6개입 그레이',
     ],
   },
-  // {
-  //   id: 2,
-  //   name: 'Product 2',
-  //   price: 200000,
-  //   image:
-  //     'https://m.amusemakeup.com/web/product/big/202408/fb57ed8fe37d05a208e951dcd169d154.jpg',
+  {
+    id: 2,
+    name: 'Product 2',
+    price: 200000,
+    image:
+      'https://m.amusemakeup.com/web/product/big/202408/fb57ed8fe37d05a208e951dcd169d154.jpg',
 
-  //   option: [
-  //     '프리미엄 선물용 행주 6개입 화이트',
-  //     '프리미엄 선물용 행주 6개입 블랙',
-  //     '프리미엄 선물용 행주 6개입 그레이',
-  //   ],
-  // },
+    option: [
+      '프리미엄 선물용 행주 6개입 화이트',
+      '프리미엄 선물용 행주 6개입 블랙',
+      '프리미엄 선물용 행주 6개입 그레이',
+    ],
+  },
   // {
   //   id: 3,
   //   name: 'Product 3',

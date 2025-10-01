@@ -1,86 +1,89 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Select from '../Select';
 import QuantityControlButton from '../../../layout/button/QuantityControlButton';
 
 export default function OptionSelector({
   product,
-  onTotalPriceChange,
-  onOptionsChange,
+  onTotalPriceChange = () => {},
+  onOptionsChange = () => {},
 }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
+  const optionList = useMemo(() => {
+    const arr = Array.isArray(product?.productOptions)
+      ? product.productOptions
+      : [];
+    return arr.map(o => ({
+      label: o.optName,
+      value: String(o.optId),
+      name: o.optName,
+      id: o.optId,
+    }));
+  }, [product]);
+
+  const unitPrice = useMemo(() => {
+    const price = Number(product?.price ?? 0);
+    const dPrice = Number(product?.discountPrice ?? price);
+    return dPrice || price;
+  }, [product]);
+
   useEffect(() => {
-    const totalPrice = selectedOptions.reduce((total, option) => {
-      // salePrice가 있으면 salePrice 사용, 없으면 price 사용
-      const itemPrice = product.salePrice || product.price;
-      return total + itemPrice * option.quantity;
-    }, 0);
-
-    onTotalPriceChange(totalPrice);
-
-    // 선택된 옵션들을 부모 컴포넌트로 전달
-    if (onOptionsChange) {
-      onOptionsChange(selectedOptions);
-    }
-  }, [
-    selectedOptions,
-    product.price,
-    product.salePrice,
-    onTotalPriceChange,
-    onOptionsChange,
-  ]);
+    const total = selectedOptions.reduce(
+      (sum, opt) => sum + unitPrice * opt.quantity,
+      0,
+    );
+    onTotalPriceChange(total);
+    onOptionsChange(selectedOptions);
+  }, [selectedOptions, unitPrice, onTotalPriceChange, onOptionsChange]);
 
   const handleOptionChange = value => {
-    const existingOptionIndex = selectedOptions.findIndex(
-      option => option.name === value,
-    );
+    if (!value) return;
 
-    if (existingOptionIndex !== -1) {
-      const updatedOptions = [...selectedOptions];
-      updatedOptions[existingOptionIndex].quantity += 1;
-      setSelectedOptions(updatedOptions);
-    } else {
-      setSelectedOptions([...selectedOptions, { name: value, quantity: 1 }]);
-    }
+    const meta = optionList.find(o => String(o.value) === String(value));
+    if (!meta) return;
+
+    setSelectedOptions(prev => {
+      const i = prev.findIndex(p => p.value === meta.value);
+      if (i >= 0) {
+        const next = [...prev];
+        next[i] = { ...next[i], quantity: next[i].quantity + 1 };
+        return next;
+      } else {
+        return [...prev, { value: meta.value, name: meta.name, quantity: 1 }];
+      }
+    });
   };
 
-  const handleQuantityChange = (optionName, newQuantity) => {
-    const updatedOptions = selectedOptions.map(option =>
-      option.name === optionName
-        ? { ...option, quantity: newQuantity }
-        : option,
+  const handleQuantityChange = (value, q) => {
+    setSelectedOptions(prev =>
+      prev.map(p => (p.value === value ? { ...p, quantity: q } : p)),
     );
-    setSelectedOptions(updatedOptions);
   };
 
-  const removeOption = optionName => {
-    setSelectedOptions(
-      selectedOptions.filter(option => option.name !== optionName),
-    );
+  const removeOption = value => {
+    setSelectedOptions(prev => prev.filter(p => p.value !== value));
   };
 
   return (
     <div className='flex flex-col gap-4 border-b border-gray-500 pb-4'>
-      <Select
-        options={product.option.map(option => ({
-          label: option,
-          value: option,
-        }))}
-        value=''
-        onChange={handleOptionChange}
-        className='w-full pb-4 items-center mt-4 '
-      />
+      {optionList.length > 0 && (
+        <Select
+          options={optionList.map(o => ({ label: o.label, value: o.value }))}
+          value=''
+          onChange={handleOptionChange}
+          className='w-full pb-4 items-center mt-4'
+          placeholder='옵션을 선택하세요'
+        />
+      )}
 
       {selectedOptions.length > 0 && (
         <ul className='flex flex-col gap-3'>
-          {selectedOptions.map((option, index) => (
-            <li key={index} className='text-start w-full'>
+          {selectedOptions.map(opt => (
+            <li key={opt.value} className='text-start w-full'>
               <div className='flex items-center w-full'>
-                <span className='text-gray-900 font-semibold'>
-                  {option.name}
-                </span>
+                <span className='text-gray-900 font-semibold'>{opt.name}</span>
                 <button
-                  onClick={() => removeOption(option.name)}
+                  onClick={() => removeOption(opt.value)}
                   className='hover:text-red-700 text-sm px-2 py-1 rounded'
                 >
                   ✕
@@ -89,17 +92,11 @@ export default function OptionSelector({
 
               <div className='flex justify-between items-center w-full mt-2'>
                 <QuantityControlButton
-                  value={option.quantity}
-                  setValue={newQuantity =>
-                    handleQuantityChange(option.name, newQuantity)
-                  }
+                  value={opt.quantity}
+                  setValue={q => handleQuantityChange(opt.value, q)}
                 />
-
                 <span className='text-gray-900 font-semibold'>
-                  {(
-                    (product.salePrice || product.price) * option.quantity
-                  ).toLocaleString()}
-                  원
+                  {(unitPrice * opt.quantity).toLocaleString()}원
                 </span>
               </div>
             </li>
