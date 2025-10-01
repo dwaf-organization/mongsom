@@ -95,6 +95,7 @@ export default function Login() {
             회원가입
           </Button>
         </Link>
+
         <SnsLogIn />
       </div>
     </InnerPaddingSectionWrapper>

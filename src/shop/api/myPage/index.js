@@ -1,6 +1,7 @@
 import { fetchData } from '../instance';
 
 export const getUserInfo = async userCode => {
+  console.log('🚀 ~ getUserInfo ~ userCode:', userCode);
   const response = await fetchData.get(`api/v1/auth/${userCode}`);
   console.log('🚀 ~ getUserInfo ~ response:', response);
   if (response.code === 1) {

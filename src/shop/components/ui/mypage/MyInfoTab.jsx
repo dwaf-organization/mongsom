@@ -7,6 +7,7 @@ import DeleteUserModal from './DeleteUserModal';
 
 export default function MyInfoTab() {
   const { userCode } = useAuth();
+  console.log('🚀 ~ MyInfoTab ~ userCode:', userCode);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const { openModal } = useModal();

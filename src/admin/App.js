@@ -15,31 +15,37 @@ import Notice from './view/Notice';
 import './index.css';
 import 'quill/dist/quill.snow.css';
 import Login from './view/Login';
+import { AuthProvider } from './context/AuthContext';
+import RequireAuth from './routes/RequireAuth';
 
 export default function AdminApp() {
   return (
-    <ToastProvider>
-      <ModalProvider>
-        <AdminLayout>
-          <Routes>
-            <Route path='/' element={<Login />} />
-            <Route path='/orders' element={<OrderList />} />
-            <Route path='/products' element={<Products />} />
-            <Route path='/products-list' element={<ProductList />} />
-            <Route path='/orders' element={<OrderList />} />
-            <Route path='/notice' element={<Notice />} />
-            <Route path='/exchange-return' element={<Exchange />} />
-            <Route
-              path='/edit-product-info/:id'
-              element={<EditProductInfo />}
-            />
-            <Route path='/user-management' element={<UserManagement />} />
-            <Route path='/orders/:id' element={<OrderDetail />} />
-          </Routes>
-          <GlobalToast />
-          <GlobalModal />
-        </AdminLayout>
-      </ModalProvider>
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <ModalProvider>
+          <AdminLayout>
+            <Routes>
+              <Route path='/' element={<Login />} />
+              <Route element={<RequireAuth />}>
+                <Route path='/orders' element={<OrderList />} />
+                <Route path='/products' element={<Products />} />
+                <Route path='/products-list' element={<ProductList />} />
+                <Route path='/orders' element={<OrderList />} />
+                <Route path='/notice' element={<Notice />} />
+                <Route path='/exchange-return' element={<Exchange />} />
+                <Route
+                  path='/edit-product-info/:id'
+                  element={<EditProductInfo />}
+                />
+                <Route path='/user-management' element={<UserManagement />} />
+                <Route path='/orders/:id' element={<OrderDetail />} />
+              </Route>
+            </Routes>
+            <GlobalToast />
+            <GlobalModal />
+          </AdminLayout>
+        </ModalProvider>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
