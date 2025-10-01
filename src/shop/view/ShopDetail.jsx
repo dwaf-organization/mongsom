@@ -98,7 +98,7 @@ export default function ShopDetail() {
                 fetchpriority='high'
                 onLoad={() => setImgLoaded(true)}
                 className={`w-[400px] h-full object-cover transition-opacity duration-200 will-change-[opacity] ${
-                  imgLoaded ? 'opacity-100' : 'opacity-0'
+                  imgLoaded ? 'opacity-100 ' : 'opacity-0'
                 }`}
               />
             ) : (

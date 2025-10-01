@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 export default function ImageSkeleton({
   src,
   alt = '',
-  // 래퍼와 이미지 클래스 분리!
+
   containerClassName = '',
   imgClassName = '',
   skeletonClassName = '',
-  loading = 'lazy', // 기본 lazy 권장
+  loading = 'lazy',
   decoding = 'async',
   fallback = '이미지 없음',
   ...props
@@ -16,13 +16,11 @@ export default function ImageSkeleton({
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
-  // src 바뀌면 로딩 상태 리셋
   useEffect(() => {
     setLoaded(false);
     setError(false);
   }, [src]);
 
-  // 캐시된 이미지(이미 complete) 처리
   useEffect(() => {
     const img = imgRef.current;
     if (img && img.complete && img.naturalWidth > 0) {
@@ -32,7 +30,6 @@ export default function ImageSkeleton({
 
   return (
     <div className={`relative overflow-hidden ${containerClassName}`}>
-      {/* 스켈레톤 오버레이 */}
       {!loaded && !error && (
         <div
           className={`absolute inset-0 animate-pulse bg-gray-200 ${skeletonClassName}`}

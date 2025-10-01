@@ -51,7 +51,10 @@ export default function TopProductSection() {
         <Slider {...createSliderSettings()} className='max-w-[1000px] mx-auto'>
           {Array.isArray(productItems) &&
             productItems.map(product => (
-              <Link to={`${routes.shopDetail}/${product.id}`} key={product.id}>
+              <Link
+                to={`${routes.shopDetail}/${product.productId}`}
+                key={product.id}
+              >
                 <ul key={product.id} className='px-4'>
                   <div className='rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 gap-2 bg-white'>
                     <li className='relative items-center justify-center'>
