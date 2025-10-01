@@ -3,7 +3,7 @@ import { bestReview } from '../../../data/BestReview';
 
 export default function BestReviewSection() {
   return (
-    <InnerPaddingSectionWrapper>
+    <InnerPaddingSectionWrapper className='py-20'>
       <div>
         <h2 className='text-start text-4xl font-bold text-primary-200 font-montserrat mb-4'>
           Best Review
@@ -13,7 +13,7 @@ export default function BestReviewSection() {
         </p>
       </div>
 
-      <ul className=' md:grid-cols-2 lg:grid-cols-3'>
+      <ul className=' md:grid-cols-2 lg:grid-cols-3 mb-10'>
         <li className='grid grid-cols-3 gap-6'>
           {bestReview.map(review => (
             <div key={review.id}>

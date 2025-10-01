@@ -349,6 +349,13 @@ export default function SignUpForm() {
 
       <AdditionalInfoInput />
 
+      <section>
+        <label htmlFor='agreeMain'>
+          <input type='checkbox' />
+          이용 약관
+        </label>
+      </section>
+
       <Button
         type='submit'
         className={`w-full p-4 mt-11 mx-auto text-2xl ${

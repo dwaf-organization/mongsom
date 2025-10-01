@@ -1,4 +1,3 @@
-// src/pages/auth/KakaoCallback.jsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -34,15 +33,12 @@ export default function KakaoCallback() {
   const [sp] = useSearchParams();
   const navigate = useNavigate();
 
-  const [step, setStep] = useState('loading'); // loading | form | submitting | done | error
+  const [step, setStep] = useState('loading');
   const [msg, setMsg] = useState('카카오 로그인 처리 중…');
   const [error, setError] = useState(null);
 
-  // 카카오에서 받은 것들 (프론트에서만 사용, 백엔드로 안 보냄)
-  const [token, setToken] = useState(null); // { access_token, ... }
-  const [profile, setProfile] = useState(null); // 카카오 프로필 원본
-
-  // 추가정보 폼 (이름, 배송지, 휴대폰)
+  const [token, setToken] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [form, setForm] = useState({
     name: '',
     address: { zipCode: '', address: '', address2: '' },
@@ -58,7 +54,6 @@ export default function KakaoCallback() {
     setForm(prev => ({ ...prev, address: addressData }));
   };
 
-  // 더블 실행 방지
   const once = useRef(false);
 
   const code = useMemo(() => sp.get('code') || '', [sp]);

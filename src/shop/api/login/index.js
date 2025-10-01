@@ -43,3 +43,16 @@ export const kakaoLoginCheck = async ({ email, nickname }) => {
 
   return res;
 };
+
+export const getNaverLogin = async ({ code, state }) => {
+  console.log('🚀 ~ getNaverLogin ~ code, state:', code, state);
+  const qs = new URLSearchParams({
+    code: String(code).trim(),
+    state: String(state || '').trim(),
+  });
+  const response = await fetchData.get(
+    `api/v1/auth/naver/callback?${qs.toString()}`,
+  );
+  console.log('🚀 ~ getNaverLogin ~ response:', response);
+  return response;
+};
