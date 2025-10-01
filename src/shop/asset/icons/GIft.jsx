@@ -10,30 +10,30 @@ export default function Gift() {
       <path
         d='M110.006 38.0742H22.6566C19.6415 38.0742 17.1973 40.1643 17.1973 42.7425V52.079C17.1973 54.6572 19.6415 56.7473 22.6566 56.7473H110.006C113.021 56.7473 115.465 54.6572 115.465 52.079V42.7425C115.465 40.1643 113.021 38.0742 110.006 38.0742Z'
         stroke='#3A3A3A'
-        stroke-width='2'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
       <path
         d='M66.3311 38.0742V98.7617'
         stroke='#3A3A3A'
-        stroke-width='2'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
       <path
         d='M104.549 56.7461V89.424C104.549 91.9002 103.398 94.275 101.351 96.0259C99.303 97.7768 96.5258 98.7605 93.63 98.7605H39.0368C36.141 98.7605 33.3638 97.7768 31.3162 96.0259C29.2685 94.275 28.1182 91.9002 28.1182 89.424V56.7461'
         stroke='#3A3A3A'
-        stroke-width='2'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
       <path
         d='M41.7665 38.0739C38.1467 38.0739 34.6752 36.8443 32.1157 34.6556C29.5561 32.4669 28.1182 29.4984 28.1182 26.4032C28.1182 23.3079 29.5561 20.3394 32.1157 18.1508C34.6752 15.9621 38.1467 14.7325 41.7665 14.7325C47.033 14.654 52.1939 16.8391 56.5761 21.0027C60.9584 25.1664 64.3586 31.1154 66.3334 38.0739C68.3082 31.1154 71.7084 25.1664 76.0906 21.0027C80.4729 16.8391 85.6338 14.654 90.9003 14.7325C94.5201 14.7325 97.9916 15.9621 100.551 18.1508C103.111 20.3394 104.549 23.3079 104.549 26.4032C104.549 29.4984 103.111 32.4669 100.551 34.6556C97.9916 36.8443 94.5201 38.0739 90.9003 38.0739'
         stroke='#3A3A3A'
-        stroke-width='2'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

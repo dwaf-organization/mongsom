@@ -34,7 +34,7 @@ export default function ProductActionButtons({
   const isPreShipping =
     deliveryStatus === '결제완료' || deliveryStatus === '상품준비중';
   const isShippedOrDelivered =
-    deliveryStatus === '배송중' || deliveryStatus === '배송완료';
+    deliveryStatus === '결제완료' || deliveryStatus === '결제완료';
 
   const handleReview = () => navigate(`/create-review/${product?.id}`);
 
@@ -46,24 +46,6 @@ export default function ProductActionButtons({
   const handleReturnOrExchangeCancel = odid =>
     openModal(<ExchangeCancelModal orderDetailId={odid} orderId={orderId} />);
 
-  const handleOrderCancelClick = () => {
-    openModal(
-      <OrderCancelModal
-        orderDetailId={orderDetailId}
-        orderId={orderId}
-        productName={product.name}
-      />,
-    );
-  };
-
-  if (orderStatuses.includes(1)) {
-    return (
-      <div className='flex items-center pt-14 text-sm gap-2'>
-        <p className='text-gray-700 text-center'> 주문 취소</p>
-      </div>
-    );
-  }
-
   return (
     <div className='flex flex-col text-sm gap-2'>
       <button
@@ -72,15 +54,6 @@ export default function ProductActionButtons({
       >
         배송조회
       </button>
-
-      {isPreShipping && (
-        <button
-          className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'
-          onClick={handleOrderCancelClick}
-        >
-          주문 취소
-        </button>
-      )}
 
       {isShippedOrDelivered && (
         <>
