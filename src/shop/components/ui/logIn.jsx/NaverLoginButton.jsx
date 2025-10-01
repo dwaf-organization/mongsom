@@ -3,7 +3,7 @@ import NaverLogo from '../../../asset/logo/naverLogo.png';
 function buildNaverAuthUrl() {
   const clientId = process.env.REACT_APP_NAVER_CLIENT_ID;
   console.log('🚀 ~ buildNaverAuthUrl ~ clientId:', clientId);
-  const redirectUri = process.env.REACT_APP_NAVER_REDIRECT_URI;
+  const redirectUri = `${window.location.origin}/auth/naver/callback`;
   const state = Math.random().toString(36).slice(2);
   sessionStorage.setItem('NAVER_OAUTH_STATE', state);
 
