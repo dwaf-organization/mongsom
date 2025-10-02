@@ -57,7 +57,7 @@ export default function Shop() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <div className='flex items-center justify-center'>
+      <div className='flex items-center justify-center pb-16'>
         <Link
           to={`${routes.shop}`}
           className='text-4xl font-semibold font-montserrat'
@@ -73,22 +73,21 @@ export default function Shop() {
           className='w-24'
           hidden={sort === 'premium'}
         />
-        {/* {sort === 'premium' && ( */}
+
         <div className='flex items-center justify-center'>
           <Link
             to={`${routes.shop}?sort=all`}
             className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
-          ${sort !== 'premium' ? 'border-primary-200 text-primary-200' : ''}
+          ${sort !== 'premium' ? 'border-primary-200 font-bold text-primary-200' : ''}
           `}
           >
             일반 상품
           </Link>
         </div>
-        {/* )} */}
         <Link
           to={`${routes.shop}?sort=premium`}
           className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
-          ${sort === 'premium' ? 'border-primary-200 text-primary-200' : ''}
+          ${sort === 'premium' ? 'border-primary-200 font-semibold text-primary-200' : ''}
           `}
         >
           프리미엄 선물용

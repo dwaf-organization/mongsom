@@ -1,10 +1,24 @@
 // src/admin/schema/ProductSchema.js
 import { z } from 'zod';
 
+const hasMeaningfulContent = (html = '') => {
+  const str = String(html || '');
+  const hasImg = /<img\b[^>]*>/i.test(str);
+  const textOnly = str
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, '') // 태그 제거
+    .replace(/&nbsp;|\u200B/g, '') // nbsp, zero-width 제거
+    .trim();
+  return hasImg || textOnly.length > 0;
+};
+
 export const ProductSchema = z
   .object({
     name: z.string().trim().min(1, '상품명을 입력하세요.'),
-    contents: z.string().min(1, '상품 설명을 입력하세요.'), // 실제 비어있는지 superRefine에서 추가체크
+    contents: z.string().refine(hasMeaningfulContent, {
+      message: '상품 설명을 입력하세요. (이미지 또는 텍스트 중 하나는 필수)',
+    }),
     productImgUrls: z
       .array(z.string().min(1))
       .min(1, '썸네일 이미지를 1장 이상 등록하세요.'),
@@ -32,19 +46,6 @@ export const ProductSchema = z
       .min(0, '배송비는 0 이상이어야 합니다.'),
   })
   .superRefine((val, ctx) => {
-    // HTML 태그 제거 후 실제 텍스트 비어있는지 검사
-    const textOnly = val.contents
-      ?.replace(/<[^>]*>/g, '')
-      ?.replace(/&nbsp;/g, ' ')
-      ?.trim();
-    if (!textOnly) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['contents'],
-        message: '상품 설명을 입력하세요.',
-      });
-    }
-
     // discountPrice 검증(선택) — 계산값과 다르면 경고
     const base =
       (Number.isFinite(val.price) ? val.price : 0) +
