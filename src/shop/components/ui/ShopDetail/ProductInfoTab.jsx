@@ -1,14 +1,32 @@
 export default function ProductInfoTab({ product }) {
   return (
     <>
-      <h3 className='text-xl font-semibold text-gray-800 mb-4 text-center'>
-        {product.name}
-      </h3>
-
       <div
-        className='flex flex-col items-center text-left'
+        className={[
+          'rich-content',
+          'prose prose-neutral max-w-none',
+          '[&_img]:block [&_img]:h-auto [&_img]:mx-auto [&_img]:my-4 [&_img]:rounded-lg',
+        ].join(' ')}
         dangerouslySetInnerHTML={{ __html: product.contents }}
       />
+
+      <style>{`
+        .rich-content :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table) {
+          max-width: 680px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .rich-content :where(img, figure, video, iframe) {
+          max-width: 800px;
+          width: 100%;
+        }
+
+        .rich-content p:has(> img),
+        .rich-content p:has(> a > img) {
+          max-width: 800px;
+        }
+      `}</style>
     </>
   );
 }
