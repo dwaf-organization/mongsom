@@ -14,15 +14,13 @@ const onlyDigits = v => (v || '').replace(/\D/g, '');
 const splitPhone = mobile => {
   const d = onlyDigits(mobile);
   if (!d) return { p1: '', p2: '', p3: '' };
-  // 010-1234-5678 형태 가정
   return { p1: d.slice(0, 3), p2: d.slice(3, 7), p3: d.slice(7, 11) };
 };
 
-// 안전하게 네이버 프로필 꺼내기
 const pickNaverProfile = resp => {
   const r =
     resp?.data?.data?.profile?.response ||
-    resp?.result?.profile?.response || // 혹시 다른 스키마 대비
+    resp?.result?.profile?.response ||
     resp?.data?.profile?.response ||
     null;
   if (!r) return null;
@@ -40,19 +38,22 @@ export default function NaverCallback() {
   const [sp] = useSearchParams();
   const navigate = useNavigate();
 
-  const [step, setStep] = useState('loading'); // loading | form | submitting | done | error
+  const [step, setStep] = useState('loading');
   const [msg, setMsg] = useState('네이버 로그인 처리 중…');
   const [error, setError] = useState(null);
 
   const [userinfo, setUserinfo] = useState(null);
 
-  // 폼 기본값: 이름/주소/전화
   const [form, setForm] = useState({
     name: '',
     address: { zipCode: '', address: '', address2: '' },
     phone1: '',
     phone2: '',
     phone3: '',
+    agreeMain: false,
+    agreeShopping: false,
+    agreeSms: false,
+    agreeEmail: false,
   });
 
   const handleAddressChange = addressData => {
@@ -60,6 +61,9 @@ export default function NaverCallback() {
   };
   const handleInputChange = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
+  };
+  const handleToggleAgree = field => {
+    setForm(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
   const once = useRef(false);
@@ -88,8 +92,7 @@ export default function NaverCallback() {
         const resp = await getNaverLogin({ code, state });
 
         if (resp.code === 1) {
-          // 이미 가입자 → 로그인 후 홈
-          const userCode = resp?.result ?? resp?.data.userCode; // 서버 스키마에 맞게
+          const userCode = resp?.result ?? resp?.data?.userCode ?? resp?.data;
           if (!userCode) {
             setError('로그인 응답에 userCode가 없습니다.');
             setStep('error');
@@ -138,17 +141,23 @@ export default function NaverCallback() {
     if (step === 'submitting') return;
 
     if (!form.name.trim()) {
-      setError('이름을 입력하세요.');
+      addToast('이름을 입력하세요.', 'error');
       setStep('form');
       return;
     }
     if (!form.address?.zipCode?.trim() || !form.address?.address?.trim()) {
-      setError('우편번호와 기본주소를 입력하세요.');
+      addToast('우편번호와 기본주소를 입력하세요.', 'error');
       setStep('form');
       return;
     }
     if (!form.phone1?.trim() || !form.phone2?.trim() || !form.phone3?.trim()) {
-      setError('휴대전화를 입력하세요.');
+      addToast('휴대전화를 입력하세요.', 'error');
+      setStep('form');
+      return;
+    }
+
+    if (!form.agreeMain || !form.agreeShopping) {
+      addToast('필수 약관에 동의해야 회원가입이 가능합니다.', 'error');
       setStep('form');
       return;
     }
@@ -162,16 +171,16 @@ export default function NaverCallback() {
         provider: 'NAVER',
         userId: userinfo?.email,
         email: userinfo?.email || '',
-        password: userinfo?.email + userinfo?.name,
+        password: userinfo?.email + (userinfo?.name || ''),
         name: form.name.trim(),
         zipCode: form.address.zipCode.trim(),
         address: form.address.address.trim(),
         address2: (form.address.address2 || '').trim(),
         phone: [form.phone1, form.phone2, form.phone3].join(''),
-        agreeMain: true,
-        agreeShopping: true,
-        agreeSms: true,
-        agreeEmail: true,
+        agreeMain: form.agreeMain,
+        agreeShopping: form.agreeShopping,
+        agreeSms: form.agreeSms,
+        agreeEmail: form.agreeEmail,
       };
 
       const resp = await signUp(payload);
@@ -180,7 +189,7 @@ export default function NaverCallback() {
         if (!userCode) {
           addToast('회원가입은 성공했지만 userCode가 없습니다.', 'error');
         } else {
-          login({ userData: { userId: payload.naverId || 'naver' }, userCode });
+          login({ userData: { userId: payload.userId || 'naver' }, userCode });
           addToast('회원가입 및 로그인 완료', 'success');
         }
         navigate('/', { replace: true });
@@ -284,6 +293,50 @@ export default function NaverCallback() {
               />
             </div>
           </FormField>
+
+          {/* ✅ 약관 동의 섹션 (카카오와 동일 정책) */}
+          <section className='mt-6 space-y-3 rounded-md border border-gray-200 p-4'>
+            <label className='flex items-center gap-2 text-sm'>
+              <input
+                type='checkbox'
+                checked={form.agreeMain}
+                onChange={() => handleToggleAgree('agreeMain')}
+              />
+              <span>
+                이용 약관 동의 <span className='text-red-500'>(필수)</span>
+              </span>
+            </label>
+
+            <label className='flex items-center gap-2 text-sm'>
+              <input
+                type='checkbox'
+                checked={form.agreeShopping}
+                onChange={() => handleToggleAgree('agreeShopping')}
+              />
+              <span>
+                개인정보 수집 및 이용 동의{' '}
+                <span className='text-red-500'>(필수)</span>
+              </span>
+            </label>
+
+            <label className='flex items-center gap-2 text-sm'>
+              <input
+                type='checkbox'
+                checked={form.agreeSms}
+                onChange={() => handleToggleAgree('agreeSms')}
+              />
+              <span>SMS 수신 동의</span>
+            </label>
+
+            <label className='flex items-center gap-2 text-sm'>
+              <input
+                type='checkbox'
+                checked={form.agreeEmail}
+                onChange={() => handleToggleAgree('agreeEmail')}
+              />
+              <span>이메일 수신 동의</span>
+            </label>
+          </section>
 
           <button
             type='submit'

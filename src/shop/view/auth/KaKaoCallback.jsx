@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import AddressInput from '../../components/ui/AddressInput';
 import FormField from '../../components/ui/SignUp/FormField';
+import AgreeModal from '../../components/ui/AgreeModal';
+import { useModal } from '../../context/ModalContext';
 
 import { signUp } from '../../api/signUp';
 import { kakaoLoginCheck } from '../../api/login';
@@ -25,14 +27,13 @@ function extractName(profile) {
 }
 
 function extractEmail(profile) {
-  // 카카오 동의 범위에 이메일 포함되어 있어야 내려옴
   return profile?.kakao_account?.email || '';
 }
 
-// 숫자만
 const onlyDigits = v => (v || '').replace(/\D/g, '');
 
 export default function KakaoCallback() {
+  const { openModal } = useModal();
   const { login } = useAuth();
   const { addToast } = useToast();
   const [sp] = useSearchParams();
@@ -47,11 +48,15 @@ export default function KakaoCallback() {
 
   const [form, setForm] = useState({
     name: '',
-    email: '', // ✅ 이메일 필드 추가
+    email: '',
     address: { zipCode: '', address: '', address2: '' },
     phone1: '',
     phone2: '',
     phone3: '',
+    agreeMain: false,
+    agreeShopping: false,
+    agreeSms: false,
+    agreeEmail: false,
   });
 
   const handleInputChange = (field, value) => {
@@ -60,9 +65,15 @@ export default function KakaoCallback() {
   const handleAddressChange = addressData => {
     setForm(prev => ({ ...prev, address: addressData }));
   };
+  const handleToggleAgree = field => {
+    setForm(prev => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const handleClick = () => {
+    openModal(<AgreeModal />);
+  };
 
   const once = useRef(false);
-
   const code = useMemo(() => sp.get('code') || '', [sp]);
   const state = useMemo(() => sp.get('state') || '', [sp]);
 
@@ -80,7 +91,7 @@ export default function KakaoCallback() {
         const storedState = sessionStorage.getItem('kakao_oauth_state');
         if (storedState && state && storedState !== state) {
           console.warn(
-            'state 불일치. 개발 중이라면 넘어가도 되지만, 정식에선 막아라.',
+            'state 불일치. 개발 중에는 넘어가도 되지만 정식에선 막아라.',
           );
         }
 
@@ -108,7 +119,6 @@ export default function KakaoCallback() {
         const tokenJson = await tokenResp.json();
         setToken(tokenJson);
 
-        // 2) 프로필 조회
         setMsg('프로필 조회 중…');
         const meResp = await fetch('https://kapi.kakao.com/v2/user/me', {
           headers: { Authorization: `Bearer ${tokenJson.access_token}` },
@@ -121,7 +131,7 @@ export default function KakaoCallback() {
         setProfile(meJson);
 
         const nickname = extractName(meJson) || '카카오사용자';
-        const emailFromKakao = extractEmail(meJson) || ''; // ✅ 이메일 추출
+        const emailFromKakao = extractEmail(meJson) || '';
 
         setForm(prev => ({ ...prev, name: nickname, email: emailFromKakao }));
 
@@ -133,7 +143,6 @@ export default function KakaoCallback() {
             email: emailFromKakao || '',
             nickname,
           });
-          // console.log('kakaoLoginCheck:', checkResp);
         } catch (e) {
           console.warn('kakaoLoginCheck 실패, 폼으로 진행:', e);
           checkResp = { code: -1 };
@@ -141,16 +150,12 @@ export default function KakaoCallback() {
 
         if (checkResp?.code === 1) {
           const userCode = checkResp?.data;
-          login({
-            userData: { userId: String(meJson?.id || '') },
-            userCode,
-          });
+          login({ userData: { userId: String(meJson?.id || '') }, userCode });
           addToast('카카오 로그인 완료', 'success');
           navigate('/', { replace: true });
           return;
         }
 
-        // 신규(추가정보 필요)
         setStep('form');
         setMsg('추가 정보를 입력하세요.');
       } catch (e) {
@@ -169,23 +174,30 @@ export default function KakaoCallback() {
     e.preventDefault();
     if (step === 'submitting') return;
 
+    // 필수값 체크
     if (!form.name.trim()) {
-      setError('이름을 입력하세요.');
+      addToast('이름을 입력하세요.', 'error');
       setStep('form');
       return;
     }
     if (!form.email.trim()) {
-      setError('이메일을 입력하세요.');
+      addToast('이메일을 입력하세요.', 'error');
       setStep('form');
       return;
     }
     if (!form.address?.zipCode?.trim() || !form.address?.address?.trim()) {
-      setError('우편번호와 기본주소를 입력하세요.');
+      addToast('우편번호와 기본주소를 입력하세요.', 'error');
       setStep('form');
       return;
     }
     if (!form.phone1?.trim() || !form.phone2?.trim() || !form.phone3?.trim()) {
-      setError('휴대전화를 입력하세요.');
+      addToast('휴대전화를 입력하세요.', 'error');
+      setStep('form');
+      return;
+    }
+
+    if (!form.agreeMain || !form.agreeShopping) {
+      addToast('필수 약관에 동의해야 회원가입이 가능합니다.', 'error');
       setStep('form');
       return;
     }
@@ -195,23 +207,22 @@ export default function KakaoCallback() {
       setStep('submitting');
       setMsg('제출 중…');
 
-      // ✅ 최종 전송은 userId와 email을 카카오 이메일로
       const emailToUse = form.email.trim();
 
       const payload = {
         provider: 'KAKAO',
-        userId: emailToUse, // ← 이메일을 userId로 사용
-        email: emailToUse, // ← 실제 카카오 이메일
+        userId: emailToUse,
+        email: emailToUse,
         password: '12345678',
         name: form.name.trim(),
         phone: [form.phone1, form.phone2, form.phone3].join(''),
         zipCode: form.address.zipCode.trim(),
         address: form.address.address.trim(),
         address2: (form.address.address2 || '').trim(),
-        agreeMain: true,
-        agreeShopping: true,
-        agreeSms: true,
-        agreeEmail: true,
+        agreeMain: form.agreeMain,
+        agreeShopping: form.agreeShopping,
+        agreeSms: form.agreeSms,
+        agreeEmail: form.agreeEmail,
       };
 
       const resp = await signUp(payload);
@@ -268,7 +279,6 @@ export default function KakaoCallback() {
             autoComplete='name'
           />
 
-          {/* ✅ 이메일 입력 (카카오에서 오면 선기입, 직접 수정 가능) */}
           <FormField
             id='email'
             label='이메일'
@@ -331,6 +341,57 @@ export default function KakaoCallback() {
               />
             </div>
           </FormField>
+
+          <section className='mt-6 space-y-3 rounded-md border border-gray-200 p-4'>
+            <label className='flex items-center gap-2 text-sm'>
+              <input
+                type='checkbox'
+                checked={form.agreeMain}
+                onChange={() => handleToggleAgree('agreeMain')}
+              />
+              <span>
+                이용 약관 동의 <span className='text-red-500'>(필수)</span>
+              </span>
+
+              <button
+                type='button'
+                className='ml-auto text-xs text-gray-500 underline'
+                onClick={handleClick}
+              >
+                약관 보기
+              </button>
+            </label>
+
+            <label className='flex items-center gap-2 text-sm'>
+              <input
+                type='checkbox'
+                checked={form.agreeShopping}
+                onChange={() => handleToggleAgree('agreeShopping')}
+              />
+              <span>
+                개인정보 수집 및 이용 동의{' '}
+                <span className='text-red-500'>(필수)</span>
+              </span>
+            </label>
+
+            <label className='flex items-center gap-2 text-sm'>
+              <input
+                type='checkbox'
+                checked={form.agreeSms}
+                onChange={() => handleToggleAgree('agreeSms')}
+              />
+              <span>SMS 수신 동의</span>
+            </label>
+
+            <label className='flex items-center gap-2 text-sm'>
+              <input
+                type='checkbox'
+                checked={form.agreeEmail}
+                onChange={() => handleToggleAgree('agreeEmail')}
+              />
+              <span>이메일 수신 동의</span>
+            </label>
+          </section>
 
           <button
             type='submit'
