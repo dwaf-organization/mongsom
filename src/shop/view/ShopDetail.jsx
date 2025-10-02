@@ -104,7 +104,7 @@ export default function ShopDetail() {
       })
       .catch(() => {
         if (!cancel) {
-          setCurrentUrl(url); // 실패해도 그냥 박아둠
+          setCurrentUrl(url);
           setFirstReady(true);
         }
       });
@@ -113,31 +113,25 @@ export default function ShopDetail() {
     };
   }, [imgs]);
 
-  // 썸네일 hover 시 미리 디코드
   const onThumbHover = url => {
     decodeImage(url).catch(() => {});
   };
 
-  // 썸네일 클릭: 화면은 즉시 반응(겹쳐 올릴 nextUrl 생성), 로드 후 스무스 교체
   const onThumbClick = async index => {
     if (index === selectedIndex) return;
     const url = imgs[index];
     if (!url) return;
 
     setSelectedIndex(index);
-    setNextUrl(url); // 즉시 오버레이 등장 준비
-
+    setNextUrl(url);
     try {
-      await decodeImage(url); // 백그라운드 디코드
-      // 디코드 완료되면 페이드인 애니메이션 트리거
+      await decodeImage(url);
       setSwapAnimating(true);
     } catch {
-      // 실패해도 교체 시도
       setSwapAnimating(true);
     }
   };
 
-  // 오버레이 페이드인 후 currentUrl로 확정
   const [swapAnimating, setSwapAnimating] = useState(false);
   const handleOverlayTransitionEnd = () => {
     if (!nextUrl) return;
@@ -146,7 +140,6 @@ export default function ShopDetail() {
     setSwapAnimating(false);
   };
 
-  // 이웃 프리로드
   useEffect(() => {
     if (!imgs.length) return;
     [selectedIndex - 1, selectedIndex + 1]
@@ -182,14 +175,12 @@ export default function ShopDetail() {
     <InnerPaddingSectionWrapper>
       <div className='flex flex-col md:flex-row gap-8 justify-center'>
         <div className='flex flex-col gap-4'>
-          {/* 메인 이미지 영역: 400x400 고정 */}
           <div
             className={[
               'relative w-[400px] h-[400px] rounded-lg overflow-hidden border border-gray-200 bg-gray-100',
-              firstReady ? '' : 'animate-pulse', // 첫 로드에서만 스켈레톤
+              firstReady ? '' : 'animate-pulse',
             ].join(' ')}
           >
-            {/* 현재 이미지 */}
             {currentUrl && (
               <img
                 src={currentUrl}
@@ -202,7 +193,6 @@ export default function ShopDetail() {
               />
             )}
 
-            {/* 교체용 오버레이 이미지: 디코드 끝나면 페이드인 */}
             {nextUrl && (
               <img
                 src={nextUrl}
@@ -220,7 +210,6 @@ export default function ShopDetail() {
             )}
           </div>
 
-          {/* 썸네일들 */}
           <div className='flex gap-2 flex-wrap'>
             {imgs.map((img, index) => (
               <button
