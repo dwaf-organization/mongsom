@@ -1,11 +1,4 @@
-import { useState } from 'react';
-import { PRICE_OPTIONS, CATEGORY_OPTIONS } from '../../constants/inquiry';
-import { Button } from './button';
-
 export default function AgreeModal() {
-  const [selectedPrice, setSelectedPrice] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
   return (
     <div className='flex w-full flex-col items-center justify-center gap-4 p-10'>
       제1조(목적) <br />이 약관은 몽솜주식회사(전자상거래 사업자)가 운영하는
