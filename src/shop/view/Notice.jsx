@@ -13,7 +13,7 @@ export default function Notice() {
     [searchParams],
   );
   const pageSize = useMemo(
-    () => Number(searchParams.get('size') || 5),
+    () => Number(searchParams.get('size') || 10),
     [searchParams],
   );
 
@@ -67,6 +67,18 @@ export default function Notice() {
     };
   }, [currentPage, pageSize]);
 
+  const sevenDaysAgoTs = (() => {
+    const now = new Date();
+    return now.getTime() - 7 * 24 * 60 * 60 * 1000;
+  })();
+
+  const isRecent = value => {
+    if (!value) return false;
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return false;
+    return d.getTime() >= sevenDaysAgoTs;
+  };
+
   const formatDate = d => (d ? String(d).slice(0, 10) : '');
 
   return (
@@ -75,14 +87,8 @@ export default function Notice() {
         공지사항
       </h2>
 
-      {loading ? (
-        <div className='py-20 text-center text-gray-500'>불러오는 중…</div>
-      ) : notices.length === 0 ? (
-        <div className='py-20 text-center text-gray-500'>
-          등록된 공지사항이 없습니다.
-        </div>
-      ) : (
-        <table className='w-full bg-secondary-100/80 text-sm text-[#3A3A3A]'>
+      {!loading && notices.length > 0 && (
+        <table className='w-full text-sm text-[#3A3A3A]'>
           <thead>
             <tr className='flex justify-between border-b border-gray-400 py-3'>
               <th className='text-center font-montserrat font-medium w-full max-w-[100px]'>
@@ -98,30 +104,35 @@ export default function Notice() {
             </tr>
           </thead>
           <tbody>
-            {notices.map((item, index) => (
-              <tr
-                key={item?.id ?? item?.noticeId ?? index}
-                className='flex justify-between border-b border-gray-400 py-3 cursor-pointer'
-                onClick={() =>
-                  navigate(
-                    `/notice-detail/${item?.id ?? item?.noticeId ?? index}`,
-                  )
-                }
-              >
-                <td className='text-center font-montserrat font-medium w-full max-w-[100px]'>
-                  {item?.id ?? item?.noticeId ?? index + 1}
-                </td>
-                <td className='text-start font-montserrat font-medium w-full pl-4 truncate'>
-                  {item?.title ?? item?.subject ?? '(제목 없음)'}
-                </td>
-                <td className='text-center font-montserrat font-medium w-full max-w-[120px]'>
-                  {item?.writer ?? item?.author ?? '관리자'}
-                </td>
-                <td className='text-center font-montserrat font-medium w-full max-w-[120px] pr-8'>
-                  {formatDate(item?.date ?? item?.createdAt)}
-                </td>
-              </tr>
-            ))}
+            {notices.map((item, index) => {
+              const id = item?.id ?? item?.noticeId ?? index;
+              const dateRaw = item?.date ?? item?.createdAt;
+              const recent = isRecent(dateRaw); // ✅ 최근 1주 이내 체크
+
+              return (
+                <tr
+                  key={id}
+                  onClick={() => navigate(`/notice-detail/${id}`)}
+                  className={[
+                    'flex justify-between border-b border-gray-400 py-3 cursor-pointer',
+                    recent ? 'bg-secondary-100' : '', // ✅ 배경색 적용
+                  ].join(' ')}
+                >
+                  <td className='text-center font-montserrat font-medium w-full max-w-[100px]'>
+                    {item?.id ?? item?.noticeId ?? index + 1}
+                  </td>
+                  <td className='text-start font-montserrat font-medium w-full pl-4 truncate'>
+                    {item?.title ?? item?.subject ?? '(제목 없음)'}
+                  </td>
+                  <td className='text-center font-montserrat font-medium w-full max-w-[120px]'>
+                    {item?.writer ?? item?.author ?? '관리자'}
+                  </td>
+                  <td className='text-center font-montserrat font-medium w-full max-w-[120px] pr-8'>
+                    {formatDate(dateRaw)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

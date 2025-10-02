@@ -23,7 +23,6 @@ export default function AdminApp() {
   return (
     <AuthProvider>
       <ToastProvider>
-        s
         <ModalProvider>
           <AdminLayout>
             <Routes>
