@@ -121,7 +121,9 @@ export default function Shop() {
                     <div className='p-2'>
                       {!item.discountPer && (
                         <div className='flex justify-between gap-2 '>
-                          <h3 className='truncate'>{item.name}</h3>
+                          <h3 className='truncate hover:text-gray-700'>
+                            {item.name}
+                          </h3>
                           <p className=' font-semibold whitespace-nowrap'>
                             {item.price.toLocaleString()}원
                           </p>
@@ -130,10 +132,10 @@ export default function Shop() {
                       {item.discountPer > 0 && (
                         <div className='flex flex-col gap-2'>
                           <div className='flex justify-between gap-2'>
-                            <h3 className='hover:text-gray-700 truncate'>
+                            <p className='hover:text-gray-700 truncate'>
                               {item.name}
-                            </h3>
-                            <p className=' font-semibold line-through text-gray-500 whitespace-nowrap'>
+                            </p>
+                            <p className='line-through text-gray-500 whitespace-nowrap'>
                               {item.price.toLocaleString()}원
                             </p>
                           </div>
