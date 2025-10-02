@@ -70,8 +70,11 @@ export default function ProductTableSection({ rows, loading }) {
                       : undefined;
 
                 const discountPrice =
-                  item.discountPrice ?? item.salePrice ?? null;
-                const basePrice = item.price ?? 0;
+                  item.discountPrice ??
+                  item.salePrice ??
+                  item.discountPrice ??
+                  null;
+                const basePrice = item.price + item.salesMargin ?? 0;
 
                 const premiumLabel =
                   item.premium === 1
@@ -119,10 +122,15 @@ export default function ProductTableSection({ rows, loading }) {
 
                     <td className='px-4 py-4 whitespace-nowrap text-sm text-gray-900'>
                       <div className='flex flex-col items-center gap-1'>
-                        {discountPrice && (
-                          <p className='text-gray-400 text-xs line-through'>
-                            {Number(basePrice).toLocaleString()} 원
-                          </p>
+                        {item.discountPer > 0 && (
+                          <>
+                            <p className='text-primary-200 text-xs'>
+                              {item.discountPer}%
+                            </p>
+                            <p className='text-gray-400 text-xs line-through'>
+                              {Number(basePrice).toLocaleString()} 원
+                            </p>
+                          </>
                         )}
                         <p className='font-medium'>
                           {Number(discountPrice ?? basePrice).toLocaleString()}{' '}
