@@ -37,13 +37,11 @@ export default function InquireModal() {
     const price = PRICE_OPTIONS.find(p => p.id === selectedPrice);
     const category = CATEGORY_OPTIONS.find(c => c.id === selectedCategory);
     const payload = {
-      // category: selectedCategory,
       category: category?.label ?? '',
       companyName: name.trim(),
       email: email.trim(),
       phone: digits(phone),
-      contents: message.trim(),
-      price: price?.label ?? '', // ← 여기만 있으면 됨
+      price: price?.label ?? '',
     };
 
     try {
@@ -81,7 +79,6 @@ export default function InquireModal() {
           handleSubmit();
         }}
       >
-        {/* 카테고리 */}
         <section className='w-full'>
           <label className='w-full text-lg font-bold'>카테고리</label>
           <div
@@ -118,7 +115,6 @@ export default function InquireModal() {
           />
         </section>
 
-        {/* 기본 정보 */}
         <section className='py-4 flex w-full max-w-[800px] flex-col gap-2'>
           <label className='w-full'>
             이름
@@ -152,20 +148,8 @@ export default function InquireModal() {
               className='w-full max-w-[800px] rounded-md border border-gray-300 p-2'
             />
           </label>
-
-          <label className='w-full'>
-            문의내용
-            <input
-              type='text'
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              placeholder='문의내용'
-              className='w-full max-w-[800px] rounded-md border border-gray-300 p-2'
-            />
-          </label>
         </section>
 
-        {/* 희망 가격 */}
         <section className='flex flex-col pb-5'>
           <h2 className='mb-2 font-semibold'>희망 가격</h2>
           <div
@@ -201,7 +185,6 @@ export default function InquireModal() {
           />
         </section>
 
-        {/* 제출 버튼은 폼 안에서 submit으로 */}
         <Button type='submit' className='text-md mb-4 rounded-sm py-3'>
           견적 문의신청하기
         </Button>
