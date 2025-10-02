@@ -155,7 +155,7 @@ export default function ShopDetail() {
     );
   }
 
-  if (!product || product.deleteStatus === 1) {
+  if (!loading && (!product || product.deleteStatus === 1)) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <div className='text-center'>
@@ -241,11 +241,15 @@ export default function ShopDetail() {
           </div>
         </div>
 
-        <PurchaseInfo product={product} />
+        <PurchaseInfo product={product} isLoading={loading} />
       </div>
 
       <ShopDetailTabSection />
-      <ShopDetailInfoListSection tab={activeTab} product={product} />
+      <ShopDetailInfoListSection
+        tab={activeTab}
+        product={product}
+        isLoading={loading}
+      />
     </InnerPaddingSectionWrapper>
   );
 }
