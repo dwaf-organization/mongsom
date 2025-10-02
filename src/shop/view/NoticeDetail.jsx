@@ -37,11 +37,9 @@ export default function NoticeDetail() {
       </ul>
 
       <div
-        className='pt-10'
+        className='py-10 px-4 border border-gray-500 mt-10 rounded-md'
         dangerouslySetInnerHTML={{ __html: notice && notice.contents }}
-      >
-        {/* {notice && notice.contents} */}
-      </div>
+      ></div>
     </InnerPaddingSectionWrapper>
   );
 }
