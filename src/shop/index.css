@@ -71,6 +71,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.rich-content img {
+  display: block;
+  width: 100%;
+  max-width: 800px;
+  height: auto !important;
+  margin: 1rem auto;
+  border-radius: 0.5rem;
+  object-fit: contain;
+}
+
 code {
   font-family:
     source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
