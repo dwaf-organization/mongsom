@@ -24,6 +24,11 @@ function extractName(profile) {
   );
 }
 
+function extractEmail(profile) {
+  // 카카오 동의 범위에 이메일 포함되어 있어야 내려옴
+  return profile?.kakao_account?.email || '';
+}
+
 // 숫자만
 const onlyDigits = v => (v || '').replace(/\D/g, '');
 
@@ -39,8 +44,10 @@ export default function KakaoCallback() {
 
   const [token, setToken] = useState(null);
   const [profile, setProfile] = useState(null);
+
   const [form, setForm] = useState({
     name: '',
+    email: '', // ✅ 이메일 필드 추가
     address: { zipCode: '', address: '', address2: '' },
     phone1: '',
     phone2: '',
@@ -113,17 +120,20 @@ export default function KakaoCallback() {
         const meJson = await meResp.json();
         setProfile(meJson);
 
-        const email = 'neocop7@gamil.com';
         const nickname = extractName(meJson) || '카카오사용자';
-        setForm(prev => ({ ...prev, name: nickname }));
+        const emailFromKakao = extractEmail(meJson) || ''; // ✅ 이메일 추출
+
+        setForm(prev => ({ ...prev, name: nickname, email: emailFromKakao }));
+
         setMsg('회원 여부 확인 중…');
+
         let checkResp;
         try {
           checkResp = await kakaoLoginCheck({
-            email,
+            email: emailFromKakao || '',
             nickname,
           });
-          console.log('🚀 ~ run ~ checkResp:', checkResp);
+          // console.log('kakaoLoginCheck:', checkResp);
         } catch (e) {
           console.warn('kakaoLoginCheck 실패, 폼으로 진행:', e);
           checkResp = { code: -1 };
@@ -131,18 +141,16 @@ export default function KakaoCallback() {
 
         if (checkResp?.code === 1) {
           const userCode = checkResp?.data;
-          login({ userData: { userId: String(meJson?.id || '') }, userCode });
+          login({
+            userData: { userId: String(meJson?.id || '') },
+            userCode,
+          });
           addToast('카카오 로그인 완료', 'success');
           navigate('/', { replace: true });
           return;
         }
 
-        if (checkResp?.code === -1) {
-          setStep('form');
-          setMsg('추가 정보를 입력하세요.');
-          return;
-        }
-
+        // 신규(추가정보 필요)
         setStep('form');
         setMsg('추가 정보를 입력하세요.');
       } catch (e) {
@@ -166,6 +174,11 @@ export default function KakaoCallback() {
       setStep('form');
       return;
     }
+    if (!form.email.trim()) {
+      setError('이메일을 입력하세요.');
+      setStep('form');
+      return;
+    }
     if (!form.address?.zipCode?.trim() || !form.address?.address?.trim()) {
       setError('우편번호와 기본주소를 입력하세요.');
       setStep('form');
@@ -182,11 +195,13 @@ export default function KakaoCallback() {
       setStep('submitting');
       setMsg('제출 중…');
 
+      // ✅ 최종 전송은 userId와 email을 카카오 이메일로
+      const emailToUse = form.email.trim();
+
       const payload = {
         provider: 'KAKAO',
-        // userId: String(profile?.id || ''),
-        userId: 'neocop7@gamil.com',
-        email: 'neocop7@gamil.com',
+        userId: emailToUse, // ← 이메일을 userId로 사용
+        email: emailToUse, // ← 실제 카카오 이메일
         password: '12345678',
         name: form.name.trim(),
         phone: [form.phone1, form.phone2, form.phone3].join(''),
@@ -251,6 +266,17 @@ export default function KakaoCallback() {
             value={form.name}
             onChange={e => handleInputChange('name', e.target.value)}
             autoComplete='name'
+          />
+
+          {/* ✅ 이메일 입력 (카카오에서 오면 선기입, 직접 수정 가능) */}
+          <FormField
+            id='email'
+            label='이메일'
+            placeholder='이메일을 입력하세요'
+            required
+            value={form.email}
+            onChange={e => handleInputChange('email', e.target.value)}
+            autoComplete='email'
           />
 
           <AddressInput
