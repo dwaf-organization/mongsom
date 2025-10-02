@@ -66,18 +66,25 @@ export default function Shop() {
         </Link>
       </div>
       <div className='flex items-center justify-end gap-4'>
-        {sort === 'premium' && (
-          <div className='flex items-center justify-center'>
-            <Link
-              to={`${routes.shop}?sort=all`}
-              className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
-          ${sort === 'all' ? 'border-primary-200 text-primary-200' : ''}
+        <Select
+          options={sortOptions}
+          value={sort}
+          onChange={handleSortChange}
+          className='w-24'
+          hidden={sort === 'premium'}
+        />
+        {/* {sort === 'premium' && ( */}
+        <div className='flex items-center justify-center'>
+          <Link
+            to={`${routes.shop}?sort=all`}
+            className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
+          ${sort !== 'premium' ? 'border-primary-200 text-primary-200' : ''}
           `}
-            >
-              일반 상품
-            </Link>
-          </div>
-        )}
+          >
+            일반 상품
+          </Link>
+        </div>
+        {/* )} */}
         <Link
           to={`${routes.shop}?sort=premium`}
           className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
@@ -86,13 +93,6 @@ export default function Shop() {
         >
           프리미엄 선물용
         </Link>
-        <Select
-          options={sortOptions}
-          value={sort}
-          onChange={handleSortChange}
-          className='w-24'
-          hidden={sort === 'premium'}
-        />
       </div>
 
       {(() => {

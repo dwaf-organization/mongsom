@@ -1,6 +1,5 @@
-import { useParams, useSearchParams } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import PurchaseInfo from '../components/section/ShopDetail/PurchaseInfo';
 import ShopDetailTabSection from '../components/section/ShopDetail/ShopDetailTabSection';
@@ -15,10 +14,39 @@ export default function ShopDetail() {
   const activeTab = searchParams.get('tab') || 'info';
   const navigate = useNavigate();
 
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [imgLoaded, setImgLoaded] = useState(false);
+
+  // 이미지 목록
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [currentUrl, setCurrentUrl] = useState(null); // 지금 화면에 보이는 메인
+  const [nextUrl, setNextUrl] = useState(null); // 교체 예정(겹쳐 올릴) 이미지
+  const [firstReady, setFirstReady] = useState(false); // 첫 로드 완료 여부
+
+  // 디코드 캐시
+  const decodeCacheRef = useRef(new Map()); // url -> Promise<void>
+  const decodeImage = url => {
+    if (!url) return Promise.resolve();
+    const cache = decodeCacheRef.current;
+    if (cache.has(url)) return cache.get(url);
+    const p = new Promise((resolve, reject) => {
+      const im = new Image();
+      im.src = url;
+      if (im.decode) {
+        im.decode()
+          .then(resolve)
+          .catch(e => {
+            im.onload = () => resolve();
+            im.onerror = () => reject(e || new Error('image decode error'));
+          });
+      } else {
+        im.onload = () => resolve();
+        im.onerror = () => reject(new Error('image load error'));
+      }
+    });
+    cache.set(url, p);
+    return p;
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -27,8 +55,8 @@ export default function ShopDetail() {
         setLoading(true);
         const res = await getProductDetail(id);
         if (!cancelled) {
-          setProduct(res?.data ?? res ?? null);
-          setSelectedImageIndex(0);
+          const data = res?.data ?? res ?? null;
+          setProduct(data);
         }
       } catch (e) {
         console.error('상품 상세 로드 실패:', e);
@@ -42,23 +70,89 @@ export default function ShopDetail() {
     };
   }, [id]);
 
-  const imgs = useMemo(() => product?.productImgUrl ?? [], [product]);
-  const mainImg = imgs?.[selectedImageIndex];
+  const imgs = useMemo(() => {
+    const raw = product?.productImgUrl ?? [];
+    let arr = [];
+    if (Array.isArray(raw)) {
+      arr = raw.map(it => {
+        if (typeof it === 'string') return it;
+        if (it && typeof it === 'object')
+          return it.url || it.imageUrl || it.imgUrl || it.src || '';
+        return '';
+      });
+    } else if (typeof raw === 'string') arr = [raw];
+    else if (raw && typeof raw === 'object') {
+      const u = raw.url || raw.imageUrl || raw.imgUrl || raw.src || '';
+      arr = u ? [u] : [];
+    }
+    return arr.filter(Boolean);
+  }, [product]);
 
+  // 첫 진입: 첫 이미지를 선디코드 → currentUrl 세팅
   useEffect(() => {
-    setImgLoaded(false);
-  }, [selectedImageIndex, mainImg]);
+    let cancel = false;
+    if (!imgs.length) return;
+    const url = imgs[0];
+    setSelectedIndex(0);
+    setFirstReady(false);
+    decodeImage(url)
+      .then(() => {
+        if (!cancel) {
+          setCurrentUrl(url);
+          setFirstReady(true);
+        }
+      })
+      .catch(() => {
+        if (!cancel) {
+          setCurrentUrl(url); // 실패해도 그냥 박아둠
+          setFirstReady(true);
+        }
+      });
+    return () => {
+      cancel = true;
+    };
+  }, [imgs]);
 
+  // 썸네일 hover 시 미리 디코드
+  const onThumbHover = url => {
+    decodeImage(url).catch(() => {});
+  };
+
+  // 썸네일 클릭: 화면은 즉시 반응(겹쳐 올릴 nextUrl 생성), 로드 후 스무스 교체
+  const onThumbClick = async index => {
+    if (index === selectedIndex) return;
+    const url = imgs[index];
+    if (!url) return;
+
+    setSelectedIndex(index);
+    setNextUrl(url); // 즉시 오버레이 등장 준비
+
+    try {
+      await decodeImage(url); // 백그라운드 디코드
+      // 디코드 완료되면 페이드인 애니메이션 트리거
+      setSwapAnimating(true);
+    } catch {
+      // 실패해도 교체 시도
+      setSwapAnimating(true);
+    }
+  };
+
+  // 오버레이 페이드인 후 currentUrl로 확정
+  const [swapAnimating, setSwapAnimating] = useState(false);
+  const handleOverlayTransitionEnd = () => {
+    if (!nextUrl) return;
+    setCurrentUrl(nextUrl);
+    setNextUrl(null);
+    setSwapAnimating(false);
+  };
+
+  // 이웃 프리로드
   useEffect(() => {
-    if (!Array.isArray(imgs) || imgs.length === 0) return;
-    const idxs = [selectedImageIndex - 1, selectedImageIndex + 1].filter(
-      i => i >= 0 && i < imgs.length,
-    );
-    idxs.forEach(i => {
-      const im = new Image();
-      im.src = imgs[i];
-    });
-  }, [selectedImageIndex, imgs]);
+    if (!imgs.length) return;
+    [selectedIndex - 1, selectedIndex + 1]
+      .filter(i => i >= 0 && i < imgs.length)
+      .forEach(i => decodeImage(imgs[i]).catch(() => {}));
+  }, [selectedIndex, imgs]);
 
   if (loading) {
     return (
@@ -67,6 +161,7 @@ export default function ShopDetail() {
       </div>
     );
   }
+
   if (!product || product.deleteStatus === 1) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
@@ -87,37 +182,60 @@ export default function ShopDetail() {
     <InnerPaddingSectionWrapper>
       <div className='flex flex-col md:flex-row gap-8 justify-center'>
         <div className='flex flex-col gap-4'>
-          <div className='w-full max-w-[500px] h-[400px] rounded-lg overflow-hidden border border-gray-200'>
-            {mainImg ? (
+          {/* 메인 이미지 영역: 400x400 고정 */}
+          <div
+            className={[
+              'relative w-[400px] h-[400px] rounded-lg overflow-hidden border border-gray-200 bg-gray-100',
+              firstReady ? '' : 'animate-pulse', // 첫 로드에서만 스켈레톤
+            ].join(' ')}
+          >
+            {/* 현재 이미지 */}
+            {currentUrl && (
               <img
-                src={mainImg}
+                src={currentUrl}
                 alt={product.name}
-                width={500}
+                width={400}
                 height={400}
                 decoding='async'
-                fetchpriority='high'
-                onLoad={() => setImgLoaded(true)}
-                className={`w-[400px] h-full object-cover transition-opacity duration-200 will-change-[opacity] ${
-                  imgLoaded ? 'opacity-100 ' : 'opacity-0'
-                }`}
+                className='absolute inset-0 w-[400px] h-[400px] object-cover'
+                draggable={false}
               />
-            ) : (
-              <div className='w-full h-full flex items-center justify-center text-gray-400'>
-                이미지 없음
-              </div>
+            )}
+
+            {/* 교체용 오버레이 이미지: 디코드 끝나면 페이드인 */}
+            {nextUrl && (
+              <img
+                src={nextUrl}
+                alt={product.name}
+                width={400}
+                height={400}
+                decoding='async'
+                className={[
+                  'absolute inset-0 w-[400px] h-[400px] object-cover transition-opacity duration-200',
+                  swapAnimating ? 'opacity-100' : 'opacity-0',
+                ].join(' ')}
+                onTransitionEnd={handleOverlayTransitionEnd}
+                draggable={false}
+              />
             )}
           </div>
 
+          {/* 썸네일들 */}
           <div className='flex gap-2 flex-wrap'>
-            {imgs?.map((img, index) => (
+            {imgs.map((img, index) => (
               <button
-                key={img + index}
-                onClick={() => setSelectedImageIndex(index)}
-                className={`w-[50px] h-[50px] rounded-lg overflow-hidden border-2 transition-all ${
-                  selectedImageIndex === index
+                key={`${img}-${index}`}
+                onClick={() => onThumbClick(index)}
+                onMouseEnter={() => onThumbHover(img)}
+                type='button'
+                aria-pressed={selectedIndex === index}
+                aria-label={`${product.name} 썸네일 ${index + 1}`}
+                className={[
+                  'w-[50px] h-[50px] rounded-lg overflow-hidden border-2 transition-all',
+                  selectedIndex === index
                     ? 'ring-2 ring-blue-200'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
+                    : 'border-gray-200 hover:border-gray-300',
+                ].join(' ')}
               >
                 <img
                   src={img}
@@ -127,6 +245,7 @@ export default function ShopDetail() {
                   loading='lazy'
                   decoding='async'
                   className='w-full h-full object-cover'
+                  draggable={false}
                 />
               </button>
             ))}
