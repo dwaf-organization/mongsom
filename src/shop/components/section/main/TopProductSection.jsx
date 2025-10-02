@@ -65,7 +65,7 @@ export default function TopProductSection() {
                       />
                     </li>
                     <div className='h-[85px]'>
-                      <h3 className='text-sm text-black-100 text-start pt-2 px-3'>
+                      <h3 className='text-sm text-black-100 text-start pt-2 px-3 truncate'>
                         {product.name}
                       </h3>
                       {product.discountPer > 0 ? (
