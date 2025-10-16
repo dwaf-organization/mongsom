@@ -1,4 +1,5 @@
 export default function ProductHeader({ product }) {
+  const basePrice = product.price + product.salesMargin;
   return (
     <ul className=''>
       <li className='flex items-center justify-start text-2xl font-bold text-gray-800 mb-4'>
@@ -8,7 +9,7 @@ export default function ProductHeader({ product }) {
         <>
           <li>
             <p className='text-primary-600 text-end font-pretendard text-xl text-gray-600 line-through'>
-              {product.price.toLocaleString()}원
+              {Number(basePrice).toLocaleString()} 원
             </p>
           </li>
           <li className='flex items-center justify-between border-b-2 border-gray-500 pb-4'>
@@ -24,7 +25,7 @@ export default function ProductHeader({ product }) {
         <>
           <li>
             <p className='text-primary-600 text-end font-pretendard text-2xl font-semibold'>
-              {product.price.toLocaleString()}원
+              {product.discountPrice.toLocaleString()}원
             </p>
           </li>
         </>

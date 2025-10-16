@@ -146,9 +146,8 @@ export default function CartItemListSection({ cart = [], updateCart }) {
     <>
       <ul className='flex flex-col items-start justify-start gap-4 w-full border-b border-gray-500 pb-10 mb-4'>
         {cart.map(item => {
-          const hasDiscount =
-            Number(item.discountPer ?? 0) > 0 &&
-            Number(item.discountPrice ?? item.price) < Number(item.price ?? 0);
+          const hasDiscount = Number(item.discountPer ?? 0) > 0;
+          const basePrice = item.price + item.salesMargin;
 
           const imgSrc = Array.isArray(item.productImgUrl)
             ? item.productImgUrl[0]
@@ -211,11 +210,11 @@ export default function CartItemListSection({ cart = [], updateCart }) {
                       {item.discountPer}%
                     </p>
                     <p className='text-pretendart text-gray-500 line-through'>
-                      {Number(item.price).toLocaleString()}원
+                      {Number(basePrice).toLocaleString()} 원
                     </p>
                   </div>
                 ) : (
-                  <p>{Number(item.price).toLocaleString()}원</p>
+                  <p>{Number(item.discountPrice).toLocaleString()}원</p>
                 )}
 
                 <p className='text-pretendart font-semibold text-xl'>
