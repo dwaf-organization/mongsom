@@ -7,6 +7,7 @@ import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import ShopDetailInfoListSection from '../components/section/ShopDetail/ShopDetailInfoListSection';
 import { getProductDetail } from '../api/products';
 import { Button } from '../components/ui/button';
+import { useLayoutEffect } from 'react';
 
 export default function ShopDetail() {
   const { id } = useParams();
@@ -17,14 +18,12 @@ export default function ShopDetail() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 이미지 목록
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentUrl, setCurrentUrl] = useState(null); // 지금 화면에 보이는 메인
   const [nextUrl, setNextUrl] = useState(null); // 교체 예정(겹쳐 올릴) 이미지
   const [firstReady, setFirstReady] = useState(false); // 첫 로드 완료 여부
 
-  // 디코드 캐시
-  const decodeCacheRef = useRef(new Map()); // url -> Promise<void>
+  const decodeCacheRef = useRef(new Map());
   const decodeImage = url => {
     if (!url) return Promise.resolve();
     const cache = decodeCacheRef.current;
@@ -47,6 +46,17 @@ export default function ShopDetail() {
     cache.set(url, p);
     return p;
   };
+
+  useLayoutEffect(() => {
+    const prev = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+    return () => {
+      window.history.scrollRestoration = prev || 'auto';
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -172,7 +182,7 @@ export default function ShopDetail() {
   }
 
   return (
-    <InnerPaddingSectionWrapper>
+    <InnerPaddingSectionWrapper className='[overFlow-anchor:none]'>
       <div className='flex flex-col md:flex-row gap-8 justify-center'>
         <div className='flex flex-col gap-4'>
           <div
