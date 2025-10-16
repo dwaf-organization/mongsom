@@ -125,7 +125,7 @@ export default function Shop() {
                             {item.name}
                           </h3>
                           <p className=' font-semibold whitespace-nowrap'>
-                            {item.price.toLocaleString()}원
+                            {item.discountPrice.toLocaleString()}원
                           </p>
                         </div>
                       )}
@@ -136,7 +136,8 @@ export default function Shop() {
                               {item.name}
                             </p>
                             <p className='line-through text-gray-500 whitespace-nowrap'>
-                              {item.price.toLocaleString()}원
+                              {(item.price + item.salesMargin).toLocaleString()}
+                              원
                             </p>
                           </div>
                           <div className='flex justify-end gap-2'>
