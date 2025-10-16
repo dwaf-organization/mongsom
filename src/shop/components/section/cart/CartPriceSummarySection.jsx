@@ -1,11 +1,13 @@
 export default function CartPriceSummarySection({ cart }) {
   console.log('🚀 ~ CartPriceSummarySection ~ cart:', cart);
   const selectedItems = cart.filter(item => item.checkStatus === 1);
+  console.log('🚀 ~ CartPriceSummarySection ~ selectedItems:', selectedItems);
 
   const totalPrice = selectedItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.discountPrice * item.quantity,
     0,
   );
+  console.log('🚀 ~ CartPriceSummarySection ~ totalPrice:', totalPrice);
 
   const shippingFee = totalPrice > 0 ? 3000 : 0;
   const finalPrice = totalPrice + shippingFee;
