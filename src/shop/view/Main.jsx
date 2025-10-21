@@ -7,6 +7,7 @@ import {
   BestReviewSection,
   BrandStorySection,
 } from '../components/section/main';
+import ChatFlutingButton from '../components/ui/ChatFlutingButton';
 
 export default function Main() {
   return (
@@ -21,6 +22,7 @@ export default function Main() {
         <TopProductSection />
         <BestReviewSection />
         <BrandStorySection />
+        <ChatFlutingButton />
       </motion.div>
     </Mainwrapper>
   );
