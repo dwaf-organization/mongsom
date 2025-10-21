@@ -52,7 +52,11 @@ export default function ChatFlutingButton() {
     const id = CHANNEL_PUBLIC_ID?.startsWith('_')
       ? CHANNEL_PUBLIC_ID
       : `_${CHANNEL_PUBLIC_ID}`;
-    window.open(`https://pf.kakao.com/${id}`, '_blank', 'noopener,noreferrer');
+    window.open(
+      `https://pf.kakao.com/${id}/chat`,
+      '_blank',
+      'noopener,noreferrer',
+    );
   };
 
   return (
