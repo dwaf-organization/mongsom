@@ -13,7 +13,6 @@ export default function ProductHeader({ product }) {
             </p>
           </li>
           <li className='flex items-center justify-between border-b-2 border-gray-500 pb-4'>
-            *-
             <p className='text-primary-200 font-pretendard font-semibold text-2xl'>
               {product.discountPer}%
             </p>
