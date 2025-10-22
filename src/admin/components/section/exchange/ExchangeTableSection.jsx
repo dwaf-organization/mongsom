@@ -84,7 +84,7 @@ export default function ExchangeTableSection({ exchangeList }) {
                             alt={change.productName}
                           />
                           <div className='min-w-0 flex-1'>
-                            <div className='font-medium truncate text-left'>
+                            <div className='font-medium truncate max-w-[120px] text-left'>
                               {change.productName}
                             </div>
                             {change.length > 1 && (

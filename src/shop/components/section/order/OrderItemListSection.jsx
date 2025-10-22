@@ -40,8 +40,12 @@ export default function OrderItemListSection({ selectedItems }) {
               </Link>
               <div className='flex flex-col justify-between h-[150px] px-6 font-pretendard'>
                 <div className='text-left'>
-                  <h4 className='font-semibold text-xl'>{item.productName}</h4>
-                  <p className='text-gray-600 text-lg'>옵션 | {item.optName}</p>
+                  <h4 className='font-semibold text-xl truncate max-w-[500px]'>
+                    {item.productName}
+                  </h4>
+                  <p className='text-gray-600 truncate max-w-[500px]'>
+                    옵션 | {item.optName}
+                  </p>
                   <span>수량: {item.quantity || item.count || 1}개</span>
                 </div>
                 {item.discountPrice ? (

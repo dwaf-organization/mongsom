@@ -102,7 +102,7 @@ export default function CreateReview() {
         <div className='py-6 text-center text-gray-500'>불러오는 중…</div>
       ) : !target ? (
         <div className='py-6 text-center text-gray-500'>
-          이미 리뷰를 작성한 상품입니다
+          이미 작성된 리뷰 입니다.{' '}
         </div>
       ) : (
         <>
