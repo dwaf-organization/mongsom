@@ -58,23 +58,19 @@ export default function AddProductInfoSection() {
   // === 금액 계산 유틸
   const toNum = v => (Number.isFinite(parseFloat(v)) ? parseFloat(v) : 0);
 
-  // ✅ 실시간 판매가(할인가) 계산
   const computedDiscountPrice = useMemo(() => {
     const base = toNum(productData.price) + toNum(productData.salesMargin);
     const dp = toNum(productData.discountPer);
     const price = Math.floor(base * (1 - dp / 100));
-    // 할인 퍼센트가 비어있으면 기본 base 사용
     return Number.isFinite(dp) && productData.discountPer !== '' ? price : base;
   }, [productData.price, productData.salesMargin, productData.discountPer]);
 
-  // ✅ 판매가 유효성(0 이상)
   const isDiscountPriceValid = computedDiscountPrice > 0;
 
   const handleInputChange = e => {
     const { name, value } = e.target;
     setProductData(prev => {
       const updated = { ...prev, [name]: value };
-      // 표시용 판매가도 동기화(읽기전용 input에 반영)
       const base = toNum(updated.price) + toNum(updated.salesMargin);
       const dp = toNum(updated.discountPer);
       updated.discountPrice =
@@ -91,7 +87,6 @@ export default function AddProductInfoSection() {
     });
   };
 
-  // === 옵션
   const addOption = () => {
     if (!optionInput.trim()) return;
     setProductData(prev => ({
@@ -109,7 +104,6 @@ export default function AddProductInfoSection() {
     }));
   };
 
-  // ✅ 옵션 입력에서 Enter 누르면 폼 제출 방지 + 옵션 추가
   const onOptionKeyDown = e => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -136,13 +130,11 @@ export default function AddProductInfoSection() {
   const submit = async e => {
     e.preventDefault();
 
-    // ✅ 판매가 0 미만 방지 (0 이상만 허용)
     if (!isDiscountPriceValid) {
       setErrors(prev => ({
         ...prev,
         discountPrice: ['판매가격은 0 이상이어야 합니다.'],
       }));
-      // 해당 섹션으로 스크롤
       document
         .querySelector('[data-field="discountPer"]')
         ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -224,10 +216,15 @@ export default function AddProductInfoSection() {
             <input
               placeholder='상품명을 입력하세요'
               name='name'
+              type='text'
+              maxLength={80}
               value={productData.name}
               onChange={handleInputChange}
               className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
             />
+            <p className='text-red-500 text-xs'>
+              * 상품명은 최대 80자 까지 입력 가능합니다{' '}
+            </p>
             {errors.name && (
               <p className='text-red-500 text-sm w-full mt-2'>
                 {errors.name[0]}
@@ -241,7 +238,7 @@ export default function AddProductInfoSection() {
           <div className='bg-primary-100 font-semibold px-6 py-4 border-b'>
             상품 설명
           </div>
-          <div className='p-4 pt-0' data-field='contents'>
+          <div className='p-4 pt-4' data-field='contents'>
             <RichEditor
               ref={editorRef}
               initialValue={productData.contents}
