@@ -8,9 +8,11 @@ import { useImageUpload } from '../../../../hooks/useImageUpload';
 import { ProductSchema } from '../../../schema/ProductSchema';
 import { createProduct } from '../../../api/product';
 import { useToast } from '../../../context/ToastContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddProductInfoSection() {
   const editorRef = useRef(null);
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [optionInput, setOptionInput] = useState('');
   const [errors, setErrors] = useState({});
@@ -40,7 +42,6 @@ export default function AddProductInfoSection() {
     resetUpload,
   } = useImageUpload('products_thumbnails');
 
-  // === 이미지 업로드 콜백 안정화
   const uploadFileRef = useRef(uploadFile);
   useEffect(() => {
     uploadFileRef.current = uploadFile;
@@ -55,7 +56,6 @@ export default function AddProductInfoSection() {
     }
   }, []);
 
-  // === 금액 계산 유틸
   const toNum = v => (Number.isFinite(parseFloat(v)) ? parseFloat(v) : 0);
 
   const computedDiscountPrice = useMemo(() => {
@@ -177,6 +177,7 @@ export default function AddProductInfoSection() {
       const resp = await createProduct(result.data);
       console.log('✅ 상품 등록 성공:', resp);
       addToast('상품 등록이 완료되었습니다.', 'success');
+      navigate('/admin/products-list');
 
       setProductData({
         name: '',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import ProductSearchSection from '../components/section/productList/ProductSearchSection';
 import ProductTableSection from '../components/section/productList/ProductTableSection';
@@ -9,8 +9,13 @@ import { useSearchParams } from 'react-router-dom';
 
 export default function ProductList() {
   const { addToast } = useToast();
-  const [searchParams] = useSearchParams();
-  const page = searchParams.get('page') || '1';
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageStr = searchParams.get('page') || '1';
+  const page = useMemo(() => {
+    const n = Number(pageStr);
+    return Number.isFinite(n) && n > 0 ? n : 1;
+  }, [pageStr]);
 
   const [query, setQuery] = useState({
     name: '',
@@ -23,54 +28,57 @@ export default function ProductList() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const fetchList = async (next = {}) => {
-    setLoading(true);
-    try {
-      const params = {
-        page,
-        size,
-        ...query,
-        ...next,
-      };
-      const res = await getProductList(params);
+  const fetchList = useCallback(
+    async (next = {}) => {
+      setLoading(true);
+      try {
+        const params = {
+          page,
+          size,
+          ...query,
+          ...next,
+        };
+        const res = await getProductList(params);
 
-      if (res?.code !== 1) {
-        addToast(res?.message || '상품 목록 조회에 실패했습니다.', 'error');
+        if (res?.code !== 1) {
+          addToast(res?.message || '상품 목록 조회에 실패했습니다.', 'error');
+          setRows([]);
+          setTotalPages(1);
+          return;
+        }
+
+        const d = res.data ?? {};
+        const list = Array.isArray(d.products)
+          ? d.products
+          : Array.isArray(d.list)
+            ? d.list
+            : Array.isArray(d.items)
+              ? d.items
+              : [];
+        const pg = d.pagination ?? {};
+        const totalPg =
+          Number(pg.totalPage) ||
+          Number(d.totalPages) ||
+          (pg.total && size
+            ? Math.max(1, Math.ceil(Number(pg.total) / size))
+            : 1);
+
+        setRows(list);
+        setTotalPages(totalPg || 1);
+      } catch (e) {
+        addToast('네트워크 오류로 상품 목록을 불러오지 못했습니다.', 'error');
         setRows([]);
         setTotalPages(1);
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      const d = res.data ?? {};
-      const list = Array.isArray(d.products)
-        ? d.products
-        : Array.isArray(d.list)
-          ? d.list
-          : Array.isArray(d.items)
-            ? d.items
-            : [];
-      const pg = d.pagination ?? {};
-      const totalPg =
-        Number(pg.totalPage) ||
-        Number(d.totalPages) ||
-        (pg.total && size
-          ? Math.max(1, Math.ceil(Number(pg.total) / size))
-          : 1);
-
-      setRows(list);
-      setTotalPages(totalPg || 1);
-    } catch (e) {
-      addToast('네트워크 오류로 상품 목록을 불러오지 못했습니다.', 'error');
-      setRows([]);
-      setTotalPages(1);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [addToast, page, size, query],
+  );
 
   useEffect(() => {
     fetchList();
-  }, [page, query]);
+  }, [page, query, fetchList]);
 
   const handleSearch = values => {
     setQuery({
@@ -80,13 +88,36 @@ export default function ProductList() {
     });
   };
 
+  const handleDeleted = useCallback(
+    async deletedId => {
+      const keyOf = p => p?.productId ?? p?.id;
+
+      const next = rows.filter(p => keyOf(p) !== deletedId);
+      const wasLastItemOnPage = rows.length === 1;
+
+      setRows(next);
+
+      if (wasLastItemOnPage && page > 1) {
+        setSearchParams({ page: String(page - 1) }, { replace: true });
+        return;
+      }
+
+      await fetchList();
+    },
+    [rows, page, setSearchParams, fetchList],
+  );
+
   return (
     <InnerPaddingSectionWrapper>
       <h2 className='text-2xl font-bold text-gray-900 mb-6'>상품 목록</h2>
 
       <ProductSearchSection onSearch={handleSearch} defaultValues={query} />
 
-      <ProductTableSection rows={rows} loading={loading} />
+      <ProductTableSection
+        rows={rows}
+        loading={loading}
+        onDeleted={handleDeleted} // ← 핵심
+      />
 
       <div className='mt-6 flex items-center justify-center'>
         <Pagination totalPage={totalPages} />
