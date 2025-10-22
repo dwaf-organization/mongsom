@@ -220,10 +220,13 @@ export default function EditProductInfoSection({ product }) {
             <input
               placeholder='상품명을 입력하세요'
               name='name'
+              type='text'
+              maxLength={80}
               value={form.name}
               onChange={onChange}
               className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
             />
+            <p className='text-red-500 text-xs'>* 최대 80자</p>
             {errors.name && (
               <p className='text-red-500 text-sm w-full mt-2'>
                 {errors.name[0]}
