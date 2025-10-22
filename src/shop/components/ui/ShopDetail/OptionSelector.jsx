@@ -81,7 +81,9 @@ export default function OptionSelector({
           {selectedOptions.map(opt => (
             <li key={opt.value} className='text-start w-full'>
               <div className='flex items-center w-full'>
-                <span className='text-gray-900 font-semibold'>{opt.name}</span>
+                <span className='text-gray-900 font-semibold truncate max-w-[300px]'>
+                  {opt.name}
+                </span>
                 <button
                   onClick={() => removeOption(opt.value)}
                   className='hover:text-red-700 text-sm px-2 py-1 rounded'

@@ -1,7 +1,3 @@
-import review1 from '../asset/image/review1.jpeg';
-import review2 from '../asset/image/review2.jpeg';
-import review3 from '../asset/image/review3.jpeg';
-
 export const bestReview = [
   {
     id: 1,

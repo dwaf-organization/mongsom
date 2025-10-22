@@ -106,12 +106,14 @@ export default function ProductTableSection({ rows, loading }) {
                           </div>
                         )}
 
-                        <div className='min-w-0'>
-                          <div className='truncate font-medium'>{name}</div>
+                        <div className='min-w-0 flex-1'>
+                          <p className='truncate font-medium max-w-[250px]'>
+                            {name}
+                          </p>
                           {optionNames.length > 0 && (
                             <div className='text-gray-500 text-xs mt-1'>
                               <p className='mb-0.5'>[옵션]</p>
-                              <div className='truncate max-w-[260px]'>
+                              <div className='truncate block w-full max-w-[260px]'>
                                 {optionNames.join(' / ')}
                               </div>
                             </div>

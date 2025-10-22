@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 
 import RichEditor from '../../ui/RichEditor';
 import 'quill/dist/quill.snow.css';
@@ -40,6 +40,7 @@ export default function AddProductInfoSection() {
     resetUpload,
   } = useImageUpload('products_thumbnails');
 
+  // === 이미지 업로드 콜백 안정화
   const uploadFileRef = useRef(uploadFile);
   useEffect(() => {
     uploadFileRef.current = uploadFile;
@@ -54,33 +55,43 @@ export default function AddProductInfoSection() {
     }
   }, []);
 
+  // === 금액 계산 유틸
+  const toNum = v => (Number.isFinite(parseFloat(v)) ? parseFloat(v) : 0);
+
+  // ✅ 실시간 판매가(할인가) 계산
+  const computedDiscountPrice = useMemo(() => {
+    const base = toNum(productData.price) + toNum(productData.salesMargin);
+    const dp = toNum(productData.discountPer);
+    const price = Math.floor(base * (1 - dp / 100));
+    // 할인 퍼센트가 비어있으면 기본 base 사용
+    return Number.isFinite(dp) && productData.discountPer !== '' ? price : base;
+  }, [productData.price, productData.salesMargin, productData.discountPer]);
+
+  // ✅ 판매가 유효성(0 이상)
+  const isDiscountPriceValid = computedDiscountPrice > 0;
+
   const handleInputChange = e => {
     const { name, value } = e.target;
     setProductData(prev => {
       const updated = { ...prev, [name]: value };
-      const base =
-        (parseFloat(updated.price || 0) || 0) +
-        (parseFloat(updated.salesMargin || 0) || 0);
+      // 표시용 판매가도 동기화(읽기전용 input에 반영)
+      const base = toNum(updated.price) + toNum(updated.salesMargin);
+      const dp = toNum(updated.discountPer);
+      updated.discountPrice =
+        updated.discountPer === '' ? base : Math.floor(base * (1 - dp / 100));
 
-      updated.discountPrice = updated.discountPer
-        ? Math.floor(base * (1 - (parseFloat(updated.discountPer) || 0) / 100))
-        : base;
-
-      setErrors(prevErr => ({ ...prevErr, [name]: undefined }));
-      if (
-        name === 'price' ||
-        name === 'salesMargin' ||
-        name === 'discountPer'
-      ) {
-        setErrors(prevErr => ({ ...prevErr, discountPrice: undefined }));
-      }
-      if (name === 'name') {
-        setErrors(prevErr => ({ ...prevErr, name: undefined }));
-      }
+      setErrors(prevErr => ({
+        ...prevErr,
+        [name]: undefined,
+        ...(name === 'price' || name === 'salesMargin' || name === 'discountPer'
+          ? { discountPrice: undefined }
+          : {}),
+      }));
       return updated;
     });
   };
 
+  // === 옵션
   const addOption = () => {
     if (!optionInput.trim()) return;
     setProductData(prev => ({
@@ -96,6 +107,14 @@ export default function AddProductInfoSection() {
       ...prev,
       optNames: prev.optNames.filter((_, i) => i !== idx),
     }));
+  };
+
+  // ✅ 옵션 입력에서 Enter 누르면 폼 제출 방지 + 옵션 추가
+  const onOptionKeyDown = e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addOption();
+    }
   };
 
   const handleButtonClick = () => {
@@ -117,38 +136,45 @@ export default function AddProductInfoSection() {
   const submit = async e => {
     e.preventDefault();
 
+    // ✅ 판매가 0 미만 방지 (0 이상만 허용)
+    if (!isDiscountPriceValid) {
+      setErrors(prev => ({
+        ...prev,
+        discountPrice: ['판매가격은 0 이상이어야 합니다.'],
+      }));
+      // 해당 섹션으로 스크롤
+      document
+        .querySelector('[data-field="discountPer"]')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     const html = editorRef.current?.getHTML?.() ?? '';
 
-    const base =
-      (parseFloat(productData.price || 0) || 0) +
-      (parseFloat(productData.salesMargin || 0) || 0);
-    const computedDiscountPrice = productData.discountPer
-      ? Math.floor(
-          base * (1 - (parseFloat(productData.discountPer) || 0) / 100),
-        )
-      : base;
+    const base = toNum(productData.price) + toNum(productData.salesMargin);
+    const dp = toNum(productData.discountPer);
+    const finalDiscountPrice =
+      productData.discountPer === '' ? base : Math.floor(base * (1 - dp / 100));
 
     const finalData = {
       ...productData,
       contents: html,
       productImgUrls: uploadedImageUrls,
-      price: Number(productData.price || 0),
-      salesMargin: Number(productData.salesMargin || 0),
-      discountPer: Number(productData.discountPer || 0),
-      discountPrice: Number(computedDiscountPrice || 0),
-      deliveryPrice: Number(productData.deliveryPrice || 3000),
+      price: toNum(productData.price),
+      salesMargin: toNum(productData.salesMargin),
+      discountPer: toNum(productData.discountPer),
+      discountPrice: toNum(finalDiscountPrice),
+      deliveryPrice: toNum(productData.deliveryPrice || 3000),
     };
 
     const result = ProductSchema.safeParse(finalData);
     if (!result.success) {
       const errMap = toErrorMap(result.error.issues);
       setErrors(errMap);
-
       const firstKey = Object.keys(errMap)[0];
-      const el = document.querySelector(`[data-field="${firstKey}"]`);
-      if (el?.scrollIntoView) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      document
+        .querySelector(`[data-field="${firstKey}"]`)
+        ?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
       return;
     }
 
@@ -173,7 +199,6 @@ export default function AddProductInfoSection() {
         deliveryPrice: 3000,
       });
       editorRef.current?.setHTML?.('');
-
       resetUpload();
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err) {
@@ -187,8 +212,9 @@ export default function AddProductInfoSection() {
   return (
     <form onSubmit={submit}>
       <div className='rounded-lg border border-gray-400 w-full max-w-[980px] h-full'>
+        {/* 상품명 */}
         <div className='grid grid-cols-[200px_1fr] rounded-2xl'>
-          <div className='bg-primary-100  font-semibold px-6 py-4 border-b'>
+          <div className='bg-primary-100 font-semibold px-6 py-4 border-b'>
             상품명
           </div>
           <div
@@ -210,8 +236,9 @@ export default function AddProductInfoSection() {
           </div>
         </div>
 
+        {/* 상품 설명 */}
         <div className='grid grid-cols-[200px_1fr] h-full w-full'>
-          <div className='bg-primary-100  font-semibold px-6 py-4 border-b'>
+          <div className='bg-primary-100 font-semibold px-6 py-4 border-b'>
             상품 설명
           </div>
           <div className='p-4 pt-0' data-field='contents'>
@@ -230,10 +257,11 @@ export default function AddProductInfoSection() {
         </div>
       </div>
 
+      {/* 이미지 */}
       <section className='py-10' data-field='productImgUrls'>
         <p className='font-semibold text-xl mb-4'>이미지 정보</p>
         <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
-          <div className='bg-primary-100  font-semibold px-6 py-4 border-b whitespace-nowrap'>
+          <div className='bg-primary-100 font-semibold px-6 py-4 border-b whitespace-nowrap'>
             썸네일 등록
           </div>
           <div className='p-6 border-b flex flex-wrap items-center gap-3'>
@@ -256,7 +284,7 @@ export default function AddProductInfoSection() {
 
             <button
               type='button'
-              className=' h-[100px] bg-primary-100 w-[100px] rounded-lg flex items-center justify-center'
+              className='h-[100px] bg-primary-100 w-[100px] rounded-lg flex items-center justify-center'
               onClick={handleButtonClick}
               disabled={loading}
             >
@@ -280,10 +308,11 @@ export default function AddProductInfoSection() {
         </div>
       </section>
 
+      {/* 표시 설정 */}
       <section className='py-10' data-field='premium'>
         <p className='font-semibold text-xl mb-4'>표시 설정</p>
         <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
-          <div className='bg-primary-100  font-semibold px-6 py-4 border-b whitespace-nowrap'>
+          <div className='bg-primary-100 font-semibold px-6 py-4 border-b whitespace-nowrap'>
             상품분류 선택
           </div>
           <div className='p-6 flex items-center gap-3'>
@@ -292,7 +321,7 @@ export default function AddProductInfoSection() {
               variant={productData.premium === 1 ? 'default' : 'outline'}
               className={`w-fit py-2 px-4 ${
                 productData.premium === 1
-                  ? ' text-white'
+                  ? 'text-white'
                   : 'border border-gray-400 text-gray-600'
               }`}
               onClick={() => {
@@ -307,7 +336,7 @@ export default function AddProductInfoSection() {
               variant={productData.premium === 0 ? 'default' : 'outline'}
               className={`w-fit py-2 px-4 ${
                 productData.premium === 0
-                  ? ' text-white'
+                  ? 'text-white'
                   : 'border border-gray-400 text-gray-600'
               }`}
               onClick={() => {
@@ -326,10 +355,11 @@ export default function AddProductInfoSection() {
         </div>
       </section>
 
+      {/* 옵션 등록 */}
       <section className='py-10' data-field='optNames'>
         <p className='font-semibold text-xl mb-4'>옵션 등록</p>
         <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
-          <div className='bg-primary-100  font-semibold px-6 py-4 border-b whitespace-nowrap'>
+          <div className='bg-primary-100 font-semibold px-6 py-4 border-b whitespace-nowrap'>
             옵션 등록
           </div>
           <div className='p-6 flex flex-col gap-3'>
@@ -340,6 +370,7 @@ export default function AddProductInfoSection() {
                 placeholder='옵션명을 입력하세요'
                 className='border rounded-md p-2 w-full max-w-[500px] focus:outline-primary-200 border-gray-400'
                 onChange={e => setOptionInput(e.target.value)}
+                onKeyDown={onOptionKeyDown} // ✅ Enter → 옵션 추가, 제출 방지
               />
               <div className='flex flex-col gap-2'>
                 <Button
@@ -375,16 +406,19 @@ export default function AddProductInfoSection() {
         </div>
       </section>
 
+      {/* 가격 섹션 */}
       <section className='py-10'>
         <div className='rounded-lg border border-gray-400'>
           <div className='grid grid-cols-[200px_1fr]'>
-            <div className='bg-primary-100  font-semibold px-6 py-6 border-b'>
+            <div className='bg-primary-100 font-semibold px-6 py-6 border-b'>
               <div className='flex flex-col gap-3'>
                 <p>공급가</p> <p>+</p> <p>판매 마진</p> <p>+</p> <p>할인</p>
               </div>
             </div>
             <div className='p-4 border-b flex flex-wrap items-center gap-3'>
               <input
+                type='number'
+                inputMode='decimal'
                 name='price'
                 value={productData.price}
                 onChange={handleInputChange}
@@ -393,19 +427,23 @@ export default function AddProductInfoSection() {
               />
               <p>KRW</p>
               <input
+                type='number'
                 name='salesMargin'
                 value={productData.salesMargin}
                 onChange={handleInputChange}
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
                 data-field='salesMargin'
+                inputMode='decimal'
               />
               <p>KRW</p>
               <input
+                type='number'
                 name='discountPer'
                 value={productData.discountPer}
                 onChange={handleInputChange}
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
                 data-field='discountPer'
+                inputMode='decimal'
               />
               <p>%</p>
 
@@ -423,9 +461,10 @@ export default function AddProductInfoSection() {
                     {errors.discountPer[0]}
                   </p>
                 )}
-                {errors.discountPrice && (
+                {(!isDiscountPriceValid || errors.discountPrice) && (
                   <p className='text-red-500 text-sm'>
-                    {errors.discountPrice[0]}
+                    {errors.discountPrice?.[0] ||
+                      '판매가격은 0 이상이어야 합니다.'}
                   </p>
                 )}
               </div>
@@ -433,13 +472,13 @@ export default function AddProductInfoSection() {
           </div>
 
           <div className='grid grid-cols-[200px_1fr]'>
-            <div className='bg-primary-100  font-semibold px-6 py-4 border-b'>
+            <div className='bg-primary-100 font-semibold px-6 py-4 border-b'>
               판매 가격
             </div>
             <div className='p-4 border-b flex flex-wrap items-center gap-3'>
               <input
                 name='discountPrice'
-                value={productData.discountPrice}
+                value={computedDiscountPrice}
                 readOnly
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400 bg-gray-100'
               />
@@ -453,10 +492,9 @@ export default function AddProductInfoSection() {
         <Button
           type='submit'
           className='w-fit px-20 py-4'
-          disabled={submitting}
+          disabled={submitting || !isDiscountPriceValid}
         >
           {submitting ? '등록 중…' : '등록'}
-          상품 등록
         </Button>
       </div>
     </form>

@@ -55,21 +55,6 @@ export default function Cart() {
     updateCart(cart.map(i => ({ ...i, checkStatus: Number(checked) })));
   };
 
-  // const { totalPrice, totalSalePrice, totalQty } = useMemo(() => {
-  //   const sel = cart.filter(i => i.checkStatus === 1);
-  //   const qty = sel.reduce((s, i) => s + Number(i.quantity || 0), 0);
-  //   const price = sel.reduce(
-  //     (s, i) => s + Number(i.price || 0) * Number(i.quantity || 0),
-  //     0,
-  //   );
-  //   const sale = sel.reduce(
-  //     (s, i) =>
-  //       s + Number(i.discountPrice ?? i.price ?? 0) * Number(i.quantity || 0),
-  //     0,
-  //   );
-  //   return { totalPrice: price, totalSalePrice: sale, totalQty: qty };
-  // }, [cart]);
-
   if (!userCode) {
     return (
       <InnerPaddingSectionWrapper className='max-w-[800px]'>
