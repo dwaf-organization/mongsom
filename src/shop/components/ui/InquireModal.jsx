@@ -31,7 +31,6 @@ export default function InquireModal() {
         '전화번호를 입력하세요. 숫자만 입력 가능합니다.',
         'error',
       );
-    if (!message.trim()) return addToast('문의내용을 입력하세요.', 'error');
     if (!selectedPrice) return addToast('희망 가격을 선택하세요.', 'error');
 
     const price = PRICE_OPTIONS.find(p => p.id === selectedPrice);

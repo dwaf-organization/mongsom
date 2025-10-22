@@ -29,7 +29,7 @@ export default function PaymentButton({
           const discountPrice = Number(
             it.discountPrice ?? it.salePrice ?? it.price ?? 0,
           );
-          acc.totalPrice += price * quantity;
+          acc.totalPrice += discountPrice * quantity;
           acc.totalDiscountPrice +=
             Math.max(0, price - discountPrice) * quantity;
           return acc;
@@ -39,6 +39,11 @@ export default function PaymentButton({
       const dp =
         typeof deliveryPriceProp === 'number' ? deliveryPriceProp : 3000;
       const finalP = base.totalPrice - base.totalDiscountPrice + dp;
+      console.log(
+        '🚀 ~ PaymentButton ~ base.totalDiscountPrice:',
+        base.totalDiscountPrice,
+      );
+      console.log('🚀 ~ PaymentButton ~ finalP:', finalP);
       return {
         totalPrice: base.totalPrice,
         totalDiscountPrice: base.totalDiscountPrice,
@@ -46,6 +51,7 @@ export default function PaymentButton({
         finalPrice: finalP,
       };
     }, [selectedItems, deliveryPriceProp]);
+  console.log('🚀 ~ PaymentButton ~ totalPrice:', totalPrice);
 
   const buildOrderPayload = () => {
     const phoneDigits =
@@ -79,11 +85,11 @@ export default function PaymentButton({
       finalPrice,
 
       // 결제 전 단계: 안전값으로 둔다
-      paymentAt: '2024-09-17T15:30:00', // 결제 완료 시 서버에서 채움
-      paymentMethod: '카드', // 결제 완료 시 서버에서 채움
-      paymentAmount: finalPrice, // 서버 승인 시 서버 계산값과 대조
-      paymentStatus: 'PAUSE', // ★ 결제 전에는 PAUSE
-      paymentKey: 'toss_12345', // 승인 후 채움
+      paymentAt: '2024-09-17T15:30:00',
+      paymentMethod: '카드',
+      paymentAmount: finalPrice,
+      paymentStatus: 'PAUSE',
+      paymentKey: 'toss_12345',
       pgProvider: '토스페이먼츠',
 
       orderDetails: (selectedItems || []).map(it => ({

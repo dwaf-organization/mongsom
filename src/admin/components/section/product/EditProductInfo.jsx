@@ -57,6 +57,13 @@ export default function EditProductInfoSection({ product }) {
     }
   }, []);
 
+  const onOptionKeyDown = e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      addOption();
+    }
+  };
   const productKey = product?.productId ?? product?.id ?? 'new';
 
   const buildInitial = useCallback(
@@ -350,7 +357,9 @@ export default function EditProductInfoSection({ product }) {
                 placeholder='새 옵션명을 입력하세요'
                 className='border rounded-md p-2 w-full max-w-[500px] focus:outline-primary-200 border-gray-400'
                 onChange={e => setNewOptName(e.target.value)}
+                onKeyDown={onOptionKeyDown} // ★ 추가
               />
+
               <Button
                 type='button'
                 className='w-fit py-2 px-4'
