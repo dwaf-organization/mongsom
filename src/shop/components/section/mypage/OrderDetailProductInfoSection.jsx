@@ -79,9 +79,11 @@ export default function OrderDetailProductInfoSection({ order }) {
 
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 mb-1'>
-                    <p className='text-gray-900'>{name}</p>
+                    <p className='text-gray-900 truncate max-w-[500px]'>
+                      {name}
+                    </p>
                   </div>
-                  <p className='text-sm text-gray-600 mb-2 text-left'>
+                  <p className='text-sm text-gray-600 mb-2 truncate max-w-[500px] text-left'>
                     옵션: {option}
                   </p>
                   <div className='flex items-center gap-4 text-sm'>

@@ -20,9 +20,13 @@ export default function ExchangeCancelModal({ orderDetailId, orderId }) {
       userCode: userCode,
     };
     const res = await deleteChangeOrder(data);
+    console.log('🚀 ~ handleConfirm ~ res:', res);
     if (res.code === 1) {
-      addToast('교환/반품 취소가 완료되었습니다.');
+      addToast('교환/반품 취소가 완료되었습니다.', 'success');
       closeModal();
+    }
+    if (res.code === -1) {
+      addToast(res.data, 'error');
     }
     closeModal();
   };

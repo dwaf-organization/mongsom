@@ -36,7 +36,8 @@ export default function ProductActionButtons({
   const isShippedOrDelivered =
     deliveryStatus === '결제완료' || deliveryStatus === '결제완료';
 
-  const handleReview = () => navigate(`/create-review/${product?.id}`);
+  const handleReview = () =>
+    navigate(`/create-review/${product?.orderDetailId}`);
 
   const handleExchange = () => navigate(`/exchange/${orderId}`);
 
@@ -86,7 +87,7 @@ export default function ProductActionButtons({
         </>
       )}
 
-      {!isPreShipping && !isShippedOrDelivered && (
+      {/* {!isPreShipping && !isShippedOrDelivered && (
         <>
           {hasReturnCancel && (
             <button
@@ -113,7 +114,7 @@ export default function ProductActionButtons({
             </button>
           )}
         </>
-      )}
+      )} */}
 
       <button
         className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'

@@ -49,7 +49,7 @@ export const deleteChangeOrder = async data => {
   const response = await fetchData.post(`api/v1/my/change/delete`, {
     body: JSON.stringify(data),
   });
-  return response.data;
+  return response;
 };
 
 export const getOrderDeliveryInfo = async orderId => {

@@ -102,7 +102,7 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
 
                         <div className='min-w-0 flex-1'>
                           <div
-                            className='truncate text-left'
+                            className='truncate max-w-[160px] text-left'
                             title={
                               firstItem?.productName ||
                               firstItem?.name ||

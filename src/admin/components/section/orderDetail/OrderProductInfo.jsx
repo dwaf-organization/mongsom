@@ -83,8 +83,8 @@ export default function OrderProductInfo({ order }) {
                         </div>
                       )}
                       <div className='flex flex-col text-left gap-2 '>
-                        <p>{detail.productName}</p>
-                        <p className='text-gray-500 text-sm'>
+                        <p className=' max-w-[300px]'>{detail.productName}</p>
+                        <p className='text-gray-500 text-sm max-w-[300px] truncate'>
                           [옵션] {detail.optName}
                         </p>
                       </div>

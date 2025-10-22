@@ -198,7 +198,7 @@ export default function Exchange() {
                   className={`flex items-center gap-4 p-4 cursor-pointer transition-colors rounded-lg ${
                     isDisabled
                       ? 'opacity-60 cursor-not-allowed bg-gray-300'
-                      : 'hover:bg-gray-50'
+                      : ''
                   }`}
                   onClick={() => handleProductSelect(product.id)}
                   aria-disabled={isDisabled}

@@ -28,6 +28,7 @@ export default function OrderListTable() {
       try {
         setLoading(true);
         const data = await getOrderList(userCode);
+        console.log('🚀 ~ OrderListTable ~ data:', data);
         const list = Array.isArray(data)
           ? data
           : Array.isArray(data?.items)
@@ -90,7 +91,7 @@ export default function OrderListTable() {
           <tr>
             <th className='py-4 px-3'>NO</th>
             <th className='text-center'>주문일자</th>
-            <th className='text-center'>상품정보/선택옵션</th>
+            <th className='text-center'>주문정보</th>
             <th className='text-center'>주문금액</th>
             <th className='text-right'>배송비</th>
             <th className='text-center'>상태</th>
@@ -132,14 +133,17 @@ export default function OrderListTable() {
                     )}
                     <div className='flex flex-col justify-between text-left gap-2'>
                       <div className='flex items-center gap-2'>
-                        <p className='font-medium truncate'>{name}</p>
+                        <p className='font-medium truncate max-w-[200px]'>
+                          {name}
+                        </p>
                         {details.length > 1 && (
                           <p className='text-sm text-gray-600'>
                             외 {details.length - 1}개
                           </p>
                         )}
                       </div>
-                      <p className='text-sm text-gray-500'>{opt}</p>
+                      {/* <p className='text-sm text-gray-500'>{opt}</p> */}
+                      <p></p>
                     </div>
                   </div>
                 </td>

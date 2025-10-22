@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { paymentConfirm } from '../api/payment';
+import { useAuth } from '../context/AuthContext';
 
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(null);
+  const { userCode } = useAuth();
+
+  const navigate = useNavigate();
 
   const orderId = useMemo(
     () => searchParams.get('orderId') || '',
@@ -35,13 +39,17 @@ export default function PaymentSuccess() {
       setLoading(true);
       setErr(null);
 
-      const payload = { orderId, paymentKey, amount };
+      const payload = { orderId, paymentKey, amount, userCode };
 
       try {
         setPaymentInfo(payload);
 
         const res = await paymentConfirm(payload);
         console.log('🚀 ~ run ~ res:', res);
+        if (res.code == -1) {
+          // navigate('/payment/fail');
+          return setErr(res.data);
+        }
 
         sessionStorage.removeItem('purchaseItems');
       } catch (e) {
