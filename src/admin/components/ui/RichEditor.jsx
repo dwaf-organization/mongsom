@@ -7,7 +7,10 @@ import {
   memo,
 } from 'react';
 import ReactQuill from 'react-quill-new';
+import Quill from 'quill'; // ✅ clipboard matcher 사용
 import 'quill/dist/quill.snow.css';
+
+const Delta = Quill.import('delta'); // ✅ empty delta용
 
 const RichEditorInner = forwardRef(function RichEditor(
   {
@@ -26,7 +29,7 @@ const RichEditorInner = forwardRef(function RichEditor(
 ) {
   const quillRef = useRef(null);
 
-  // 최신 콜백을 참조하기 위한 ref (modules 핸들러는 identity 유지)
+  // 최신 콜백 ref
   const imgCbRef = useRef(onUploadImage);
   const fileCbRef = useRef(onUploadFile);
   const videoCbRef = useRef(onUploadVideo);
@@ -51,7 +54,7 @@ const RichEditorInner = forwardRef(function RichEditor(
     input.click();
   };
 
-  // 툴바 구성 (불필요한 재계산 최소화)
+  // 툴바
   const toolbarContainer = useMemo(() => {
     const hasImg = !!onUploadImage;
     const hasVid = !!onUploadVideo;
@@ -97,7 +100,6 @@ const RichEditorInner = forwardRef(function RichEditor(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [variant, !!onUploadImage, !!onUploadVideo, !!onUploadFile]);
 
-  // modules 객체 (toolbarContainer 변경시에만 새로 만듦)
   const modules = useMemo(
     () => ({
       toolbar: {
@@ -142,6 +144,7 @@ const RichEditorInner = forwardRef(function RichEditor(
           },
         },
       },
+      // ✅ Quill clipboard 모듈에 직접 관여는 useEffect에서 할 거라 여기선 그대로
     }),
     [toolbarContainer],
   );
@@ -164,7 +167,7 @@ const RichEditorInner = forwardRef(function RichEditor(
     'video',
   ];
 
-  // 글자수 제한만 처리(상태 동기화 X → 깜빡임 방지)
+  // 입력 길이 제한
   const handleChange = (_html, _delta, _source, editor) => {
     if (!maxChars) return;
     const textLen = editor.getText().replace(/\n$/, '').length;
@@ -174,7 +177,7 @@ const RichEditorInner = forwardRef(function RichEditor(
     }
   };
 
-  // blur 시점에만 최종 HTML을 부모로 알림(선택)
+  // blur 시 부모에 HTML 전달
   useEffect(() => {
     if (!onChangeHTML) return;
     const q = quillRef.current?.getEditor();
@@ -188,32 +191,123 @@ const RichEditorInner = forwardRef(function RichEditor(
     return () => root.removeEventListener('blur', onBlur, true);
   }, [onChangeHTML]);
 
-  // 외부에서 제어할 수 있는 메서드 노출
+  // 외부 제어 API
   useImperativeHandle(
     ref,
     () => ({
-      /** 현재 HTML 가져오기 */
       getHTML: () => quillRef.current?.getEditor()?.root?.innerHTML || '',
-      /** HTML 설정(초기값 변경 등 수동 반영) */
       setHTML: html => {
         const q = quillRef.current?.getEditor();
         if (q) q.root.innerHTML = html ?? '';
       },
-      /** 필요하면 에디터 인스턴스 직접 접근 */
       getEditor: () => quillRef.current?.getEditor(),
     }),
     [],
   );
 
-  // initialValue 변경 시 수동으로만 반영 (defaultValue는 최초 1회만 적용)
+  // initialValue 반영
   useEffect(() => {
     const q = quillRef.current?.getEditor();
     if (!q) return;
     q.root.innerHTML = initialValue || '';
   }, [initialValue]);
 
-  // const minH =
-  //   typeof minHeight === 'number' ? `${minHeight}px` : minHeight || '240px';
+  // ✅ 붙여넣기 & 드롭 완전 차단
+  useEffect(() => {
+    const q = quillRef.current?.getEditor?.();
+    const root = q?.root;
+    if (!q || !root) return;
+
+    // 1) Quill clipboard 수준에서 paste 내용 자체를 무시
+    try {
+      q.clipboard.addMatcher(Node.ELEMENT_NODE, () => new Delta());
+      q.clipboard.addMatcher(Node.TEXT_NODE, () => new Delta());
+    } catch (e) {
+      // 일부 환경에서 Node 상수가 없을 수 있음 → 이벤트 차단으로 충분
+    }
+
+    // 2) DOM 이벤트를 캡처 단계에서 전파 차단
+    const hardStop = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Quill 내부 핸들러까지 못 가게
+      if (typeof e.stopImmediatePropagation === 'function') {
+        e.stopImmediatePropagation();
+      }
+    };
+
+    // 드롭 전용: 파일/텍스트 모두 차단 (이미지 여러 개 포함)
+    const onDrop = e => {
+      // 모든 드롭 차단
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'none';
+      }
+      hardStop(e);
+    };
+
+    const onDragOver = e => {
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'none';
+      }
+      hardStop(e);
+    };
+
+    const onBeforeInput = e => {
+      const t = e.inputType || '';
+      if (t.includes('insertFromPaste') || t.includes('insertFromDrop')) {
+        hardStop(e);
+      }
+    };
+
+    const onPaste = e => hardStop(e);
+
+    const onKeydown = e => {
+      const k = e.key?.toLowerCase?.();
+      if ((e.ctrlKey || e.metaKey) && ['v'].includes(k)) {
+        hardStop(e);
+      }
+    };
+
+    const onContext = e => {
+      // 우클릭 메뉴 자체를 막고 싶으면 주석 해제
+      // hardStop(e);
+      // 우클릭 메뉴는 열리게 두되, 붙여넣기 동작은 paste 이벤트에서 막힌다.
+    };
+
+    // 캡처 단계(true)로 등록
+    root.addEventListener('paste', onPaste, true);
+    root.addEventListener('beforeinput', onBeforeInput, true);
+    root.addEventListener('drop', onDrop, true);
+    root.addEventListener('dragover', onDragOver, true);
+    root.addEventListener('dragenter', hardStop, true);
+    root.addEventListener('dragstart', hardStop, true);
+    root.addEventListener('keydown', onKeydown, true);
+    root.addEventListener('contextmenu', onContext, true);
+
+    // 창 전체로 떨어지는 파일 드롭(탭 이동 방지)
+    const stopWindow = e => {
+      // 페이지가 파일 드롭으로 네비게이션 되는걸 방지
+      e.preventDefault();
+    };
+    window.addEventListener('dragover', stopWindow);
+    window.addEventListener('drop', stopWindow);
+
+    // 힌트 속성
+    root.setAttribute('dropzone', 'none');
+
+    return () => {
+      root.removeEventListener('paste', onPaste, true);
+      root.removeEventListener('beforeinput', onBeforeInput, true);
+      root.removeEventListener('drop', onDrop, true);
+      root.removeEventListener('dragover', onDragOver, true);
+      root.removeEventListener('dragenter', hardStop, true);
+      root.removeEventListener('dragstart', hardStop, true);
+      root.removeEventListener('keydown', onKeydown, true);
+      root.removeEventListener('contextmenu', onContext, true);
+      window.removeEventListener('dragover', stopWindow);
+      window.removeEventListener('drop', stopWindow);
+    };
+  }, []);
 
   return (
     <div
@@ -223,13 +317,12 @@ const RichEditorInner = forwardRef(function RichEditor(
         '[&_.ql-toolbar]:rounded-t-md [&_.ql-container]:rounded-b-md',
         className,
       ].join(' ')}
-      // style={{ ['--rt-min-h']: minH }}
     >
       <ReactQuill
         ref={quillRef}
         theme='snow'
-        defaultValue={initialValue} // 비제어
-        onChange={handleChange} // 글자수 제한만
+        defaultValue={initialValue}
+        onChange={handleChange}
         modules={modules}
         formats={formats}
         placeholder={placeholder}

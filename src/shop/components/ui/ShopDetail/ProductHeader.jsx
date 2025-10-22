@@ -2,7 +2,7 @@ export default function ProductHeader({ product }) {
   const basePrice = product.price + product.salesMargin;
   return (
     <ul className=''>
-      <li className='flex items-center justify-start text-2xl font-bold text-gray-800 mb-4'>
+      <li className='flex items-center justify-start text-2xl font-bold text-gray-800 mb-4 max-w-md'>
         <p>{product.name}</p>
       </li>
       {product.discountPer ? (
@@ -13,6 +13,7 @@ export default function ProductHeader({ product }) {
             </p>
           </li>
           <li className='flex items-center justify-between border-b-2 border-gray-500 pb-4'>
+            *-
             <p className='text-primary-200 font-pretendard font-semibold text-2xl'>
               {product.discountPer}%
             </p>

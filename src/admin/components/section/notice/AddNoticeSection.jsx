@@ -18,7 +18,6 @@ export default function AddNoticeSection() {
     setProductData(prev => ({ ...prev, [name]: value }));
   };
 
-  // ✅ 에디터 blur 등에서 넘어온 HTML을 그대로 저장
   const handleEditorChangeHTML = html => {
     setProductData(prev => ({ ...prev, contents: html }));
   };
@@ -31,7 +30,6 @@ export default function AddNoticeSection() {
       return;
     }
 
-    // 에디터 실제 입력 여부 체크 (텍스트/미디어)
     const quill = editorRef.current?.getEditor?.();
     const plain = (quill?.getText?.() || '').trim();
     const ops = quill?.getContents?.().ops || [];
@@ -44,7 +42,6 @@ export default function AddNoticeSection() {
       return;
     }
 
-    // ✅ 최종 HTML은 ref에서 한 번 더 가져와 보정
     const html = editorRef.current?.getHTML?.() ?? productData.contents;
     const payload = { ...productData, contents: html };
 
@@ -56,9 +53,8 @@ export default function AddNoticeSection() {
         return;
       }
       console.log('✅ 공지 등록 성공:', resp);
-      alert('공지 등록이 완료되었습니다.');
+      addToast('공지 등록이 완료되었습니다.', 'success');
 
-      // 폼 초기화 + 에디터도 비움
       setProductData({ title: '', contents: '' });
       editorRef.current?.setHTML?.('');
     } catch (err) {
@@ -72,7 +68,6 @@ export default function AddNoticeSection() {
   return (
     <form onSubmit={submit}>
       <div className='rounded-lg border border-gray-400 w-full max-w-[980px] h-full'>
-        {/* 제목 */}
         <div className='grid grid-cols-[200px_1fr] rounded-2xl'>
           <div className='bg-primary-100  font-semibold px-6 py-4 border-b'>
             제목
@@ -95,11 +90,11 @@ export default function AddNoticeSection() {
           </div>
           <RichEditor
             ref={editorRef}
-            initialValue={productData.contents} // ✅ 비제어 초기값
+            initialValue={productData.contents}
             variant='full'
             maxChars={20000}
             minHeight={300}
-            onChangeHTML={handleEditorChangeHTML} // ✅ blur 시점 HTML 저장
+            onChangeHTML={handleEditorChangeHTML}
           />
         </div>
       </div>

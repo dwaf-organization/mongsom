@@ -17,11 +17,12 @@ export default function TopProductSection() {
   const [searchParams] = useSearchParams();
   const [productItems, setProductItems] = useState([]);
 
-  const sort = searchParams.get('sort') || 'all';
+  // const sort = searchParams.get('sort') || 'popular';
   const page = searchParams.get('page') || '1';
+  const sort = 'popular';
 
   useEffect(() => {
-    const size = sort === 'popular' ? 9 : undefined;
+    const size = 9;
     getAllProductList(sort, page, { size })
       .then(res => {
         const items = res?.items || [];
@@ -83,7 +84,7 @@ export default function TopProductSection() {
                           </div>
                         </div>
                       ) : (
-                        <span className='flex items-center justify-end w-full font-semibold text-black-100 px-3 py-2'>
+                        <span className='flex items-center justify-end w-full font-semibold text-black-100 px-3 py-2 pt-7'>
                           {product.price.toLocaleString()} 원
                         </span>
                       )}

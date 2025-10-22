@@ -1,4 +1,3 @@
-// ChatButtonQuick.jsx
 import ChatIcon from '../../asset/icons/ChatIcon';
 import { useEffect, useRef, useState } from 'react';
 

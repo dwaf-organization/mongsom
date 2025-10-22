@@ -20,6 +20,7 @@ export const getAllProductList = async (sort = 'all', page = 1, opts = {}) => {
     sort === 'popular' && opts.size
       ? `${base}/${encodeURIComponent(opts.size)}`
       : base;
+  console.log('🚀 ~ getAllProductList ~ url:', url);
 
   const response = await fetchData.get(url);
   console.log('🚀 ~ getAllProductList ~ response:', response);

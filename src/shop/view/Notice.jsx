@@ -94,7 +94,9 @@ export default function Notice() {
               <th className='text-center font-montserrat font-medium w-full max-w-[100px]'>
                 NO
               </th>
-              <th className='text-center font-medium w-full'>제목</th>
+              <th className='text-center font-medium w-full max-w-[280px]'>
+                제목
+              </th>
               <th className='text-center font-medium w-full max-w-[120px]'>
                 글쓴이
               </th>
@@ -107,7 +109,7 @@ export default function Notice() {
             {notices.map((item, index) => {
               const id = item?.id ?? item?.noticeId ?? index;
               const dateRaw = item?.date ?? item?.createdAt;
-              const recent = isRecent(dateRaw); // ✅ 최근 1주 이내 체크
+              const recent = isRecent(dateRaw);
 
               return (
                 <tr
@@ -115,13 +117,13 @@ export default function Notice() {
                   onClick={() => navigate(`/notice-detail/${id}`)}
                   className={[
                     'flex justify-between border-b border-gray-400 py-3 cursor-pointer',
-                    recent ? 'bg-secondary-100' : '', // ✅ 배경색 적용
+                    recent ? 'bg-secondary-100' : '',
                   ].join(' ')}
                 >
                   <td className='text-center font-montserrat font-medium w-full max-w-[100px]'>
                     {item?.id ?? item?.noticeId ?? index + 1}
                   </td>
-                  <td className='text-start font-montserrat font-medium w-full pl-4 truncate'>
+                  <td className='text-start font-montserrat font-medium w-full pl-4 truncate max-w-[280px]'>
                     {item?.title ?? item?.subject ?? '(제목 없음)'}
                   </td>
                   <td className='text-center font-montserrat font-medium w-full max-w-[120px]'>

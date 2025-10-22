@@ -20,17 +20,17 @@ export default function NoticeDetail() {
   const formatDate = d => (d ? String(d).slice(0, 10) : '');
   return (
     <InnerPaddingSectionWrapper>
-      <ul className='flex items-center justify-between gap-4 border-b border-gray-500 pb-4 pt-10 '>
+      <ul className='flex items-center justify-between gap-4 border-b border-gray-500 pt-10 '>
         <li>
-          <p className='text-2xl font-semibold text-left px-4'>
+          <p className='text-2xl font-semibold text-left px-4 whitespace-nowrap truncate max-w-[600px]'>
             {notice && notice.title}
           </p>
         </li>
-        <li className='flex items-center justify-between gap-4 px-4'>
-          <p className='text-sm text-left'>
+        <li className='flex items-end justify-between gap-4 px-4 whitespace-nowrap'>
+          <p className='text-sm white-space-nowrap '>
             작성자 : {notice && notice.writer}
           </p>
-          <p className='text-sm text-left '>
+          <p className='text-sm white-space-nowrap'>
             작성일 : {formatDate(notice && notice.createdAt)}
           </p>
         </li>
