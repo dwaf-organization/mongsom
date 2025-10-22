@@ -96,7 +96,7 @@ export default function ExchangeTableSection({ exchangeList }) {
                         </div>
                       </td>
                       <td className='px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
-                        {change.finalPrice.toLocaleString()}원
+                        {change.price.toLocaleString()}원
                       </td>
 
                       <td className='px-2 py-4 text-sm text-primary-700'>

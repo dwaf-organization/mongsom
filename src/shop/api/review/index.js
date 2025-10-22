@@ -6,7 +6,7 @@ export const createReview = async review => {
     body: JSON.stringify(review),
   });
   console.log('🚀 ~ createReview ~ response:', response);
-  return response.data;
+  return response;
 };
 
 export const getReviewWriteList = async (userCode, page, size = 8) => {
