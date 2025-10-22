@@ -8,7 +8,7 @@ export default function ReviewContents({ value, onChange }) {
         <textarea
           className='w-full h-[200px] border border-gray-400 rounded-lg p-4 resize-none '
           placeholder='리뷰를 작성해주세요.'
-          maxLength={100}
+          maxLength={200}
           value={value}
           onChange={e => onChange?.(e.target.value)}
         />
