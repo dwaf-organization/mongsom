@@ -209,7 +209,7 @@ export default function CartItemListSection({ cart = [], updateCart }) {
 
               <div className='flex flex-col items-start gap-2 px-6 w-full'>
                 <div className='flex justify-between gap-2 w-full'>
-                  <p className='text-xl font-semibold whitespace-nowrap'>
+                  <p className='text-xl font-semibold whitespace-nowrap truncate max-w-[500px]'>
                     {item.productName}
                   </p>
                   <div className='flex items-center gap-2'>
