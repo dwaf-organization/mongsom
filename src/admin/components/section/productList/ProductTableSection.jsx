@@ -4,13 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import { useModal } from '../../../context/ModalContext';
 import ProductDeleteModal from './ProductDeleteModal';
 
-export default function ProductTableSection({ rows, loading }) {
+export default function ProductTableSection({ rows, loading, onDeleted }) {
   const navigate = useNavigate();
   const { openModal } = useModal();
   const safeRows = Array.isArray(rows) ? rows : [];
 
-  const handleDelete = async id => {
-    openModal(<ProductDeleteModal productId={id} />);
+  const handleDelete = id => {
+    openModal(
+      <ProductDeleteModal
+        productId={id}
+        onDeleted={deletedId => onDeleted?.(deletedId)}
+      />,
+    );
   };
 
   return (
