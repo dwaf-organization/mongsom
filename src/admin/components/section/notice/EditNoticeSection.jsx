@@ -113,6 +113,8 @@ export default function EditNoticeSection() {
             <input
               placeholder='제목을 입력하세요'
               name='title'
+              type='text'
+              maxLength={200}
               className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
               value={form.title}
               onChange={handleInputChange}
