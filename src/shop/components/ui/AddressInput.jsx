@@ -51,7 +51,7 @@ export default function AddressInput({
       <div
         className={`flex flex-col gap-2 border-b border-gray-400 pb-6 ${className}`}
       >
-        <label htmlFor={id} className='flex items-center gap-20'>
+        <label htmlFor={id} className='flex items-center gap-10 md:gap-20'>
           <span className='min-w-[90px] text-left'>
             {label}
             {required && <span className='text-red-500'>*</span>}

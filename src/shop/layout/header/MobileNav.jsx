@@ -7,7 +7,7 @@ import MyPage from '../../asset/icons/MyPage';
 export default function MobileNav() {
   return (
     <nav className='fixed bottom-0 left-0 w-full bg-white shadow-md border-t border-gray-200 md:hidden'>
-      <ul className='flex justify-around items-center py-3 font-pretendard font-medium text-xs text-gray-700 bg-primary-100'>
+      <ul className='flex justify-around items-center py-3 font-pretendard font-medium text-xs text-gray-700 bg-primary-100 border-t border-gray-200'>
         <li>
           <Link
             to='/'
