@@ -22,15 +22,18 @@ export default function ReviewProductInfo({
 
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 mb-1'>
-            <p className='text-gray-900 font-semibold'>
+            <p className='text-gray-900 font-semibold truncate max-w-[10rem]'>
               {filteredReviewWriteList.productName}
             </p>
           </div>
 
+          <div className='flex items-center gap-2'>
+            <p>별점</p>
+            <p className='text-gray-500 text-xs md:text-sm'>(필수)</p>
+            <p className='text-red-500'>*</p>
+          </div>
           <div className='flex gap-2'>
             <StarRating rating={rating} onRatingChange={onRatingChange} />
-            <p className='text-gray-500'>(필수)</p>
-            <p className='text-red-500'>*</p>
           </div>
         </div>
       </li>

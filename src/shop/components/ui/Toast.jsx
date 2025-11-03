@@ -21,12 +21,12 @@ export default function Toast({
   const box = (
     <div
       className={`fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-3 rounded-lg shadow-lg
-                  transition-all duration-300 pointer-events-none z-[2147483647]
+                  transition-all duration-300 pointer-events-none z-[2147483647] w-full max-w-[280px] md:max-w-[400px]
                   ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}
                   ${toastStyles(type)}`}
     >
       <div className='flex items-center gap-2 pointer-events-auto'>
-        <span>{message}</span>
+        <span className='text-xs md:text-base'>{message}</span>
         <button
           onClick={() => {
             setIsVisible(false);

@@ -35,9 +35,9 @@ export default function TopProductSection() {
   }, [sort, page]);
 
   return (
-    <section ref={ref} className='w-full bg-primary-100 py-20'>
+    <section ref={ref} className='w-full bg-primary-100 py-20 hidden xl:block'>
       <motion.div
-        className='container mx-auto px-4 text-center max-w-[1280px]'
+        className=' px-4 text-center'
         initial={{ y: 50, opacity: 0 }}
         animate={isInView ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}

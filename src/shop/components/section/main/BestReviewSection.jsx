@@ -18,10 +18,10 @@ export default function BestReviewSection() {
           {bestReview.map(review => (
             <div key={review.id}>
               <img src={review.image} alt={review.title} />
-              <p className='text-start font-pretendard font-semibold'>
+              <p className='text-start font-pretendard font-semibold text-xs md:text-base'>
                 {review.title}
               </p>
-              <p className='text-start text-secondary-200 font-pretendard'>
+              <p className='text-start text-secondary-200 font-pretendard text-xs md:text-base'>
                 {review.description}
               </p>
             </div>

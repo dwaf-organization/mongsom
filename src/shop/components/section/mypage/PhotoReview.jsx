@@ -21,20 +21,16 @@ export default function PhotoReview({ onUrlsChange }) {
     fileInputRef.current?.click();
   };
 
-  // ✅ 3장 제한 가드 + 단일 파일만 허용
   const handleSingleFile = e => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const remain = 3 - uploadedImages.length;
     if (remain <= 0) {
-      // 이미 3장 등록됨
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
-    // useImageUpload의 handleFileInput이 "이벤트"를 받도록 되어 있으므로
-    // 단일 파일만 담긴 FileList로 교체해서 전달
     const dt = new DataTransfer();
     dt.items.add(file);
     const patchedEvent = {
@@ -46,13 +42,12 @@ export default function PhotoReview({ onUrlsChange }) {
     };
     handleFileInput(patchedEvent);
 
-    // input 초기화
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
     <section className='flex py-10 gap-4 border-b border-gray-400'>
-      <p className='font-semibold text-left pb-4 whitespace-nowrap mr-[100px]'>
+      <p className='font-semibold text-left pb-4 whitespace-nowrap md:mr-[100px]'>
         사진 첨부
       </p>
 

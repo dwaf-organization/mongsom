@@ -8,6 +8,7 @@ import {
   BrandStorySection,
 } from '../components/section/main';
 import ChatFlutingButton from '../components/ui/ChatFlutingButton';
+import MoblieTopProduct from '../components/section/main/MobileTopProduct';
 
 export default function Main() {
   return (
@@ -20,6 +21,7 @@ export default function Main() {
       >
         <HeroSection />
         <TopProductSection />
+        <MoblieTopProduct />
         <BestReviewSection />
         <BrandStorySection />
         <ChatFlutingButton />

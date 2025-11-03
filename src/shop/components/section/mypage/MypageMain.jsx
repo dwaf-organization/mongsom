@@ -3,13 +3,13 @@ import OrderListTable from '../../ui/mypage/OrderListTable';
 import { getOrderDeliveryStatus } from '../../../api/myPage';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
+import MobileMyPageMain from './MobileMyPageMain';
 
 export default function MypageMain() {
   const [orderDeliveryStatus, setOrderDeliveryStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { userCode } = useAuth();
-  console.log('🚀 ~ MypageMain ~ userCode:', userCode);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,6 +60,7 @@ export default function MypageMain() {
         }
       />
       <OrderListTable />
+      <MobileMyPageMain />
     </section>
   );
 }

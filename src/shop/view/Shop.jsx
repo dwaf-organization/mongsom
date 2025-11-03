@@ -102,7 +102,7 @@ export default function Shop() {
             <div className='text-lg text-gray-500'>상품을 불러오는 중...</div>
           </div>
         ) : (
-          <ul className='grid grid-cols-3 gap-4 mt-10'>
+          <ul className='grid grid-cols-3 md:grid-cols-3 gap-1 md:gap-4 mt-10'>
             {Array.isArray(productItems) &&
               productItems.map(item => (
                 <Link
@@ -113,41 +113,66 @@ export default function Shop() {
                     <ImageSkeleton
                       src={item.productImgUrls[0]}
                       alt={item.name}
-                      className='w-full max-w-[320px] h-[320px] object-cover rounded-t-lg'
+                      className='w-full h-[120px] md:max-w-[320px] md:h-[320px] object-cover rounded-lg'
                       skeletonClassName='rounded-t-lg'
                       loading='eager'
                       decoding='async'
                     />
                     <div className='p-2'>
                       {!item.discountPer && (
-                        <div className='flex justify-between gap-2 '>
+                        <div className='gap-2 md:hidden '>
+                          <div className='font-semibold whitespace-nowrap text-sm md:text-base'>
+                            {item.discountPrice.toLocaleString()}원
+                          </div>
+                          <h3 className='truncate hover:text-gray-700 text-sm'>
+                            {item.name}
+                          </h3>
+                        </div>
+                      )}
+                      {!item.discountPer && (
+                        <div className='justify-between gap-2 hidden md:flex'>
                           <h3 className='truncate hover:text-gray-700'>
                             {item.name}
                           </h3>
-                          <p className=' font-semibold whitespace-nowrap'>
+                          <p className=' font-semibold whitespace-nowrap text-sm md:text-base'>
                             {item.discountPrice.toLocaleString()}원
                           </p>
                         </div>
                       )}
                       {item.discountPer > 0 && (
-                        <div className='flex flex-col gap-2'>
+                        <div className=' flex-col gap-2 hidden md:flex'>
                           <div className='flex justify-between gap-2'>
                             <p className='hover:text-gray-700 truncate'>
                               {item.name}
                             </p>
-                            <p className='line-through text-gray-500 whitespace-nowrap'>
+                            <p className='line-through text-gray-500 whitespace-nowrap hidden md:block'>
                               {(item.price + item.salesMargin).toLocaleString()}
                               원
                             </p>
                           </div>
-                          <div className='flex justify-end gap-2'>
-                            <p className='flex text-lg font-semibold text-red-500 justify-start'>
+                          <div className='flex justify-start md:justify-end gap-2'>
+                            <p className='flex md:text-lg font-semibold text-red-500 justify-start text-sm'>
                               {item.discountPer}%
                             </p>
-                            <p className='text-lg font-semibold text-gray-900'>
+                            <p className='text-sm md:text-lg font-semibold text-gray-900'>
                               {item.discountPrice.toLocaleString()}원
                             </p>
                           </div>
+                        </div>
+                      )}
+                      {item.discountPer > 0 && (
+                        <div className='flex flex-col md:hidden'>
+                          <div className='flex justify-start gap-1'>
+                            <p className='flex md:text-lg font-semibold text-red-500 justify-start text-sm'>
+                              {item.discountPer}%
+                            </p>
+                            <p className='text-sm md:text-lg font-semibold text-gray-900 whitespace-nowrap '>
+                              {item.discountPrice.toLocaleString()}원
+                            </p>
+                          </div>
+                          <p className='hover:text-gray-700 truncate text-sm '>
+                            {item.name}
+                          </p>
                         </div>
                       )}
                     </div>

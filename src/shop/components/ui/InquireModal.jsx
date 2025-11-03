@@ -4,6 +4,7 @@ import { Button } from './button';
 import { useToast } from '../../context/ToastContext';
 import { inquire } from '../../api/inquire/index';
 import { useModal } from '../../context/ModalContext';
+import { X } from 'lucide-react';
 
 const isEmail = v => /^\S+@\S+\.\S+$/.test(String(v || '').trim());
 
@@ -43,6 +44,10 @@ export default function InquireModal() {
       price: price?.label ?? '',
     };
 
+    const handleClose = () => {
+      closeModal();
+    };
+
     try {
       const res = await inquire(payload);
       console.log('🚀 ~ handleSubmit ~ res:', res);
@@ -68,10 +73,14 @@ export default function InquireModal() {
 
   return (
     <div className='flex w-full flex-col items-center justify-center gap-4 px-10'>
-      <h2 className='py-4 text-center font-montserrat text-4xl font-bold'>
-        CONTACT
-      </h2>
-
+      <div className='w-full flex items-center justify-between border-b pb-2'>
+        <h2 className='py-4 text-center font-montserrat text-2xl md:text-4xl font-bold'>
+          CONTACT
+        </h2>
+        <button onClick={closeModal}>
+          <X />
+        </button>
+      </div>
       <form
         onSubmit={e => {
           e.preventDefault();
@@ -81,7 +90,7 @@ export default function InquireModal() {
         <section className='w-full'>
           <label className='w-full text-lg font-bold'>카테고리</label>
           <div
-            className='pt-4 flex w-full flex-wrap items-center gap-3'
+            className='pt-4 flex w-full flex-wrap items-center gap-1 md:gap-3'
             role='radiogroup'
             aria-label='카테고리'
           >
@@ -95,14 +104,14 @@ export default function InquireModal() {
                   aria-checked={selected}
                   onClick={() => setSelectedCategory(id)}
                   className={[
-                    'flex h-[156px] w-[156px] flex-col items-center justify-center gap-2 rounded-md border-2 transition',
+                    'flex w-full py-2 md:h-[156px] md:w-[156px] flex-col items-center justify-center gap-2 rounded-md border-2 transition',
                     selected
                       ? 'border-primary-200 ring-2 ring-primary-200/20'
                       : 'border-gray-300 hover:border-gray-400',
                   ].join(' ')}
                 >
-                  <Icon />
-                  <p className='text-sm'>{label}</p>
+                  <Icon className='h-12 w-16 md:w-[100px]  ' />
+                  <p className='text-xs'>{label}</p>
                 </button>
               );
             })}

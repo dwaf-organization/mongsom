@@ -1,4 +1,4 @@
-export default function Gift() {
+export default function Gift({ className }) {
   return (
     <svg
       width='138'
@@ -6,6 +6,7 @@ export default function Gift() {
       viewBox='0 0 138 113'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
+      className={className}
     >
       <path
         d='M110.006 38.0742H22.6566C19.6415 38.0742 17.1973 40.1643 17.1973 42.7425V52.079C17.1973 54.6572 19.6415 56.7473 22.6566 56.7473H110.006C113.021 56.7473 115.465 54.6572 115.465 52.079V42.7425C115.465 40.1643 113.021 38.0742 110.006 38.0742Z'
