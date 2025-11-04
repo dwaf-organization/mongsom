@@ -1,4 +1,3 @@
-// CreateReview.jsx
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import ReviewProductInfo from '../components/ui/mypage/ReviewProductInfo';
 import ReviewContents from '../components/ui/mypage/ReviewContents';
@@ -6,7 +5,7 @@ import PhotoReview from '../components/section/mypage/PhotoReview';
 import ReviewButtons from '../components/ui/mypage/ReviewButtons';
 import { useAuth } from '../context/AuthContext';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getReviewWriteList, createReview } from '../api/review';
 import { useToast } from '../context/ToastContext';
 import BackButton from '../components/ui/BackButton';
@@ -20,20 +19,16 @@ export default function CreateReview() {
   const initialPage = Number(searchParams.get('page') || '1');
   const { addToast } = useToast();
 
-  // 작성 대상
   const [target, setTarget] = useState(null);
 
-  // 로딩 상태
   const [loading, setLoading] = useState(true);
   const [checkedAllPages, setCheckedAllPages] = useState(false);
 
-  // 폼 상태
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewContent, setReviewContent] = useState('');
   const [reviewImgUrls, setReviewImgUrls] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
-  // 대상 찾기: 페이지 전체를 순회해서 orderDetailId를 가진 아이템을 찾는다
   useEffect(() => {
     let cancelled = false;
 
@@ -49,7 +44,6 @@ export default function CreateReview() {
         setLoading(true);
         setCheckedAllPages(false);
 
-        // 1) 먼저 현재 URL의 page부터 시도
         const pageSize = 8;
         const first = await getReviewWriteList(userCode, initialPage, pageSize);
         const firstPayload =
@@ -69,16 +63,14 @@ export default function CreateReview() {
           return;
         }
 
-        // 2) 전체 페이지 수 파악
         const totalPage =
           Number(firstPayload?.pagination?.totalPage) ||
           Number(firstPayload?.totalPage) ||
           1;
 
-        // 3) 다른 페이지들도 순차 조회
         for (let p = 1; p <= totalPage; p++) {
           if (cancelled) return;
-          if (p === initialPage) continue; // 이미 확인
+          if (p === initialPage) continue;
 
           const res = await getReviewWriteList(userCode, p, pageSize);
           const payload =
@@ -98,7 +90,6 @@ export default function CreateReview() {
           }
         }
 
-        // 4) 끝까지 못 찾음
         if (!cancelled) {
           setTarget(null);
           setLoading(false);

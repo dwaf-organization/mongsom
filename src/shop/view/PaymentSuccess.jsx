@@ -10,8 +10,6 @@ export default function PaymentSuccess() {
   const [err, setErr] = useState(null);
   const { userCode } = useAuth();
 
-  const navigate = useNavigate();
-
   const orderId = useMemo(
     () => searchParams.get('orderId') || '',
     [searchParams],

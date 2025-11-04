@@ -10,7 +10,6 @@ import {
   BreadCrumbSection,
 } from '../components/section/cart';
 import { useAuth } from '../context/AuthContext';
-import BackButton from '../components/ui/BackButton';
 
 export default function Cart() {
   const auth = useAuth();
