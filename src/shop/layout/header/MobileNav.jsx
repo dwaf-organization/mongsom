@@ -1,20 +1,34 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-import Shopping from '../../asset/icons/Shopping';
-import Home from '../../asset/icons/Home';
-import MyPage from '../../asset/icons/MyPage';
-import { Brand } from '../../asset/icons/Brand';
+import { ActiveShopping, Shopping } from '../../asset/icons/Shopping';
+import { ActiveHome, Home } from '../../asset/icons/Home';
+import { MyPage, ActiveMyPage } from '../../asset/icons/MyPage';
+import { Brand, ActiveBrand } from '../../asset/icons/Brand';
 
 export default function MobileNav() {
+  const { pathname } = useLocation();
+
+  const isHome = pathname === '/';
+  const isShop = pathname.startsWith('/shop');
+  const isNotice = pathname.startsWith('/notice');
+  const isMy = pathname.startsWith('/mypage');
+
+  const base =
+    'flex flex-col items-center justify-center gap-1 transition-colors';
+
+  const activeTxt = 'text-black-100';
+  const inactiveTxt = 'text-gray-700';
+
   return (
-    <nav className='fixed bottom-0 left-0 z-50 w-full bg-white shadow-md border-t border-gray-200 md:hidden'>
-      <ul className='flex justify-around items-start pb-6 pt-1  font-pretendard font-medium text-xs text-gray-700 border-t border-gray-500'>
+    <nav className='fixed bottom-0 left-0 z-40 w-full bg-white shadow-md border-t border-gray-200 md:hidden'>
+      <ul className='flex justify-around items-start pb-6 pt-1 font-pretendard font-medium text-xs border-t border-gray-500'>
         <li>
           <Link
             to='/'
-            className='flex flex-col items-center justify-center gap-1'
+            className={`${base} ${isHome ? activeTxt : inactiveTxt}`}
+            aria-current={isHome ? 'page' : undefined}
           >
-            <Home className='' />
+            {isHome ? <ActiveHome /> : <Home />}
             <span>홈</span>
           </Link>
         </li>
@@ -22,9 +36,10 @@ export default function MobileNav() {
         <li>
           <Link
             to='/shop'
-            className='flex flex-col items-center justify-center gap-1'
+            className={`${base} ${isShop ? activeTxt : inactiveTxt}`}
+            aria-current={isShop ? 'page' : undefined}
           >
-            <Shopping />
+            {isShop ? <ActiveShopping /> : <Shopping />}
             <span>상품</span>
           </Link>
         </li>
@@ -32,9 +47,11 @@ export default function MobileNav() {
         <li>
           <Link
             to='/notice'
-            className='flex flex-col items-center justify-center gap-1'
+            className={`${base} ${isNotice ? activeTxt : inactiveTxt}`}
+            aria-current={isNotice ? 'page' : undefined}
           >
-            <Brand />
+            {/* 여기서만 아이콘 자체를 교체 */}
+            {isNotice ? <ActiveBrand /> : <Brand />}
             <span>공지</span>
           </Link>
         </li>
@@ -42,9 +59,10 @@ export default function MobileNav() {
         <li>
           <Link
             to='/mypage'
-            className='flex flex-col items-center justify-center gap-1'
+            className={`${base} ${isMy ? activeTxt : inactiveTxt}`}
+            aria-current={isMy ? 'page' : undefined}
           >
-            <MyPage />
+            {isMy ? <ActiveMyPage /> : <MyPage />}
             <span>마이페이지</span>
           </Link>
         </li>
