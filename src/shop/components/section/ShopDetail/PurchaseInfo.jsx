@@ -25,7 +25,7 @@ export default function PurchaseInfo({ product }) {
   };
 
   return (
-    <div className='flex flex-col gap-4 md:min-w-[400px]'>
+    <div className='flex flex-col gap-4 xl:min-w-[400px]'>
       <ProductHeader product={product} />
       <OptionSelector
         product={product}
@@ -38,7 +38,7 @@ export default function PurchaseInfo({ product }) {
       </div>
       <hr className='border border-gray-400' />
       <button
-        className='text-sm text-gray-700 underline hover:text-primary-200'
+        className='text-xs md:text-sm text-gray-700 underline  hover:text-primary-200'
         onClick={handleClick}
       >
         대량 주문 견적 할인 문의

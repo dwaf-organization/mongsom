@@ -183,7 +183,7 @@ export default function ShopDetail() {
 
   return (
     <InnerPaddingSectionWrapper className='[overFlow-anchor:none]'>
-      <div className='flex flex-col md:flex-row gap-8 justify-center'>
+      <div className='flex flex-col xl:flex-row gap-8 justify-center'>
         <div className='flex flex-col gap-4 mx-auto'>
           <div
             className={[

@@ -45,9 +45,9 @@ export default function MoreButton({
           onClick={handleExpand}
           aria-label='더보기'
           className={[
-            'absolute bottom-2 md:bottom-24 left-1/2 z-10 -translate-x-1/2',
+            'absolute bottom-2 md:bottom-16 xl:bottom-24 left-1/2 z-10 -translate-x-1/2',
             'flex w-fit items-center justify-center gap-2',
-            'rounded-full px-6 md:px-14 py-1 md:py-2 text-xl',
+            'rounded-full px-4 md:px-14 py-1 md:py-2',
             'bg-black-100/50 text-white backdrop-blur-sm',
             'hover:bg-black/60 transition',
             className,
@@ -75,7 +75,7 @@ export default function MoreButton({
               type='button'
               onClick={handleCollapse}
               className={[
-                'flex w-fit items-center justify-center gap-2 rounded-full px-6 md:px-14 py-2 text-xs md:text-xl bg-black-100/50 text-white backdrop-blur-sm hover:bg-black/60 transition',
+                'flex w-fit items-center justify-center gap-2 rounded-full px-4 md:px-14 py-2 text-xs md:text-xl bg-black-100/50 text-white backdrop-blur-sm hover:bg-black/60 transition',
               ]}
             >
               접기

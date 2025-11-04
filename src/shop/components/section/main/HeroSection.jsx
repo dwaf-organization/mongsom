@@ -18,10 +18,10 @@ export default function HeroSection() {
     >
       <div className='absolute inset-0'>
         <div className='absolute top-1/3 left-1/2 -translate-x-1/2 text-center'>
-          <p className='text-white/60 text-xs md:text-sm mb-2'>
+          <p className='text-white/60 text-xs md:text-sm mb-1'>
             특별한 날, 행복을 전해 줄 선물
           </p>
-          <p className='text-md md:text-2xl font-bold text-white/80'>
+          <p className='text-md md:text-2xl font-bold text-white whitespace-nowrap'>
             당신을 위한 하나뿐인 답례품
           </p>
         </div>
@@ -33,10 +33,10 @@ export default function HeroSection() {
         />
 
         <button
-          className='absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-4 md:px-8 py-3 rounded-full bg-primary-100/60 text-black-100'
+          className='absolute bottom-1/4 md:bottom-1/3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 px-4 md:px-8 py-3 rounded-full bg-primary-100/60 text-black-100'
           onClick={handleClick}
         >
-          <p className='font-semibold text-sm md:text-base'>
+          <p className='font-semibold text-sm md:text-base whitespace-nowrap'>
             견적 · 대량구매 문의
           </p>
           <NextChevron />
