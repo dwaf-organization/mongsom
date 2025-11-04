@@ -6,6 +6,7 @@ import OrderDetailProductInfoSection from '../components/section/mypage/OrderDet
 import RecipientInfoSection from '../components/section/mypage/RecipientInfoSection';
 import PaymentInfoSection from '../components/section/mypage/PaymentInfoSection';
 import { getOrderDetail } from '../api/order';
+import BackButton from '../components/ui/BackButton';
 
 export default function OrderDetail() {
   const { id } = useParams();
@@ -40,9 +41,10 @@ export default function OrderDetail() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <p className='text-2xl font-semibold text-left border-b border-gray-500 pb-4 pt-10 '>
-        주문상세
-      </p>
+      <BackButton />
+      <div className='flex justify-start gap-4 items-center border-b border-gray-500 pb-4'>
+        <p className='text-2xl font-semibold text-left'>주문상세</p>
+      </div>
 
       {loading ? (
         <div className='py-6 text-center text-gray-500'>불러오는 중…</div>

@@ -4,7 +4,7 @@ export default function ReviewButtons({ onSubmit, onCancel, submitting }) {
   return (
     <div className='flex justify-center gap-4'>
       <Button
-        className='w-fit px-10 py-2 mt-10 rounded-none border-gray-500'
+        className='w-fit px-10 py-2 mt-10 rounded-md border-gray-500'
         variant='outline'
         onClick={onCancel}
         disabled={submitting}
@@ -12,7 +12,7 @@ export default function ReviewButtons({ onSubmit, onCancel, submitting }) {
         취소하기
       </Button>
       <Button
-        className='w-fit px-10 py-2 mt-10 rounded-none'
+        className='w-fit px-10 py-2 mt-10 rounded-md'
         onClick={onSubmit}
         disabled={submitting}
       >

@@ -2,6 +2,7 @@ import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import { getNoticeDetail } from '../api/notice';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import BackButton from '../components/ui/BackButton';
 
 export default function NoticeDetail() {
   const { id } = useParams();
@@ -19,6 +20,10 @@ export default function NoticeDetail() {
   const formatDate = d => (d ? String(d).slice(0, 10) : '');
   return (
     <InnerPaddingSectionWrapper>
+      <div className='flex justify-start items-center gap-4'>
+        <BackButton />
+        <h2 className='font-semibold text-xl'>공지사항</h2>
+      </div>
       <ul className=' gap-4  pt-10 '>
         <li>
           <p className='md:text-2xl w-full font-semibold text-left px-4 whitespace-nowrap truncate border-b border-gray-500'>
