@@ -90,7 +90,7 @@ export default function ReviewTab() {
   return (
     <div>
       <div className='bg-white rounded-lg'>
-        <p className='text-xl text-start font-semibold text-gray-800'>
+        <p className='md:text-xl text-start font-semibold text-gray-800'>
           리뷰 {reviews.length} 건
         </p>
 
@@ -113,14 +113,14 @@ export default function ReviewTab() {
                 className='border-t border-gray-300 py-6 last:border-b-0'
               >
                 <div className='flex items-center px-2'>
-                  <ul className='flex flex-col items-start text-lg gap-2'>
+                  <ul className='flex flex-col items-start md:text-lg gap-2'>
                     <li className='text-gray-500'>
                       {review.userName
                         ? review.userName.charAt(0) +
                           '*'.repeat(Math.max(0, review.userName.length - 1))
                         : ''}
                     </li>
-                    <li className='text-lg text-gray-500 font-montserrat w-full whitespace-nowrap'>
+                    <li className='text-sm md:text-lg text-gray-500 font-montserrat w-full whitespace-nowrap'>
                       {formatDate(date)}
                     </li>
                   </ul>
@@ -154,7 +154,7 @@ export default function ReviewTab() {
                             key={i}
                             src={image}
                             alt={`review-${key}-${i}`}
-                            className='max-w-[75px] max-h-[75px] object-cover'
+                            className='w-[4.1rem] h-[4.1rem] object-cover'
                           />
                         ))}
                       </div>

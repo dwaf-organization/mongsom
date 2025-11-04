@@ -2,6 +2,7 @@ import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import { getNoticeDetail } from '../api/notice';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import BackButton from '../components/ui/BackButton';
 
 export default function NoticeDetail() {
   const { id } = useParams();
@@ -11,7 +12,6 @@ export default function NoticeDetail() {
   useEffect(() => {
     const fetchNoticeDetail = async () => {
       const res = await getNoticeDetail(id);
-      console.log('🚀 ~ fetchNoticeDetail ~ res:', res);
       setNotice(res);
     };
     fetchNoticeDetail();
@@ -20,13 +20,17 @@ export default function NoticeDetail() {
   const formatDate = d => (d ? String(d).slice(0, 10) : '');
   return (
     <InnerPaddingSectionWrapper>
-      <ul className='flex items-center justify-between gap-4 border-b border-gray-500 pt-10 '>
+      <div className='flex justify-start items-center gap-4'>
+        <BackButton />
+        <h2 className='font-semibold text-xl'>공지사항</h2>
+      </div>
+      <ul className=' gap-4  pt-10 '>
         <li>
-          <p className='text-2xl font-semibold text-left px-4 whitespace-nowrap truncate max-w-[600px]'>
+          <p className='md:text-2xl w-full font-semibold text-left px-4 whitespace-nowrap truncate border-b border-gray-500'>
             {notice && notice.title}
           </p>
         </li>
-        <li className='flex items-end justify-between gap-4 px-4 whitespace-nowrap'>
+        <li className='flex justify-end gap-4 px-4 whitespace-nowrap'>
           <p className='text-sm white-space-nowrap '>
             작성자 : {notice && notice.writer}
           </p>
@@ -37,7 +41,7 @@ export default function NoticeDetail() {
       </ul>
 
       <div
-        className='py-10 px-4 border border-gray-500 mt-10 rounded-md'
+        className='py-10 px-4 border text-sm md:text-base border-gray-500 mt-10 rounded-md'
         dangerouslySetInnerHTML={{ __html: notice && notice.contents }}
       ></div>
     </InnerPaddingSectionWrapper>

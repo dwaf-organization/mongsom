@@ -5,7 +5,7 @@ export default function CustomNextArrowButton({ className, onClick }) {
     <button
       onClick={onClick}
       aria-label='다음 슬라이드'
-      className={`${className}`}
+      className={`${className} hidden xl:block`}
     >
       <RightChevron />
     </button>

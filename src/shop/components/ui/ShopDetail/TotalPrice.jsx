@@ -1,6 +1,6 @@
 export default function TotalPrice({ totalPrice, shippingFee = 3000 }) {
   // 5만원 미만일 때만 배송비 추가
-  const actualShippingFee = totalPrice < 50000 ? shippingFee : 0;
+  const actualShippingFee = 3000;
   const finalTotal = totalPrice + actualShippingFee;
 
   return (

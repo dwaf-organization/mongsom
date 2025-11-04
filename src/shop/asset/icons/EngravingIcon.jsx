@@ -1,4 +1,4 @@
-export default function () {
+export default function ({ className }) {
   return (
     <svg
       width='99'
@@ -6,6 +6,7 @@ export default function () {
       viewBox='0 0 99 94'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
+      className={className}
     >
       <g clipPath='url(#clip0_2161_2512)'>
         <path

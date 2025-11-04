@@ -10,6 +10,7 @@ import {
   BreadCrumbSection,
 } from '../components/section/cart';
 import { useAuth } from '../context/AuthContext';
+import BackButton from '../components/ui/BackButton';
 
 export default function Cart() {
   const auth = useAuth();
@@ -113,7 +114,9 @@ export default function Cart() {
 
   return (
     <InnerPaddingSectionWrapper className='max-w-[800px]'>
-      <h2 className='text-2xl font-semibold font-pretendard pb-5'>장바구니</h2>
+      <h2 className='text-2xl font-semibold font-pretendard pb-5 text-center'>
+        장바구니
+      </h2>
       <BreadCrumbSection currentStep='cart' />
 
       <AllCheckBoxSection

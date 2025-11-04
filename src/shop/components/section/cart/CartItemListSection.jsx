@@ -207,14 +207,14 @@ export default function CartItemListSection({ cart = [], updateCart }) {
                 decoding='async'
               />
 
-              <div className='flex flex-col items-start gap-2 px-6 w-full'>
+              <div className='flex flex-col items-start gap-2 md:px-6 w-full'>
                 <div className='flex justify-between gap-2 w-full'>
-                  <p className='text-xl font-semibold whitespace-nowrap truncate max-w-[500px]'>
+                  <p className='md:text-xl font-semibold whitespace-nowrap truncate max-w-[8rem] md:max-w-[500px]'>
                     {item.productName}
                   </p>
                   <div className='flex items-center gap-2'>
                     <button
-                      className='text-pretendart text-gray-500 disabled:opacity-50'
+                      className='text-pretendart text-sm md:text-base text-gray-500 disabled:opacity-50 whitespace-nowrap'
                       onClick={() => handleDelete(item)}
                       disabled={busy}
                     >
@@ -259,7 +259,7 @@ export default function CartItemListSection({ cart = [], updateCart }) {
 
                 <div className='flex items-center gap-3'>
                   <input
-                    type='text'
+                    type='number'
                     inputMode='numeric'
                     pattern='[0-9]*'
                     value={displayQty}

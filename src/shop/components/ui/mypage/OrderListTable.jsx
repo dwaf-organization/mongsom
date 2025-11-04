@@ -52,7 +52,7 @@ export default function OrderListTable() {
 
   if (loading) {
     return (
-      <section className='pt-10'>
+      <section className='pt-10 hidden md:block'>
         <div className='flex items-center justify-between border-b border-gray-500 pb-4'>
           <p className='text-xl font-semibold text-left '>주문내역 조회</p>
           <Link to='/mypage?tab=orderList' className='text-sm text-gray-50'>
@@ -66,7 +66,7 @@ export default function OrderListTable() {
 
   if (!orderList.length) {
     return (
-      <section className='pt-10'>
+      <section className='pt-10 hidden md:block'>
         <p className='text-xl font-semibold text-left border-b border-gray-500 pb-4'>
           주문내역 조회
         </p>
@@ -78,7 +78,7 @@ export default function OrderListTable() {
   }
 
   return (
-    <section className='pt-10'>
+    <section className='pt-10 hidden md:block'>
       <div className='flex items-center justify-between border-b border-gray-500 pb-4'>
         <p className='text-xl font-semibold text-left '>주문내역 조회</p>
         <Link to='/mypage?tab=orderList' className='text-sm text-gray-50'>

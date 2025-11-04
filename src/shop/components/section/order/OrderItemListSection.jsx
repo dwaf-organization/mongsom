@@ -16,9 +16,9 @@ export default function OrderItemListSection({ selectedItems }) {
 
   return (
     <section className='py-10'>
-      <div className='flex items-center gap-2 mb-4'>
-        <h3 className='text-xl text-left font-semibold '>주문 상품</h3>
-        <span className='font-semibold font-montserrat text-xl'>
+      <div className='flex items-center justify-between gap-2 md:mb-4'>
+        <h3 className='md:text-xl text-left font-semibold '>주문 상품</h3>
+        <span className='font-semibold font-montserrat md:text-xl'>
           총 {selectedItems.length}개
         </span>
       </div>
@@ -29,21 +29,21 @@ export default function OrderItemListSection({ selectedItems }) {
           {selectedItems.map(item => (
             <li
               key={item.id}
-              className='flex items-start gap-4 border-t border-gray-500 pt-4'
+              className='flex items-start md:gap-4 border-t border-gray-500 pt-4'
             >
               <Link to={`/shop-detail/${item.productId}`}>
                 <img
                   src={item.productImgUrl[0]}
                   alt={item.productName}
-                  className='w-[200px] h-[200px] object-cover rounded-lg'
+                  className='w-[11rem] h-[11rem] object-cover rounded-lg'
                 />
               </Link>
               <div className='flex flex-col justify-between h-[150px] px-6 font-pretendard'>
                 <div className='text-left'>
-                  <h4 className='font-semibold text-xl truncate max-w-[500px]'>
+                  <h4 className='font-semibold md:text-xl truncate max-w-[10rem] md:max-w-[500px]'>
                     {item.productName}
                   </h4>
-                  <p className='text-gray-600 truncate max-w-[500px]'>
+                  <p className='text-gray-600 text-sm md:text-base truncate max-w-[9rem] md:max-w-[500px]'>
                     옵션 | {item.optName}
                   </p>
                   <span>수량: {item.quantity || item.count || 1}개</span>
@@ -54,16 +54,16 @@ export default function OrderItemListSection({ selectedItems }) {
                       <p className='text-pretendart text-primary-200 font-semibold'>
                         {item.discountPer}%
                       </p>
-                      <p className='text-pretendart text-gray-500 line-through'>
+                      <p className='text-pretendart text-sm md:text-base text-gray-500 line-through'>
                         {OriginalPrice(item).toLocaleString()}원
                       </p>
                     </li>
-                    <p className='font-semibold text-xl text-left'>
+                    <p className='font-semibold md:text-xl text-left'>
                       {calculateTotalPrice(item).toLocaleString()}원
                     </p>
                   </ul>
                 ) : (
-                  <p className='font-semibold text-xl text-left'>
+                  <p className='font-semibold md:text-xl text-left'>
                     {calculateTotalPrice(item).toLocaleString()}원
                   </p>
                 )}

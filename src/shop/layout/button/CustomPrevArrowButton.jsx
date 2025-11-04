@@ -5,7 +5,7 @@ export default function CustomPrevArrowButton({ className, onClick }) {
     <button
       onClick={onClick}
       aria-label='이전 슬라이드'
-      className={`${className}`}
+      className={`${className} hidden md:block`}
     >
       <LeftChevron />
     </button>

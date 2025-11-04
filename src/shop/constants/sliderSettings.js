@@ -33,14 +33,14 @@ export const SLIDER_RESPONSIVE = [
   {
     breakpoint: SLIDER_BREAKPOINTS.MOBILE,
     settings: {
-      slidesToShow: 1,
+      slidesToShow: 2,
       slidesToScroll: 1,
     },
   },
 ];
 
 export const createSliderSettings = (customProps = {}) => ({
-  dots: false,
+  dots: true,
   infinite: true,
   speed: 500,
   slidesToShow: 4,

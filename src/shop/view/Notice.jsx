@@ -100,7 +100,7 @@ export default function Notice() {
               <th className='text-center font-medium w-full max-w-[120px]'>
                 글쓴이
               </th>
-              <th className='text-center font-medium w-full max-w-[120px] pr-8'>
+              <th className='text-center font-medium w-full max-w-[120px] md:pr-8'>
                 날짜
               </th>
             </tr>
@@ -129,7 +129,7 @@ export default function Notice() {
                   <td className='text-center font-montserrat font-medium w-full max-w-[120px]'>
                     {item?.writer ?? item?.author ?? '관리자'}
                   </td>
-                  <td className='text-center font-montserrat font-medium w-full max-w-[120px] pr-8'>
+                  <td className='text-center font-montserrat font-medium w-full md:ax-w-[120px] md:pr-8'>
                     {formatDate(dateRaw)}
                   </td>
                 </tr>

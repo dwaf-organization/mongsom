@@ -17,16 +17,16 @@ export default function MyReviewManagementTab({ activeMyreview }) {
 
   return (
     <>
-      <div className='flex items-center justify-center'>
+      <div className='flex items-center justify-center rounded-md border border-black-100 bg-gray-100 mt-6'>
         {mypageReviewTabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
             className={`
-               border border-black-100 mt-6 px-6 py-2 w-full transition-colors duration-200 whitespace-nowrap
+                border-red-950 px-6 py-2 w-full transition-colors duration-200 whitespace-nowrap
               ${
                 activeTab === tab.id
-                  ? 'bg-primary-100 font-semibold'
+                  ? 'bg-primary-100 font-semibold rounded-md'
                   : ' hover:bg-primary-150'
               }
            

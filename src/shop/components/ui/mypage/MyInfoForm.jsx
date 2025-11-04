@@ -16,6 +16,34 @@ export default function MyInfoForm({ userData }) {
     toFormState(userData, userCode),
   );
 
+  // 컴포넌트 함수 내부 맨 위쪽 어딘가에 추가
+  const formatMobilePhone = digits => {
+    // 11자리까지만 사용 (010 기준)
+    const d = digits.slice(0, 11);
+    const p1 = d.slice(0, 3);
+    const p2 = d.slice(3, 7);
+    const p3 = d.slice(7, 11);
+
+    if (!p1) return '';
+    if (!p2) return p1;
+    if (!p3) return `${p1}-${p2}`;
+    return `${p1}-${p2}-${p3}`;
+  };
+
+  const handlePhoneUnifiedChange = raw => {
+    const d = onlyDigits(raw).slice(0, 11); // 숫자만, 최대 11
+    setUserInfo(prev => ({
+      ...prev,
+      phone1: d.slice(0, 3),
+      phone2: d.slice(3, 7),
+      phone3: d.slice(7, 11),
+    }));
+  };
+
+  const unifiedPhoneValue = formatMobilePhone(
+    `${userInfo.phone1 ?? ''}${userInfo.phone2 ?? ''}${userInfo.phone3 ?? ''}`,
+  );
+
   useEffect(() => {
     setUserInfo(toFormState(userData, userCode));
   }, [userData, userCode]);
@@ -95,14 +123,29 @@ export default function MyInfoForm({ userData }) {
           />
 
           <FormField id='phone' label='휴대전화'>
-            <div className='flex items-center gap-2 w-full'>
+            <input
+              type='tel'
+              inputMode='numeric'
+              placeholder='010-1234-5678'
+              value={unifiedPhoneValue}
+              onChange={e => handlePhoneUnifiedChange(e.target.value)}
+              className='border rounded-md p-3 w-full focus:outline-primary-200 border-gray-400 md:hidden'
+              maxLength={13}
+            />
+
+            <div className='hidden md:flex items-center gap-2 w-full'>
               <input
                 type='text'
                 value={userInfo.phone1}
                 className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
                 onChange={e =>
-                  handleInputChange('phone1', onlyDigits(e.target.value))
+                  handleInputChange(
+                    'phone1',
+                    onlyDigits(e.target.value).slice(0, 3),
+                  )
                 }
+                maxLength={3}
+                inputMode='numeric'
               />
               <span className='text-gray-500'>-</span>
               <input
@@ -110,8 +153,13 @@ export default function MyInfoForm({ userData }) {
                 value={userInfo.phone2}
                 className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
                 onChange={e =>
-                  handleInputChange('phone2', onlyDigits(e.target.value))
+                  handleInputChange(
+                    'phone2',
+                    onlyDigits(e.target.value).slice(0, 4),
+                  )
                 }
+                maxLength={4}
+                inputMode='numeric'
               />
               <span className='text-gray-500'>-</span>
               <input
@@ -119,12 +167,16 @@ export default function MyInfoForm({ userData }) {
                 value={userInfo.phone3}
                 className='border rounded-md p-2 flex-1 focus:outline-primary-200 border-gray-400'
                 onChange={e =>
-                  handleInputChange('phone3', onlyDigits(e.target.value))
+                  handleInputChange(
+                    'phone3',
+                    onlyDigits(e.target.value).slice(0, 4),
+                  )
                 }
+                maxLength={4}
+                inputMode='numeric'
               />
             </div>
           </FormField>
-
           <AddressInput
             id='address'
             label='주소'
