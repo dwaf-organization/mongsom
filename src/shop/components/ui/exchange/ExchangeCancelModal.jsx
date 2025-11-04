@@ -32,10 +32,13 @@ export default function ExchangeCancelModal({ orderDetailId, orderId }) {
   };
   return (
     <InnerPaddingSectionWrapper>
-      <p className='text-2xl font-semibold px-10 py-10 '>
+      <p className='text-center text-lg md:text-2xl font-semibold px-8  md:px-10 md:py-10 '>
+        교환/ 반품 취소
+      </p>
+      <p className='md:text-2xl px-8 py-4 md:px-10 md:py-10 text-center '>
         교환/ 반품을 취소하시겠습니까 ?
       </p>
-      <div className='flex gap-4 px-8'>
+      <div className='flex gap-4 px-4 md:px-8'>
         <Button variant='outline' onClick={handleCancel}>
           취소
         </Button>
