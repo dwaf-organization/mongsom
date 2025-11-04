@@ -6,7 +6,7 @@ import Nav from './Nav';
 import CartIcon from '../../asset/icons/CartIcon';
 
 export default function Header() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <header className='sticky top-0 z-50 w-full bg-primary-100'>

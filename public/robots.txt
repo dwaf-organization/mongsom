@@ -1,3 +1,12 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# 민감/비노출 경로 차단
+Disallow: /admin/
+Disallow: /mypage/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /api/
+
+# 사이트맵
+Sitemap: https://mongsom.co.kr/sitemap.xml
