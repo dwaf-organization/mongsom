@@ -56,27 +56,27 @@ export default function Login() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <h3 className='text-4xl font-pretendard pb-8 font-semibold text-center'>
+      <h3 className='text-lg md:text-4xl font-pretendard pb-4 md:pb-8 font-semibold text-center'>
         로그인
       </h3>
       <div className='flex flex-col items-center justify-center gap-4'>
         <form
           onSubmit={handleSubmit}
-          className='flex flex-col items-center justify-center gap-4 w-full max-w-[400px]'
+          className='flex flex-col items-center justify-center gap-4 w-full max-w-[250px] md:max-w-[400px]'
         >
           <input
             type='text'
             placeholder='아이디'
             value={loginData.userId}
             onChange={e => handleInputChange('userId', e.target.value)}
-            className='border border-gray-400 rounded-md p-3 w-full focus:outline-primary-200'
+            className='border border-gray-400 rounded-md p-2 md:p-3 w-full focus:outline-primary-200'
           />
           <input
             type='password'
             placeholder='비밀번호'
             value={loginData.password}
             onChange={e => handleInputChange('password', e.target.value)}
-            className='border border-gray-400 rounded-md p-3 focus:outline-primary-200 w-full'
+            className='border border-gray-400 rounded-md p-2 md:p-3 focus:outline-primary-200 w-full'
           />
           <div className='flex justify-end w-full'>
             <Link to='/find-id' className='flex text-gray-500 text-xs'>
@@ -86,12 +86,15 @@ export default function Login() {
               비밀번호 찾기
             </Link>
           </div>
-          <Button type='submit' className='w-full py-3'>
+          <Button type='submit' className='w-full p-2 md:py-3'>
             로그인
           </Button>
         </form>
-        <Link to='/signup' className='flex justify-center w-full max-w-[400px]'>
-          <Button variant='outline' className='p-3'>
+        <Link
+          to='/signup'
+          className='flex justify-center w-full max-w-[250px] md:max-w-[400px]'
+        >
+          <Button variant='outline' className='p-2 md:p-3'>
             회원가입
           </Button>
         </Link>
