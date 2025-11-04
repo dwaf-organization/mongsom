@@ -171,7 +171,9 @@ export default function Exchange() {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <div className='text-center'>
-          <h2 className='text-2xl font-bold mb-4'>교환, 반품 신청</h2>
+          <h2 className='text-sm md:text-2xl font-bold mb-4'>
+            교환, 반품 신청
+          </h2>
           <p className='text-gray-600'>주문 정보를 찾을 수 없습니다.</p>
           <Button onClick={() => navigate(-1)} className='mt-4'>
             돌아가기
@@ -182,10 +184,10 @@ export default function Exchange() {
   }
 
   return (
-    <div className='min-h-screen py-8'>
-      <div className='max-w-4xl mx-auto px-4'>
+    <div className='min-h-screen md:py-8'>
+      <div className='md:max-w-4xl md:mx-auto md:px-4'>
         <div className='p-6'>
-          <h2 className='text-2xl font-bold text-center mb-6'>
+          <h2 className='md:text-2xl font-bold text-center mb-6'>
             교환, 반품 신청
           </h2>
 
@@ -195,7 +197,7 @@ export default function Exchange() {
               return (
                 <div
                   key={`${product.orderId}-${product.id}`}
-                  className={`flex items-center gap-4 p-4 cursor-pointer transition-colors rounded-lg ${
+                  className={`flex items-center gap-4 md:p-4 cursor-pointer transition-colors rounded-lg ${
                     isDisabled
                       ? 'opacity-60 cursor-not-allowed bg-gray-300'
                       : ''
@@ -223,14 +225,16 @@ export default function Exchange() {
 
                   <div className='flex-1'>
                     <div className='flex items-center gap-2'>
-                      <h3 className='font-semibold text-lg'>{product.name}</h3>
+                      <h3 className='font-semibold md:text-lg truncate max-w-[100px]'>
+                        {product.name}
+                      </h3>
                       {isDisabled && (
                         <span className='text-xs px-2 py-0.5 rounded bg-gray-200 text-gray-700'>
                           진행중
                         </span>
                       )}
                     </div>
-                    <p className='text-gray-600 text-sm mb-1'>
+                    <p className='text-gray-600 text-sm mb-1 truncate max-w-[100px]'>
                       옵션: {product.option}
                     </p>
                     <p className='text-gray-600 text-sm mb-1'>
