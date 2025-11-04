@@ -51,7 +51,7 @@ export default function FormField({
       </label>
 
       {message && (
-        <span className='text-left pl-[170px] text-sm text-gray-500'>
+        <span className='text-left pl-[130px] md:pl-[170px] text-sm md:text-sm text-gray-500'>
           {message}
         </span>
       )}
