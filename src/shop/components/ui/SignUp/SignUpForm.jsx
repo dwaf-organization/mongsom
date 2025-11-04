@@ -472,7 +472,7 @@ export default function SignUpForm() {
 
       <Button
         type='submit'
-        className={`mx-auto mt-11 w-full p-4 text-2xl ${
+        className={`mx-auto mt-11 w-full p-2 md:p-4 text-lg md:text-2xl ${
           !isFormValid || loading ? 'cursor-not-allowed opacity-50' : ''
         }`}
         disabled={!isFormValid || loading}

@@ -21,8 +21,7 @@ export default function NoticeDetail() {
   return (
     <InnerPaddingSectionWrapper>
       <div className='flex justify-start items-center gap-4'>
-        <BackButton />
-        <h2 className='font-semibold text-xl'>공지사항</h2>
+        <BackButton text={'뒤로가기'} />
       </div>
       <ul className=' gap-4  pt-10 '>
         <li>
