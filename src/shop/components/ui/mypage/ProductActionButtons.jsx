@@ -50,7 +50,7 @@ export default function ProductActionButtons({
   return (
     <div className='flex flex-col text-sm gap-2'>
       <button
-        className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'
+        className='border border-gray-500 text-gray-50 rounded-lg md:px-6 py-2'
         onClick={handleDeliveryTracking}
       >
         배송조회
@@ -60,7 +60,7 @@ export default function ProductActionButtons({
         <>
           {hasReturnCancel && (
             <button
-              className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'
+              className='border border-gray-500 text-gray-50 rounded-lg px-2 md:px-6 py-2'
               onClick={() => handleReturnOrExchangeCancel(orderDetailId)}
             >
               반품취소
@@ -69,7 +69,7 @@ export default function ProductActionButtons({
 
           {hasExchangeCancel && (
             <button
-              className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'
+              className='border border-gray-500 text-gray-50 rounded-lg px-2 md:px-6 py-2'
               onClick={() => handleReturnOrExchangeCancel(orderDetailId)}
             >
               교환취소
@@ -78,7 +78,7 @@ export default function ProductActionButtons({
 
           {!hasAnyChange && (
             <button
-              className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'
+              className='border border-gray-500 text-gray-50 rounded-lg px-2 md:px-6 py-2'
               onClick={handleExchange}
             >
               교환, 반품 신청
@@ -117,7 +117,7 @@ export default function ProductActionButtons({
       )} */}
 
       <button
-        className='border border-gray-500 text-gray-50 rounded-lg px-6 py-2'
+        className='border border-gray-500 text-sm md:base whitespace-nowrap text-gray-50 rounded-lg px-2 md:px-6 py-2'
         onClick={handleReview}
       >
         리뷰 작성하기

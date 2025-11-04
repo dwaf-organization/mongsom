@@ -1,7 +1,7 @@
 import StarRating from '../StarRating';
 import { pickFirstImageUrl } from '../../../utils/dateUtils';
 
-export default function ReviewProductInfo({
+export default function qReviewProductInfo({
   filteredReviewWriteList,
   rating,
   onRatingChange,
@@ -17,7 +17,7 @@ export default function ReviewProductInfo({
         <img
           src={pickFirstImageUrl(filteredReviewWriteList.productImgUrls)}
           alt={filteredReviewWriteList.productName}
-          className='w-[200px] h-[200px] object-cover'
+          className='md:w-[11rem] w-[7rem] h-[7rem] md:h-[11rem] object-cover'
         />
 
         <div className='flex flex-col gap-4'>

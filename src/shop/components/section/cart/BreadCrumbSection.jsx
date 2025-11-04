@@ -27,7 +27,7 @@ export default function BreadCrumbSection({
 
   return (
     <ul
-      className={`flex items-center gap-4 justify-center font-pretendard text-lg pt-5 border-b-2 border-black-100 pb-10 ${className}`}
+      className={`flex items-center gap-4 justify-center font-pretendard md:text-lg pt-5 border-b-2 border-black-100 pb-10 ${className}`}
     >
       {steps.map((step, index) => (
         <div key={step.key} className='flex items-center'>

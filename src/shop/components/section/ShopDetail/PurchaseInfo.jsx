@@ -25,7 +25,7 @@ export default function PurchaseInfo({ product }) {
   };
 
   return (
-    <div className='flex flex-col gap-4 md:min-w-[400px] px-4'>
+    <div className='flex flex-col gap-4 md:min-w-[400px]'>
       <ProductHeader product={product} />
       <OptionSelector
         product={product}

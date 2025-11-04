@@ -10,7 +10,7 @@ export default function Header() {
 
   return (
     <header className='sticky top-0 z-50 w-full bg-primary-100'>
-      <div className='container mx-auto py-6 h-full'>
+      <div className='container mx-auto py-4 md:py-6 h-full'>
         <div className='flex justify-between items-center md:justify-start px-4 xl:px-0'>
           <h1>
             <Link to='/'>

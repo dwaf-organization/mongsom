@@ -102,7 +102,7 @@ export default function Shop() {
             <div className='text-lg text-gray-500'>상품을 불러오는 중...</div>
           </div>
         ) : (
-          <ul className='grid grid-cols-3 md:grid-cols-3 gap-1 md:gap-4 mt-10'>
+          <ul className='grid grid-cols-3 md:grid-cols-3 gap-1 md:gap-4 mt-4 md:mt-10'>
             {Array.isArray(productItems) &&
               productItems.map(item => (
                 <Link

@@ -13,7 +13,7 @@ export default function BestReviewSection() {
         </p>
       </div>
 
-      <ul className=' md:grid-cols-2 lg:grid-cols-3 mb-10'>
+      <ul className=' md:grid-cols-2 lg:grid-cols-3 md:mb-10'>
         <li className='grid grid-cols-3 gap-6'>
           {bestReview.map(review => (
             <div key={review.id}>

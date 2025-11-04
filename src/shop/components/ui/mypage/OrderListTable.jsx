@@ -66,7 +66,7 @@ export default function OrderListTable() {
 
   if (!orderList.length) {
     return (
-      <section className='pt-10'>
+      <section className='pt-10 hidden md:block'>
         <p className='text-xl font-semibold text-left border-b border-gray-500 pb-4'>
           주문내역 조회
         </p>
