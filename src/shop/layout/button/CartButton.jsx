@@ -1,4 +1,3 @@
-// CartButton.jsx
 import { Button } from '../../components/ui/button';
 import { useToast } from '../../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
@@ -18,33 +17,6 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
   const isOptionSelected =
     Array.isArray(selectedOptions) && selectedOptions.length > 0;
 
-  // 세션에 저장할 페이로드 생성 (상품 전체 정보 + 선택 옵션들)
-  // const buildBuyNowPayload = () => {
-  //   return {
-  //     createdAt: Date.now(),
-  //     product: {
-  //       productId,
-  //       name: product.name ?? product.productName ?? '',
-  //       price: Number(product.price ?? 0),
-  //       discountPer: Number(product.discountPer ?? 0),
-  //       discountPrice: Number(
-  //         product.discountPrice ?? product.salePrice ?? product.price ?? 0,
-  //       ),
-  //       // 이미지 배열 키들 중 존재하는 걸 우선 사용
-  //       productImgUrl:
-  //         product.productImgUrl ??
-  //         product.productImgUrls ??
-  //         product.image ??
-  //         [],
-  //     },
-  //     options: selectedOptions.map(opt => ({
-  //       optId: Number(opt.value ?? opt.optId),
-  //       optName: opt.label ?? opt.name ?? opt.optName ?? null,
-  //       quantity: Number(opt.quantity) || 1,
-  //     })),
-  //   };
-  // };
-
   const handleBuy = () => {
     if (!isOptionSelected) {
       addToast('상품 옵션을 선택한 후 구매하기 버튼을 눌러주세요.', 'warning');
@@ -57,10 +29,8 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
       return;
     }
 
-    // 1) 세션 저장 (바로구매에서만)
     clearInstantPurchase();
 
-    // 2) 이번 주문 데이터 저장(최소필드만)
     const productId = Number(product.productId ?? product.id);
     const payload = {
       product: {
@@ -85,7 +55,6 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
 
     setInstantPurchase(payload);
 
-    // 3) 주문 페이지로 이동
     navigate('/order');
   };
 
@@ -127,14 +96,14 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
   return (
     <>
       <Button
-        className='w-full font-bold text-xl font-pretendard'
+        className='w-full font-bold md:text-xl font-pretendard'
         variant='outline'
         onClick={handleAddToCart}
       >
         장바구니
       </Button>
       <Button
-        className='w-full font-bold text-xl font-pretendard'
+        className='w-full font-bold md:text-xl font-pretendard'
         variant='default'
         onClick={handleBuy}
       >

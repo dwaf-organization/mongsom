@@ -11,7 +11,7 @@ export default function Nav() {
   };
 
   return (
-    <nav className='flex justify-between items-center h-full w-full font-pretendard font-medium'>
+    <nav className='hidden justify-between items-center h-full w-full font-pretendard font-medium md:flex'>
       <ul className='grid grid-cols-3 justify-center items-center h-full'>
         <li className='text-center'>
           <Link to='/'>홈</Link>

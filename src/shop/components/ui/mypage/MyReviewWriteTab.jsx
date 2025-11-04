@@ -98,9 +98,11 @@ export default function MyReviewWriteTab() {
 
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 mb-1'>
-                    <p className='text-gray-900'>{name}</p>
+                    <p className='text-gray-900 truncate max-w-[7rem] md:max-w-[300px]'>
+                      {name}
+                    </p>
                   </div>
-                  <p className='text-sm text-gray-600 mb-2 text-left'>
+                  <p className='text-sm text-gray-600 mb-2 text-left truncate max-w-[7rem] md:max-w-[300px]'>
                     옵션: {option}
                   </p>
                   <p className='font-montserrat text-left text-sm text-gray-500'>

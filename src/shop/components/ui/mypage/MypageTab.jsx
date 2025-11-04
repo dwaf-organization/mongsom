@@ -12,7 +12,7 @@ export default function MypageTab() {
 
   return (
     <>
-      <div className='flex items-center justify-center'>
+      <div className='items-center justify-center hidden md:flex'>
         {mypageTabs.map((tab, index) => (
           <button
             key={tab.id}

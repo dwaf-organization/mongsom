@@ -62,7 +62,7 @@ export default function ChatFlutingButton() {
     <button
       type='button'
       onClick={openChat}
-      className='fixed bottom-10 right-10 z-50 rounded-full bg-primary-200 text-black
+      className='fixed bottom-24 right-2 md:bottom-10 md:right-10 z-50 rounded-full bg-primary-200 text-black
                 w-12 h-12 shadow-lg font-semibold'
     >
       <ChatIcon className='w-6 h-6 inline-block align-middle' />

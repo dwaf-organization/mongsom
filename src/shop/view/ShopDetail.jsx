@@ -8,6 +8,7 @@ import ShopDetailInfoListSection from '../components/section/ShopDetail/ShopDeta
 import { getProductDetail } from '../api/products';
 import { Button } from '../components/ui/button';
 import { useLayoutEffect } from 'react';
+import BackButton from '../components/ui/BackButton';
 
 export default function ShopDetail() {
   const { id } = useParams();
@@ -183,11 +184,18 @@ export default function ShopDetail() {
 
   return (
     <InnerPaddingSectionWrapper className='[overFlow-anchor:none]'>
-      <div className='flex flex-col md:flex-row gap-8 justify-center'>
-        <div className='flex flex-col gap-4'>
+      {/* <div className='flex justify-start items-center gap-2 mb-6 md:pl-14'>
+        <BackButton className='w-6 h-6' />
+        <p>뒤로가기</p>
+      </div> */}
+      <div className='flex flex-col xl:flex-row gap-8 justify-center'>
+        <div className='flex flex-col gap-4 mx-auto'>
+          <div className='flex justify-start items-center gap-2 mb-6'>
+            <BackButton className='w-6 h-6' text={'뒤로가기'} />
+          </div>
           <div
             className={[
-              'relative w-[400px] h-[400px] rounded-lg overflow-hidden border border-gray-200 bg-gray-100',
+              'relative w-[300px] md:w-[400px] h-[300px] md:h-[400px] rounded-lg overflow-hidden border border-gray-200 bg-gray-100',
               firstReady ? '' : 'animate-pulse',
             ].join(' ')}
           >
@@ -198,7 +206,7 @@ export default function ShopDetail() {
                 width={400}
                 height={400}
                 decoding='async'
-                className='absolute inset-0 w-[400px] h-[400px] object-cover'
+                className='absolute inset-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] object-cover'
                 draggable={false}
               />
             )}

@@ -9,6 +9,7 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { getReviewWriteList, createReview } from '../api/review';
 import { useToast } from '../context/ToastContext';
+import BackButton from '../components/ui/BackButton';
 
 export default function CreateReview() {
   const { id } = useParams();
@@ -157,9 +158,10 @@ export default function CreateReview() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <p className='text-2xl font-semibold text-left border-b border-gray-500 pb-4 pt-10'>
-        리뷰 작성
-      </p>
+      <div className=' gap-4 border-b border-gray-500'>
+        <BackButton />
+        <p className='text-2xl font-semibold text-left'>리뷰 작성</p>
+      </div>
 
       {loading && (
         <div className='py-6 text-center text-gray-500'>불러오는 중…</div>

@@ -139,7 +139,7 @@ export default function CompletedReviewTab() {
                       <div className='w-[80px] h-[80px] bg-gray-100' />
                     )}
                   </Link>
-                  <p className='text-gray-800'>
+                  <p className='text-gray-800 truncate max-w-[7rem] md:max-w-[300px]'>
                     {review.productName ?? review.name ?? '상품명'}
                   </p>
                 </div>

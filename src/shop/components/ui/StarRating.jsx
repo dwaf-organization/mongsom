@@ -40,7 +40,7 @@ export default function StarRating({
             onMouseLeave={handleStarLeave}
             disabled={readOnly}
             className={`
-              text-2xl transition-colors duration-200
+              text-xl md:text-xl transition-colors duration-200
               ${isActive ? 'text-yellow-400' : 'text-gray-300'}
               ${!readOnly ? 'hover:text-yellow-400 cursor-pointer' : 'cursor-default'}
             `}

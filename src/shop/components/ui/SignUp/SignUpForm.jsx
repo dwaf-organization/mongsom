@@ -43,6 +43,37 @@ export default function SignUpForm() {
   const isValidUserIdFormat = v => /^[a-z0-9]{4,16}$/.test(v);
   const onlyDigits = v => v.replace(/\D/g, '');
 
+  // 숫자만 남기고 최대 11자리(010 기준)
+  const digits11 = v => (v || '').replace(/\D/g, '').slice(0, 11);
+
+  // 01012345678 → "010-1234-5678" 포맷 표시용
+  const formatMobilePhone = digits => {
+    const d = digits11(digits);
+    const p1 = d.slice(0, 3);
+    const p2 = d.slice(3, 7);
+    const p3 = d.slice(7, 11);
+    if (!p1) return '';
+    if (!p2) return p1;
+    if (!p3) return `${p1}-${p2}`;
+    return `${p1}-${p2}-${p3}`;
+  };
+
+  // 모바일 단일 인풋 onChange 핸들러: 내부 state를 3-4-4로 쪼개 저장
+  const handlePhoneUnifiedChange = raw => {
+    const d = digits11(raw);
+    setFormData(prev => ({
+      ...prev,
+      phone1: d.slice(0, 3),
+      phone2: d.slice(3, 7),
+      phone3: d.slice(7, 11),
+    }));
+  };
+
+  // 단일 인풋 value(표시용)
+  const unifiedPhoneValue = formatMobilePhone(
+    `${formData.phone1 ?? ''}${formData.phone2 ?? ''}${formData.phone3 ?? ''}`,
+  );
+
   useEffect(() => {
     if (formData.password && formData.confirmPassword) {
       if (formData.password !== formData.confirmPassword) {
@@ -244,7 +275,7 @@ export default function SignUpForm() {
               disabled={
                 !isValidUserIdFormat(formData.userId) || idStatus === 'checking'
               }
-              className='w-fit px-8 py-2 text-lg'
+              className='w-fit px-4 md:px-8 py-2 text-sm md:text-lg'
             >
               {idStatus === 'checking'
                 ? '확인 중...'
@@ -310,13 +341,29 @@ export default function SignUpForm() {
         />
 
         <FormField id='phone' label='휴대전화' required>
-          <div className='flex w-full items-center gap-2'>
+          {/* 📱 모바일: 단일 인풋 */}
+          <input
+            type='tel'
+            inputMode='numeric'
+            placeholder='010-1234-5678'
+            value={unifiedPhoneValue}
+            onChange={e => handlePhoneUnifiedChange(e.target.value)}
+            className='w-full rounded-md border border-gray-400 p-3 focus:outline-primary-200 md:hidden'
+            maxLength={13} /* 010-1234-5678 */
+            autoComplete='tel'
+          />
+
+          {/* 💻 md 이상: 기존 3칸 */}
+          <div className='hidden md:flex w-full items-center gap-2'>
             <input
               type='text'
               inputMode='numeric'
               value={formData.phone1}
               onChange={e =>
-                handleInputChange('phone1', onlyDigits(e.target.value))
+                handleInputChange(
+                  'phone1',
+                  e.target.value.replace(/\D/g, '').slice(0, 3),
+                )
               }
               placeholder='010'
               maxLength={3}
@@ -329,7 +376,10 @@ export default function SignUpForm() {
               inputMode='numeric'
               value={formData.phone2}
               onChange={e =>
-                handleInputChange('phone2', onlyDigits(e.target.value))
+                handleInputChange(
+                  'phone2',
+                  e.target.value.replace(/\D/g, '').slice(0, 4),
+                )
               }
               placeholder='1234'
               maxLength={4}
@@ -342,7 +392,10 @@ export default function SignUpForm() {
               inputMode='numeric'
               value={formData.phone3}
               onChange={e =>
-                handleInputChange('phone3', onlyDigits(e.target.value))
+                handleInputChange(
+                  'phone3',
+                  e.target.value.replace(/\D/g, '').slice(0, 4),
+                )
               }
               placeholder='5678'
               maxLength={4}
