@@ -1,4 +1,4 @@
-export default function RightChevron({ className }) {
+export default function RightChevron({ className, stroke = '#3A3A3A' }) {
   return (
     <svg
       width='32'
@@ -10,7 +10,7 @@ export default function RightChevron({ className }) {
     >
       <path
         d='M12 24L20 16L12 8'
-        stroke='#3A3A3A'
+        stroke={stroke}
         strokeWidth='2'
         strokeLinecap='round'
         strokeLinejoin='round'
