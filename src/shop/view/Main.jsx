@@ -11,6 +11,7 @@ import ChatFlutingButton from '../components/ui/ChatFlutingButton';
 import MoblieTopProduct from '../components/section/main/MobileTopProduct';
 import Meta from '../../components/seo/Meta';
 import { SITE_URL } from '../../constants/seo';
+import FlutingButton from '../components/ui/FlutingButton';
 
 export default function Main() {
   return (
@@ -32,7 +33,8 @@ export default function Main() {
           <MoblieTopProduct />
           <BestReviewSection />
           <BrandStorySection />
-          <ChatFlutingButton />
+          <FlutingButton />
+          {/* <ChatFlutingButton /> */}
         </motion.div>
       </Mainwrapper>
     </>
