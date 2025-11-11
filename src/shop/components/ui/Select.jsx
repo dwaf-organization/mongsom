@@ -5,7 +5,7 @@ const Select = ({
   options = [],
   value,
   onChange,
-  placeholder = '선택해주세요',
+  placeholder = '선택',
   className = '',
   disabled = false,
   hidden = false,

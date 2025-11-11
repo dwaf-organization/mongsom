@@ -90,7 +90,7 @@ export default function InquireModal() {
         <section className='w-full'>
           <label className='w-full text-lg font-bold'>카테고리</label>
           <div
-            className='pt-4 flex w-full flex-wrap items-center gap-1 md:gap-3'
+            className='pt-4 grid grid-cols-2 md:flex w-full flex-wrap items-center gap-1 md:gap-3'
             role='radiogroup'
             aria-label='카테고리'
           >

@@ -20,9 +20,9 @@ export default function ShopDetail() {
   const [loading, setLoading] = useState(true);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [currentUrl, setCurrentUrl] = useState(null); // 지금 화면에 보이는 메인
-  const [nextUrl, setNextUrl] = useState(null); // 교체 예정(겹쳐 올릴) 이미지
-  const [firstReady, setFirstReady] = useState(false); // 첫 로드 완료 여부
+  const [currentUrl, setCurrentUrl] = useState(null);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [firstReady, setFirstReady] = useState(false);
 
   const decodeCacheRef = useRef(new Map());
   const decodeImage = url => {
@@ -184,13 +184,9 @@ export default function ShopDetail() {
 
   return (
     <InnerPaddingSectionWrapper className='[overFlow-anchor:none]'>
-      {/* <div className='flex justify-start items-center gap-2 mb-6 md:pl-14'>
-        <BackButton className='w-6 h-6' />
-        <p>뒤로가기</p>
-      </div> */}
       <div className='flex flex-col xl:flex-row gap-8 justify-center'>
         <div className='flex flex-col gap-4 mx-auto'>
-          <div className='flex justify-start items-center gap-2 mb-6'>
+          <div className='md:hidden'>
             <BackButton className='w-6 h-6' text={'뒤로가기'} />
           </div>
           <div

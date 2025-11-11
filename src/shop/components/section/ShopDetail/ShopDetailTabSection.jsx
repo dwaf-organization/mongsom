@@ -23,7 +23,7 @@ export default function ShopDetailTabSection() {
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
             className={`
-              text-gray-600 px-6 py-2 w-full transition-colors duration-200
+              text-gray-600 px-6 py-2 w-full transition-colors duration-200 whitespace-nowrap text-sm md:text-base
               ${
                 activeTab === tab.id
                   ? 'bg-black-100 text-white'

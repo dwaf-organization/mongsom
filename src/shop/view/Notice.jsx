@@ -87,56 +87,97 @@ export default function Notice() {
         공지사항
       </h2>
 
+      {/* 데스크톱/태블릿 테이블 레이아웃 */}
       {!loading && notices.length > 0 && (
-        <table className='w-full text-sm text-[#3A3A3A]'>
-          <thead>
-            <tr className='flex justify-between border-b border-gray-400 py-3'>
-              <th className='text-center font-montserrat font-medium w-full max-w-[100px]'>
-                NO
-              </th>
-              <th className='text-center font-medium w-full max-w-[280px]'>
-                제목
-              </th>
-              <th className='text-center font-medium w-full max-w-[120px]'>
-                글쓴이
-              </th>
-              <th className='text-center font-medium w-full max-w-[120px] md:pr-8'>
-                날짜
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {notices.map((item, index) => {
-              const id = item?.id ?? item?.noticeId ?? index;
-              const dateRaw = item?.date ?? item?.createdAt;
-              const recent = isRecent(dateRaw);
+        <div className='hidden md:block overflow-x-auto'>
+          <table className='w-full text-sm text-[#3A3A3A] min-w-[600px]'>
+            <thead>
+              <tr className='grid grid-cols-12 border-b border-gray-400 py-3 gap-2'>
+                <th className='col-span-1 text-center font-montserrat font-medium'>
+                  NO
+                </th>
+                <th className='col-span-6 text-center font-medium'>제목</th>
+                <th className='col-span-2 text-center font-medium'>글쓴이</th>
+                <th className='col-span-3 text-center font-medium'>날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+              {notices.map((item, index) => {
+                const id = item?.id ?? item?.noticeId ?? index;
+                const dateRaw = item?.date ?? item?.createdAt;
+                const recent = isRecent(dateRaw);
 
-              return (
-                <tr
-                  key={id}
-                  onClick={() => navigate(`/notice-detail/${id}`)}
-                  className={[
-                    'flex justify-between border-b border-gray-400 py-3 cursor-pointer',
-                    recent ? 'bg-secondary-100' : '',
-                  ].join(' ')}
-                >
-                  <td className='text-center font-montserrat font-medium w-full max-w-[100px]'>
-                    {item?.id ?? item?.noticeId ?? index + 1}
-                  </td>
-                  <td className='text-start font-montserrat font-medium w-full pl-4 truncate max-w-[280px]'>
-                    {item?.title ?? item?.subject ?? '(제목 없음)'}
-                  </td>
-                  <td className='text-center font-montserrat font-medium w-full max-w-[120px]'>
-                    {item?.writer ?? item?.author ?? '관리자'}
-                  </td>
-                  <td className='text-center font-montserrat font-medium w-full md:ax-w-[120px] md:pr-8'>
+                return (
+                  <tr
+                    key={id}
+                    onClick={() => navigate(`/notice-detail/${id}`)}
+                    className={[
+                      'grid grid-cols-12 border-b border-gray-400 py-3 cursor-pointer hover:bg-gray-50 gap-2 transition-colors',
+                      recent ? 'bg-secondary-100' : '',
+                    ].join(' ')}
+                  >
+                    <td className='col-span-1 text-center font-montserrat font-medium'>
+                      {item?.id ?? item?.noticeId ?? index + 1}
+                    </td>
+                    <td className='col-span-6 text-start font-montserrat font-medium pl-4 truncate'>
+                      {item?.title ?? item?.subject ?? '(제목 없음)'}
+                    </td>
+                    <td className='col-span-2 text-center font-montserrat font-medium'>
+                      {item?.writer ?? item?.author ?? '관리자'}
+                    </td>
+                    <td className='col-span-3 text-center font-montserrat font-medium truncate'>
+                      {formatDate(dateRaw)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* 모바일 카드 레이아웃 */}
+      {!loading && notices.length > 0 && (
+        <div className='block md:hidden space-y-2'>
+          {notices.map((item, index) => {
+            const id = item?.id ?? item?.noticeId ?? index;
+            const dateRaw = item?.date ?? item?.createdAt;
+            const recent = isRecent(dateRaw);
+
+            return (
+              <div
+                key={id}
+                onClick={() => navigate(`/notice-detail/${id}`)}
+                className={[
+                  'border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow',
+                  recent ? 'bg-secondary-50 border-secondary-200' : 'bg-white',
+                ].join(' ')}
+              >
+                <div className='flex justify-between items-start mb-2'>
+                  <span className='text-xs font-montserrat font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded'>
+                    NO. {item?.id ?? item?.noticeId ?? index + 1}
+                  </span>
+                  <span className='text-xs font-montserrat text-gray-500'>
                     {formatDate(dateRaw)}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                  </span>
+                </div>
+                <h3 className='font-montserrat font-medium text-[#3A3A3A] mb-2 leading-5'>
+                  {item?.title ?? item?.subject ?? '(제목 없음)'}
+                </h3>
+                <div className='flex justify-between items-center'>
+                  <span className='text-xs text-gray-600'>
+                    작성자: {item?.writer ?? item?.author ?? '관리자'}
+                  </span>
+                  {recent && (
+                    <span className='text-xs font-medium text-red-500 bg-red-50 px-2 py-1 rounded'>
+                      NEW
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
 
       <Pagination
