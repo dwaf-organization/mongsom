@@ -73,35 +73,34 @@ export default function Shop() {
             Shop
           </Link>
         </div>
-        <div className='flex items-center justify-end gap-4'>
+        <div className='flex items-center justify-between md:justify-end gap-4'>
           <Select
             options={sortOptions}
             value={sort}
             onChange={handleSortChange}
-            className='w-24'
+            className='w-24 md:order-last'
             hidden={sort === 'premium'}
           />
 
-          <div className='flex items-center justify-center'>
+          <div className='flex items-center justify-center gap-4'>
             <Link
               to={`${routes.shop}?sort=all`}
-              className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
+              className={`rounded-full border border-gray-50 px-4 py-2 text-xs whitespace-nowrap text-gray-50 w-fit 
           ${sort !== 'premium' ? 'border-primary-200 font-bold text-primary-200' : ''}
           `}
             >
               일반 상품
             </Link>
-          </div>
-          <Link
-            to={`${routes.shop}?sort=premium`}
-            className={`rounded-full border border-gray-50 px-4 py-2 text-xs text-gray-50 w-fit 
+            <Link
+              to={`${routes.shop}?sort=premium`}
+              className={`rounded-full border border-gray-50 px-4 py-2 text-xs whitespace-nowrap text-gray-50 w-fit 
           ${sort === 'premium' ? 'border-primary-200 font-semibold text-primary-200' : ''}
           `}
-          >
-            프리미엄 선물용
-          </Link>
-        </div>
-
+            >
+              프리미엄 선물용
+            </Link>
+          </div>
+        </div>{' '}
         {(() => {
           console.log('렌더링 시 productItems:', productItems);
           console.log('productItems.length:', productItems.length);
