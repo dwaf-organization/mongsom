@@ -22,17 +22,20 @@ export default function Toast({
     <div
       className={`fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-3 rounded-lg shadow-lg
                   transition-all duration-300 pointer-events-none z-[2147483647] 
+                  mx-4 w-auto max-w-none md:mx-0 md:max-w-md
                   ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}
                   ${toastStyles(type)}`}
     >
-      <div className='flex items-center justify-between pointer-events-auto'>
-        <span className='text-xs md:text-base'>{message}</span>
+      <div className='flex items-center gap-2 pointer-events-auto min-w-0'>
+        <span className='text-xs md:text-base flex-1 whitespace-nowrap overflow-hidden text-ellipsis min-w-0'>
+          {message}
+        </span>
         <button
           onClick={() => {
             setIsVisible(false);
             onClose && setTimeout(onClose, 300);
           }}
-          className='ml-2 text-lg leading-none hover:opacity-70'
+          className='text-lg leading-none hover:opacity-70 flex-shrink-0'
         >
           ×
         </button>
