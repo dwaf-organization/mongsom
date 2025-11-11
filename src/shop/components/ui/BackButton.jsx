@@ -5,7 +5,7 @@ export default function BackButton({ className, text }) {
   return (
     <button
       onClick={() => window.history.back()}
-      className='flex items-center gap-2 pb-6'
+      className='flex items-center gap-2'
     >
       <LeftChevron className='w-6 h-6' />
       <p>{text}</p>
