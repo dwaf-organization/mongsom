@@ -189,7 +189,7 @@ export default function MyInfoForm({ userData }) {
             <input
               type='email'
               value={userInfo.email}
-              className='border rounded-md p-3 flex-1 focus:outline-primary-200 border-gray-400'
+              className='border rounded-md p-3 w-full focus:outline-primary-200 border-gray-400'
               onChange={e => handleInputChange('email', e.target.value)}
             />
           </FormField>

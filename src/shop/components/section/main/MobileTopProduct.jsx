@@ -49,55 +49,71 @@ export default function MobileTopProduct() {
           고객들이 가장 많이 찾는 제품들을 만나보세요
         </p>
 
-        <Carousel opts={{ align: 'start', loop: true }} className='w-full'>
+        <Carousel
+          opts={{
+            align: 'start',
+            loop: true,
+            skipSnaps: false,
+            dragFree: true,
+            containScroll: 'trimSnaps',
+          }}
+          className='w-full'
+        >
           <CarouselContent className='-ml-2'>
             {items.map(prod => (
               <CarouselItem
                 key={prod.id ?? prod.productId}
-                // 기본: 1장, ≥380px: 2장, ≥768px: 3장
-                className='basis-full min-[380px]:basis-1/2 md:basis-1/3 pl-2'
+                // 상품 2개 완전히 보이고 3번째가 일부 보이도록 (약 40% 너비)
+                className='basis-[40%] pl-2'
               >
                 <Link
                   to={`${routes.shopDetail}/${prod.productId}`}
                   className='block'
                 >
-                  <Card className='rounded-xl border-0 shadow-sm hover:shadow-xl transition-shadow'>
+                  <Card className='rounded-sm border-0 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out transform hover:-translate-y-0.5'>
                     <CardContent className='p-0'>
-                      <div className='relative w-full aspect-square overflow-hidden rounded-xl'>
+                      <div className='relative w-full aspect-square overflow-hidden rounded-t-sm bg-gray-100'>
                         <img
                           src={prod.productImgUrls?.[0]}
                           alt={prod.name}
-                          className='absolute inset-0 w-full h-full object-cover object-center'
+                          className='absolute inset-0 w-full h-full object-cover object-center transition-transform duration-300 ease-in-out hover:scale-105'
                           loading='lazy'
                           decoding='async'
                           draggable={false}
                         />
                       </div>
 
-                      <div className='p-2'>
-                        <h3 className='text-sm md:text-sm text-black-100 text-start line-clamp-2 truncate'>
-                          {prod.name}
+                      <div className='p-1.5 h-[60px] flex flex-col'>
+                        <h3 className='text-[10px] text-black-100 text-start min-h-[1.2rem] mb-0.5 leading-tight flex-grow'>
+                          {prod.name.length > 12
+                            ? `${prod.name.slice(0, 12)}...`
+                            : prod.name}
                         </h3>
 
-                        {prod.discountPer > 0 ? (
-                          <div className='pt-1'>
-                            <span className='block text-right text-xs line-through text-gray-500'>
-                              {prod.price.toLocaleString()} 원
-                            </span>
-                            <div className='flex items-baseline justify-end gap-1.5'>
-                              <span className='font-semibold text-primary-200 text-xs'>
-                                {prod.discountPer}%
+                        <div className='mt-auto'>
+                          {prod.discountPer > 0 ? (
+                            <div className='space-y-0.5'>
+                              <span className='block text-right text-[8px] line-through text-gray-400'>
+                                {prod.price.toLocaleString()} 원
                               </span>
-                              <span className='font-semibold text-black-100 text-xs'>
-                                {prod.discountPrice.toLocaleString()} 원
+                              <div className='flex items-center justify-end gap-0.5'>
+                                <span className='font-bold text-primary-200 text-[8px] bg-primary-50 px-1 py-0.5 rounded'>
+                                  {prod.discountPer}%
+                                </span>
+                                <span className='font-bold text-black-100 text-[9px]'>
+                                  {prod.discountPrice.toLocaleString()} 원
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className='space-y-0.5'>
+                              <div className='h-[12px]'></div>
+                              <span className='block text-right font-bold text-black-100 text-[9px]'>
+                                {prod.price.toLocaleString()} 원
                               </span>
                             </div>
-                          </div>
-                        ) : (
-                          <span className='block text-right font-semibold text-black-100 text-xs pt-5'>
-                            {prod.price.toLocaleString()} 원
-                          </span>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -106,8 +122,9 @@ export default function MobileTopProduct() {
             ))}
           </CarouselContent>
 
-          <CarouselPrevious className='left-1 z-10' />
-          <CarouselNext className='right-1 z-10' />
+          {/* 화살표 버튼 숨김 - 스와이프 전용 */}
+          {/* <CarouselPrevious className='left-1 z-10 hidden md:flex' />
+          <CarouselNext className='right-1 z-10 hidden md:flex' /> */}
         </Carousel>
       </motion.div>
     </section>
