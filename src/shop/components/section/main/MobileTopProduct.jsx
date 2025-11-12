@@ -83,8 +83,8 @@ export default function MobileTopProduct() {
                         />
                       </div>
 
-                      <div className='p-1.5 h-[60px] flex flex-col'>
-                        <h3 className='text-[10px] text-black-100 text-start min-h-[1.2rem] mb-0.5 leading-tight flex-grow'>
+                      <div className='p-1.5 h-[72px] flex flex-col'>
+                        <h3 className='text-xs text-black-100 text-start min-h-[1.2rem] mb-0.5 leading-tight flex-grow'>
                           {prod.name.length > 12
                             ? `${prod.name.slice(0, 12)}...`
                             : prod.name}
@@ -92,15 +92,15 @@ export default function MobileTopProduct() {
 
                         <div className='mt-auto'>
                           {prod.discountPer > 0 ? (
-                            <div className='space-y-0.5'>
-                              <span className='block text-right text-[8px] line-through text-gray-400'>
+                            <div className='space-y-1 pb-1'>
+                              <span className='block text-right text-xs line-through text-gray-400'>
                                 {prod.price.toLocaleString()} 원
                               </span>
                               <div className='flex items-center justify-end gap-0.5'>
-                                <span className='font-bold text-primary-200 text-[8px] bg-primary-50 px-1 py-0.5 rounded'>
+                                <span className='font-bold text-primary-200 text-xs bg-primary-50 px-1 py-0.5 rounded'>
                                   {prod.discountPer}%
                                 </span>
-                                <span className='font-bold text-black-100 text-[9px]'>
+                                <span className='font-bold text-black-100 text-xs'>
                                   {prod.discountPrice.toLocaleString()} 원
                                 </span>
                               </div>
@@ -108,7 +108,7 @@ export default function MobileTopProduct() {
                           ) : (
                             <div className='space-y-0.5'>
                               <div className='h-[12px]'></div>
-                              <span className='block text-right font-bold text-black-100 text-[9px]'>
+                              <span className='block text-right font-bold text-black-100 text-xs'>
                                 {prod.price.toLocaleString()} 원
                               </span>
                             </div>
