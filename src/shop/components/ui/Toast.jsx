@@ -43,7 +43,6 @@ export default function Toast({
     </div>
   );
 
-  // body로 직접 포털 (별도 #toast-root 없어도 됨)
   return typeof document !== 'undefined'
     ? createPortal(box, document.body)
     : null;

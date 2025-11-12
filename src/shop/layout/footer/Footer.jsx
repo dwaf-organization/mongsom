@@ -19,9 +19,7 @@ export default function Footer() {
             <p className='whitespace-nowrap'>대표자: 김준겸</p>
           </li>
           <li>
-            <p className=''>
-              주소: 부산광역시 강서구 녹산산단361로 42,3층(송정동)
-            </p>
+            <p className=''>주소: 부산광역시 강서구 녹산산단361로 42,3층</p>
           </li>
 
           <li>
