@@ -110,8 +110,8 @@ export default function InquireModal() {
                       : 'border-gray-300 hover:border-gray-400',
                   ].join(' ')}
                 >
-                  <Icon className='h-12 w-16 md:w-[100px]  ' />
-                  <p className='text-xs'>{label}</p>
+                  <Icon className='h-12 w-16 md:w-20 md:h-16' />
+                  <p className='text-xs md:text-base'>{label}</p>
                 </button>
               );
             })}
