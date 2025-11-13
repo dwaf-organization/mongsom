@@ -6,14 +6,6 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
   const safeRows = Array.isArray(rows) ? rows : [];
   const navigate = useNavigate();
 
-  // const getFirstThumb = order => {
-  //   const first = order?.orderDetails?.[0];
-  //   if (!first) return null;
-  //   return Array.isArray(first.productImgUrls)
-  //     ? first.productImgUrls[0] || null
-  //     : first.productImgUrls || null;
-  // };
-
   const handleOrderDetail = orderId => {
     navigate(`/admin/orders/${orderId}`);
   };
@@ -30,7 +22,8 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
         <div className='overflow-x-auto scrollbar-hide'>
           <table className='min-w-full table-fixed divide-y divide-gray-200'>
             <colgroup>
-              <col style={{ width: 160 }} />
+              <col style={{ width: 120 }} />
+              <col style={{ width: 120 }} />
               <col style={{ width: 240 }} />
               <col style={{ width: 160 }} />
               <col style={{ width: 160 }} />
@@ -40,6 +33,10 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
             <thead className='whitespace-nowrap border-t-2 border-gray-400'>
               <tr className='text-center'>
                 <th className='px-6 py-3 uppercase tracking-wider'>주문정보</th>
+                <th className='px-6 py-3 uppercase tracking-wider'>
+                  주문자정보
+                </th>
+
                 <th className='px-3 py-3 uppercase tracking-wider text-left'>
                   주문내역
                 </th>
@@ -80,6 +77,14 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
                         <p className='font-medium'>{order.orderId}</p>
                         <p className='text-xs text-gray-600'>
                           {formatDate(order.paymentAt)}
+                        </p>
+                      </div>
+                    </td>
+                    <td className='px-6 py-3 text-sm text-gray-900'>
+                      <div className='flex flex-col gap-1 items-center'>
+                        <p className='font-medium'>{order.receivedUserName}</p>
+                        <p className='text-xs text-gray-600'>
+                          {order.receivedUserPhone}
                         </p>
                       </div>
                     </td>

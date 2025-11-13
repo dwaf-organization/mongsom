@@ -35,6 +35,10 @@ export default function OrderList() {
     startDate: searchParams.get('startDate') || monthAgo,
     endDate: searchParams.get('endDate') || today,
     orderId: searchParams.get('orderId') || '',
+    invoiceNum: searchParams.get('invoiceNum') || '',
+    receivedUserPhone: searchParams.get('receivedUserPhone') || '',
+    receivedUserName: searchParams.get('receivedUserName') || '',
+    deliveryStatus: searchParams.get('deliveryStatus') || '',
   };
 
   const bootstrappedRef = useRef(false);
@@ -49,6 +53,10 @@ export default function OrderList() {
         startDate: urlQuery.startDate,
         endDate: urlQuery.endDate,
         orderId: urlQuery.orderId,
+        invoiceNum: urlQuery.invoiceNum,
+        receivedUserPhone: urlQuery.receivedUserPhone,
+        receivedUserName: urlQuery.receivedUserName,
+        deliveryStatus: urlQuery.deliveryStatus,
       };
       setSearchParams(next, { replace: true });
     }
@@ -107,6 +115,10 @@ export default function OrderList() {
       startDate: values.startDate,
       endDate: values.endDate,
       orderId: values.orderId?.trim() || '',
+      invoiceNum: values.invoiceNum?.trim() || '',
+      receivedUserPhone: values.receivedUserPhone?.trim() || '',
+      receivedUserName: values.receivedUserName?.trim() || '',
+      deliveryStatus: values.deliveryStatus?.trim() || '',
     });
   };
 

@@ -4,7 +4,7 @@ import { updateOrderStatus } from '../../../api/order';
 import { useToast } from '../../../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
 
-const STATUS_OPTIONS = ['상품준비중', '배송준비중', '배송완료'];
+const STATUS_OPTIONS = ['상품준비중', '배송중', '배송완료'];
 
 function normalizeStatus(v) {
   const x = String(v ?? '')
@@ -23,11 +23,11 @@ function normalizeStatus(v) {
     ['상품준비중', '상품준비중'],
     ['1', '상품준비중'],
 
-    ['ready', '배송준비중'],
-    ['preparing', '배송준비중'],
-    ['배송 준비중', '배송준비중'],
-    ['배송준비중', '배송준비중'],
-    ['2', '배송준비중'],
+    ['ready', '배송중'],
+    ['preparing', '배송중'],
+    ['배송중', '배송중'],
+    ['배송중', '배송중'],
+    ['2', '배송중'],
 
     ['delivered', '배송완료'],
     ['completed', '배송완료'],
@@ -80,11 +80,29 @@ export default function OrderStatus({ order, saving = false }) {
       form.status === '배송완료' &&
       (!form.courier.trim() || !form.invoice.trim())
     ) {
-      alert('배송완료로 변경하려면 택배사와 운송장 번호를 입력하세요.');
+      addToast(
+        '배송완료로 변경하려면 택배사와 운송장 번호를 입력하세요.',
+        'error',
+      );
       return;
     }
     if (!order?.orderId) {
-      alert('주문 정보가 없습니다.');
+      addToast('주문 정보가 없습니다.');
+      return;
+    }
+
+    if (
+      form.status === '배송중' &&
+      (!form.courier.trim() || !form.invoice.trim())
+    ) {
+      addToast(
+        '배송중으로 변경하려면 택배사와 운송장 번호를 입력하세요.',
+        'error',
+      );
+      return;
+    }
+    if (!order?.orderId) {
+      addToast('주문 정보가 없습니다.');
       return;
     }
 

@@ -88,7 +88,7 @@ const Select = ({
                   key={option.value}
                   onClick={() => handleSelect(option)}
                   className={`
-                    px-4 py-3 cursor-pointer transition-colors duration-150 hover:text-primary-200 text-xs text-left
+                    px-4 py-3 cursor-pointer transition-colors duration-150 hover:text-primary-200 text-xs md:text-sm text-left
                     ${selectedOption?.value === option.value ? ' text-primary-700' : 'text-gray-900'}
                     ${index === 0 ? 'rounded-t-lg' : ''}
                     ${index === options.length - 1 ? 'rounded-b-lg' : ''}

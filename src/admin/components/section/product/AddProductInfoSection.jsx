@@ -111,6 +111,12 @@ export default function AddProductInfoSection() {
     }
   };
 
+  const onInputKeyDown = e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  };
+
   const handleButtonClick = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
     fileInputRef.current?.click();
@@ -221,6 +227,7 @@ export default function AddProductInfoSection() {
               maxLength={80}
               value={productData.name}
               onChange={handleInputChange}
+              onKeyDown={onInputKeyDown}
               className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
             />
             <p className='text-red-500 text-xs'>
@@ -420,6 +427,7 @@ export default function AddProductInfoSection() {
                 name='price'
                 value={productData.price}
                 onChange={handleInputChange}
+                onKeyDown={onInputKeyDown}
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
                 data-field='price'
               />
@@ -429,6 +437,7 @@ export default function AddProductInfoSection() {
                 name='salesMargin'
                 value={productData.salesMargin}
                 onChange={handleInputChange}
+                onKeyDown={onInputKeyDown}
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
                 data-field='salesMargin'
                 inputMode='decimal'
@@ -439,6 +448,7 @@ export default function AddProductInfoSection() {
                 name='discountPer'
                 value={productData.discountPer}
                 onChange={handleInputChange}
+                onKeyDown={onInputKeyDown}
                 className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
                 data-field='discountPer'
                 inputMode='decimal'
