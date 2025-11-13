@@ -30,7 +30,8 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
         <div className='overflow-x-auto scrollbar-hide'>
           <table className='min-w-full table-fixed divide-y divide-gray-200'>
             <colgroup>
-              <col style={{ width: 160 }} />
+              <col style={{ width: 120 }} />
+              <col style={{ width: 120 }} />
               <col style={{ width: 240 }} />
               <col style={{ width: 160 }} />
               <col style={{ width: 160 }} />
@@ -40,6 +41,7 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
             <thead className='whitespace-nowrap border-t-2 border-gray-400'>
               <tr className='text-center'>
                 <th className='px-6 py-3 uppercase tracking-wider'>주문정보</th>
+                <th className='px-6 py-3 uppercase tracking-wider'>주문자</th>
                 <th className='px-3 py-3 uppercase tracking-wider text-left'>
                   주문내역
                 </th>
@@ -83,7 +85,7 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
                         </p>
                       </div>
                     </td>
-
+                    <td className='text-sm'>{order.receivedUserName}</td>
                     <td className='px-3 py-3 text-sm text-gray-900'>
                       <div className='flex items-center gap-2'>
                         {thumbUrl ? (

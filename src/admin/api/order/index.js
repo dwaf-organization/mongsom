@@ -1,4 +1,3 @@
-// api/order.js
 import { fetchData } from '../instance';
 
 export const getOrderList = async ({
@@ -7,6 +6,10 @@ export const getOrderList = async ({
   startDate,
   endDate,
   orderId,
+  invoiceNum,
+  receivedUserPhone,
+  receivedUserName,
+  deliveryStatus,
 }) => {
   const clamp = d => {
     const [y, m, dy] = d.split('-').map(Number);
@@ -21,6 +24,12 @@ export const getOrderList = async ({
   if (s) qs.set('startDate', s);
   if (e) qs.set('endDate', e);
   if (orderId) qs.set('orderId', String(orderId).trim());
+  if (invoiceNum) qs.set('invoiceNum', String(invoiceNum).trim());
+  if (receivedUserPhone)
+    qs.set('receivedUserPhone', String(receivedUserPhone).trim());
+  if (receivedUserName)
+    qs.set('receivedUserName', String(receivedUserName).trim());
+  if (deliveryStatus) qs.set('deliveryStatus', String(deliveryStatus).trim());
 
   const url = `api/v1/admin/order/list/${page}/${size}?${qs.toString()}`;
   console.log('🚀 ~ getOrderList ~ url:', url);
