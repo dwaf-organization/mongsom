@@ -5,7 +5,7 @@ export default function RequireAuth() {
   const { userCode, loading } = useAuth();
   const location = useLocation();
 
-  if (!userCode || userCode !== 20) {
+  if (!userCode || userCode !== 1) {
     if (loading) return null;
     return <Navigate to='/admin' replace state={{ from: location }} />;
   }

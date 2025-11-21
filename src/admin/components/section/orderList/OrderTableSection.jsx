@@ -57,7 +57,7 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
                     colSpan={6}
                     className='text-center text-sm text-gray-500 py-10'
                   >
-                    데이터가 없습니다.
+                    주문이 없습니다.
                   </td>
                 </tr>
               )}
