@@ -86,7 +86,9 @@ export default function Notice() {
       <h2 className='text-xl text-start font-semibold font-pretendard border-b-2 border-gray-700 pb-4'>
         공지사항
       </h2>
-
+      {notices.length === 0 && !loading && (
+        <p className='text-center text-gray-500 my-10'>공지사항이 없습니다.</p>
+      )}
       {/* 데스크톱/태블릿 테이블 레이아웃 */}
       {!loading && notices.length > 0 && (
         <div className='hidden md:block overflow-x-auto'>
