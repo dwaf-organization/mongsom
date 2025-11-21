@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import brandStoryContents from '../../asset/image/brandStoryContents.png';
+import brandStoryContents from '../../asset/image/brandStoryContents.jpg';
 
 export default function MoreButton({
   imageSrc,
