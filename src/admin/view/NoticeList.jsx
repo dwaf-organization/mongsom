@@ -85,6 +85,9 @@ export default function NoticeList() {
     <InnerPaddingSectionWrapper>
       <h2 className='text-2xl font-bold text-gray-900 mb-6'>공지 목록</h2>
 
+      {notices.length === 0 && !loading && (
+        <p className='text-center text-gray-500 my-10'>공지사항이 없습니다.</p>
+      )}
       {!loading && notices.length > 0 && (
         <table className='w-full text-sm text-[#3A3A3A]'>
           <thead>

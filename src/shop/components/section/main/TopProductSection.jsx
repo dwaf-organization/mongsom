@@ -34,6 +34,30 @@ export default function TopProductSection() {
       });
   }, [sort, page]);
 
+  if (productItems.length === 0) {
+    return (
+      <section
+        ref={ref}
+        className='w-full bg-primary-100 py-20 hidden xl:block'
+      >
+        <motion.div
+          className=' px-4 text-center'
+          initial={{ y: 50, opacity: 0 }}
+          animate={isInView ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+        >
+          <h2 className='text-4xl font-semibold text-black-100 font-montserrat mb-4'>
+            Top Product
+          </h2>
+          <p className='text-gray-600 text-lg mb-12'>
+            고객들이 가장 많이 찾는 제품들을 만나보세요
+          </p>
+          <p className='text-gray-500 text-md'>상품이 없습니다.</p>
+        </motion.div>
+      </section>
+    );
+  }
+
   return (
     <section ref={ref} className='w-full bg-primary-100 py-20 hidden xl:block'>
       <motion.div

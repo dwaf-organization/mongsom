@@ -18,11 +18,13 @@ export default function Shop() {
     currentPage: 1,
     totalPage: 1,
   });
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
   const sort = searchParams.get('sort') || 'all';
   const page = searchParams.get('page') || '1';
 
   useEffect(() => {
+    setIsLoading(true); // 데이터 로딩 시작
     const size = sort === 'popular' ? 9 : undefined;
     getAllProductList(sort, page, { size })
       .then(res => {
@@ -39,7 +41,8 @@ export default function Shop() {
         console.error('상품 목록을 불러오는데 실패했습니다:', error);
         setProductItems([]);
         setPagination({ currentPage: 1, totalPage: 1 });
-      });
+      })
+      .finally(() => setIsLoading(false)); // 데이터 로딩 완료
   }, [sort, page]);
 
   const sortOptions = [
@@ -102,94 +105,105 @@ export default function Shop() {
           </div>
         </div>{' '}
         {(() => {
-          console.log('렌더링 시 productItems:', productItems);
-          console.log('productItems.length:', productItems.length);
-          return productItems.length === 0 ? (
-            <div className='flex justify-center items-center py-20'>
-              <div className='text-lg text-gray-500'>상품을 불러오는 중...</div>
-            </div>
-          ) : (
-            <ul className='grid grid-cols-3 md:grid-cols-3 gap-1 md:gap-4 mt-4 md:mt-10'>
-              {Array.isArray(productItems) &&
-                productItems.map(item => (
-                  <Link
-                    key={item.productId}
-                    to={`${routes.shopDetail}/${item.productId}`}
-                  >
-                    <li className='roudned-lg'>
-                      <ImageSkeleton
-                        src={item.productImgUrls[0]}
-                        alt={item.name}
-                        className='w-full h-[120px] md:max-w-[320px] md:h-[320px] object-cover rounded-lg'
-                        skeletonClassName='rounded-t-lg'
-                        loading='eager'
-                        decoding='async'
-                      />
-                      <div className='p-2'>
-                        {!item.discountPer && (
-                          <div className='gap-2 md:hidden '>
-                            <div className='font-semibold whitespace-nowrap text-sm md:text-base'>
-                              {item.discountPrice.toLocaleString()}원
+          if (isLoading) {
+            // 데이터를 불러오는 중
+            return (
+              <div className='flex justify-center items-center py-20'>
+                <div className='text-lg text-gray-500'>상품을 불러오는 중...</div>
+              </div>
+            );
+          } else if (productItems.length === 0) {
+            // 데이터가 다 왔는데 상품이 없는 경우
+            return (
+              <div className='flex justify-center items-center py-20'>
+                <div className='text-lg text-gray-500'>상품이 없습니다.</div>
+              </div>
+            );
+          } else {
+            // 상품이 있는 경우 기존 코드 유지
+            return (
+              <ul className='grid grid-cols-3 md:grid-cols-3 gap-1 md:gap-4 mt-4 md:mt-10'>
+                {Array.isArray(productItems) &&
+                  productItems.map(item => (
+                    <Link
+                      key={item.productId}
+                      to={`${routes.shopDetail}/${item.productId}`}
+                    >
+                      <li className='roudned-lg'>
+                        <ImageSkeleton
+                          src={item.productImgUrls[0]}
+                          alt={item.name}
+                          className='w-full h-[120px] md:max-w-[320px] md:h-[320px] object-cover rounded-lg'
+                          skeletonClassName='rounded-t-lg'
+                          loading='eager'
+                          decoding='async'
+                        />
+                        <div className='p-2'>
+                          {!item.discountPer && (
+                            <div className='gap-2 md:hidden '>
+                              <div className='font-semibold whitespace-nowrap text-sm md:text-base'>
+                                {item.discountPrice.toLocaleString()}원
+                              </div>
+                              <h3 className='truncate hover:text-gray-700 text-sm'>
+                                {item.name}
+                              </h3>
                             </div>
-                            <h3 className='truncate hover:text-gray-700 text-sm'>
-                              {item.name}
-                            </h3>
-                          </div>
-                        )}
-                        {!item.discountPer && (
-                          <div className='justify-between gap-2 hidden md:flex'>
-                            <h3 className='truncate hover:text-gray-700'>
-                              {item.name}
-                            </h3>
-                            <p className=' font-semibold whitespace-nowrap text-sm md:text-base'>
-                              {item.discountPrice.toLocaleString()}원
-                            </p>
-                          </div>
-                        )}
-                        {item.discountPer > 0 && (
-                          <div className=' flex-col gap-2 hidden md:flex'>
-                            <div className='flex justify-between gap-2'>
-                              <p className='hover:text-gray-700 truncate'>
+                          )}
+                          {!item.discountPer && (
+                            <div className='justify-between gap-2 hidden md:flex'>
+                              <h3 className='truncate hover:text-gray-700'>
+                                {item.name}
+                              </h3>
+                              <p className=' font-semibold whitespace-nowrap text-sm md:text-base'>
+                                {item.discountPrice.toLocaleString()}원
+                              </p>
+                            </div>
+                          )}
+                          {item.discountPer > 0 && (
+                            <div className=' flex-col gap-2 hidden md:flex'>
+                              <div className='flex justify-between gap-2'>
+                                <p className='hover:text-gray-700 truncate'>
+                                  {item.name}
+                                </p>
+                                <p className='line-through text-gray-500 whitespace-nowrap hidden md:block'>
+                                  {(
+                                    item.price + item.salesMargin
+                                  ).toLocaleString()}
+                                  원
+                                </p>
+                              </div>
+                              <div className='flex justify-start md:justify-end gap-2'>
+                                <p className='flex md:text-lg font-semibold text-red-500 justify-start text-sm'>
+                                  {item.discountPer}%
+                                </p>
+                                <p className='text-sm md:text-lg font-semibold text-gray-900'>
+                                  {item.discountPrice.toLocaleString()}원
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                          {item.discountPer > 0 && (
+                            <div className='flex flex-col md:hidden'>
+                              <div className='flex justify-start gap-1'>
+                                <p className='flex md:text-lg font-semibold text-red-500 justify-start text-sm'>
+                                  {item.discountPer}%
+                                </p>
+                                <p className='text-sm md:text-lg font-semibold text-gray-900 whitespace-nowrap '>
+                                  {item.discountPrice.toLocaleString()}원
+                                </p>
+                              </div>
+                              <p className='hover:text-gray-700 truncate text-sm '>
                                 {item.name}
                               </p>
-                              <p className='line-through text-gray-500 whitespace-nowrap hidden md:block'>
-                                {(
-                                  item.price + item.salesMargin
-                                ).toLocaleString()}
-                                원
-                              </p>
                             </div>
-                            <div className='flex justify-start md:justify-end gap-2'>
-                              <p className='flex md:text-lg font-semibold text-red-500 justify-start text-sm'>
-                                {item.discountPer}%
-                              </p>
-                              <p className='text-sm md:text-lg font-semibold text-gray-900'>
-                                {item.discountPrice.toLocaleString()}원
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                        {item.discountPer > 0 && (
-                          <div className='flex flex-col md:hidden'>
-                            <div className='flex justify-start gap-1'>
-                              <p className='flex md:text-lg font-semibold text-red-500 justify-start text-sm'>
-                                {item.discountPer}%
-                              </p>
-                              <p className='text-sm md:text-lg font-semibold text-gray-900 whitespace-nowrap '>
-                                {item.discountPrice.toLocaleString()}원
-                              </p>
-                            </div>
-                            <p className='hover:text-gray-700 truncate text-sm '>
-                              {item.name}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </li>
-                  </Link>
-                ))}
-            </ul>
-          );
+                          )}
+                        </div>
+                      </li>
+                    </Link>
+                  ))}
+              </ul>
+            );
+          }
         })()}
         <Pagination
           totalPage={pagination.totalPage}
