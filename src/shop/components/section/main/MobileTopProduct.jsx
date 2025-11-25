@@ -45,9 +45,6 @@ export default function MobileTopProduct() {
         <h2 className='text-xl font-semibold text-black-100 font-montserrat mb-1'>
           Top Product
         </h2>
-        <p className='text-gray-600 text-xs mb-4'>
-          고객들이 가장 많이 찾는 제품들을 만나보세요
-        </p>
 
         <Carousel
           opts={{
@@ -121,10 +118,6 @@ export default function MobileTopProduct() {
               </CarouselItem>
             ))}
           </CarouselContent>
-
-          {/* 화살표 버튼 숨김 - 스와이프 전용 */}
-          {/* <CarouselPrevious className='left-1 z-10 hidden md:flex' />
-          <CarouselNext className='right-1 z-10 hidden md:flex' /> */}
         </Carousel>
       </motion.div>
     </section>
