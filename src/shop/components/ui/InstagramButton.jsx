@@ -8,9 +8,13 @@ export default function InstagramButton() {
   return (
     <button
       onClick={handleClick}
-      className='fixed bottom-32 right-4 md:right-12 w-8 h-8 md:w-14 md:h-14 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform z-50'
+      className='fixed bottom-36 md:bottom-32 right-5 md:right-12 w-10 h-10 md:w-14 md:h-14 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform z-50'
     >
-      <img src={instagram} alt='Instagram' className='rounded-2xl' />
+      <img
+        src={instagram}
+        alt='Instagram'
+        className='rounded-xl md:rounded-2xl'
+      />
     </button>
   );
 }
