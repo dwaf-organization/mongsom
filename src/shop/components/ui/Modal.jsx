@@ -38,7 +38,7 @@ export default function Modal({
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden'>
+    <div className='fixed inset-0 z-[1000] flex items-center justify-center p-4 overflow-x-hidden'>
       <div
         className='absolute inset-0 bg-black-50 bg-opacity-60'
         onClick={onClose}

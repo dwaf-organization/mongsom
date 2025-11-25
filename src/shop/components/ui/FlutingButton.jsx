@@ -37,7 +37,7 @@ export default function FloatingChat() {
         ref={overlayRef}
         onClick={() => setHoursOpen(false)}
         className={[
-          'fixed inset-0 z-[1000] transition-opacity duration-200',
+          'fixed inset-0 z-50 transition-opacity duration-200',
           hoursOpen
             ? 'opacity-100 bg-black/60 pointer-events-auto'
             : 'opacity-0 bg-black/0 pointer-events-none',
