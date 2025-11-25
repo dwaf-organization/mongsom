@@ -191,11 +191,11 @@ export default function FloatingChat() {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
           className={[
-            'flex items-center justify-center rounded-2xl md:rounded-3xl px-3 w-12 h-12 md:w-14 md:h-14 shadow-lg',
+            'flex items-center justify-center rounded-2xl md:rounded-3xl px-3 w-12 h-12 md:w-16 md:h-16 shadow-lg border-primary-200 border-1',
             'transition-all duration-200',
             open
               ? 'bg-gray-900 text-white shadow-black/40 scale-95'
-              : 'bg-primary-100 border text-black shadow-primary-100/40',
+              : 'bg-primary-200 border text-black shadow-primary-100/40',
             pressing ? 'scale-90 ring-4 ring-black/10' : 'scale-100',
           ].join(' ')}
         >
@@ -209,7 +209,7 @@ export default function FloatingChat() {
             {open ? (
               <X />
             ) : (
-              <p className='text-xs font-semibold whitespace-nowrap'>
+              <p className='text-xs text-white font-semibold whitespace-nowrap'>
                 1:1 <br /> 문의하기
               </p>
             )}
