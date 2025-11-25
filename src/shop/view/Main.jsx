@@ -12,6 +12,7 @@ import MoblieTopProduct from '../components/section/main/MobileTopProduct';
 import Meta from '../../components/seo/Meta';
 import { SITE_URL } from '../../constants/seo';
 import FlutingButton from '../components/ui/FlutingButton';
+import { BannerSlider } from '../components/section/main/BannerSlider';
 
 export default function Main() {
   return (
@@ -28,7 +29,8 @@ export default function Main() {
           transition={{ duration: 2, ease: [0.25, 0.46, 0.45, 0.94] }}
           className='w-full'
         >
-          <HeroSection />
+          {/* <HeroSection /> */}
+          <BannerSlider />
           <TopProductSection />
           <MoblieTopProduct />
           <BestReviewSection />

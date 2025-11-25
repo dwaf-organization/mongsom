@@ -109,7 +109,9 @@ export default function Shop() {
             // 데이터를 불러오는 중
             return (
               <div className='flex justify-center items-center py-20'>
-                <div className='text-lg text-gray-500'>상품을 불러오는 중...</div>
+                <div className='text-lg text-gray-500'>
+                  상품을 불러오는 중...
+                </div>
               </div>
             );
           } else if (productItems.length === 0) {

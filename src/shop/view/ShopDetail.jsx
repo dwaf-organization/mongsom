@@ -67,7 +67,13 @@ export default function ShopDetail() {
         const res = await getProductDetail(id);
         if (!cancelled) {
           const data = res?.data ?? res ?? null;
-          setProduct(data);
+
+          // 상품을 찾을 수 없는 경우 처리
+          if (res?.code === -1 || !data || data.deleteStatus === 1) {
+            setProduct(null);
+          } else {
+            setProduct(data);
+          }
         }
       } catch (e) {
         console.error('상품 상세 로드 실패:', e);
@@ -99,7 +105,6 @@ export default function ShopDetail() {
     return arr.filter(Boolean);
   }, [product]);
 
-  // 첫 진입: 첫 이미지를 선디코드 → currentUrl 세팅
   useEffect(() => {
     let cancel = false;
     if (!imgs.length) return;
@@ -162,6 +167,22 @@ export default function ShopDetail() {
     return (
       <div className='min-h-screen flex items-center justify-center text-gray-500'>
         로딩 중…
+      </div>
+    );
+  }
+
+  if (!loading && !product) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <div className='text-center'>
+          <h2 className='text-2xl font-bold text-gray-800 mb-4'>
+            상품을 찾을 수 없습니다
+          </h2>
+          <p className='text-gray-600 mb-4'>
+            요청하신 상품이 존재하지 않습니다.
+          </p>
+          <Button onClick={() => navigate('/shop')}>상품목록으로 이동</Button>
+        </div>
       </div>
     );
   }

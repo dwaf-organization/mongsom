@@ -90,7 +90,7 @@ export default function InquireModal() {
         <section className='w-full'>
           <label className='w-full text-lg font-bold'>카테고리</label>
           <div
-            className='pt-4 grid grid-cols-2 md:flex w-full flex-wrap items-center gap-1 md:gap-3'
+            className='pt-4 w-full grid grid-cols-3 items-center gap-1 md:gap-3'
             role='radiogroup'
             aria-label='카테고리'
           >
@@ -104,7 +104,7 @@ export default function InquireModal() {
                   aria-checked={selected}
                   onClick={() => setSelectedCategory(id)}
                   className={[
-                    'flex w-full py-2 md:h-[156px] md:w-[156px] flex-col items-center justify-center gap-2 rounded-md border-2 transition',
+                    'flex w-full py-2 md:h-[156px] flex-col items-center justify-center gap-2 rounded-md border-2 transition',
                     selected
                       ? 'border-primary-200 ring-2 ring-primary-200/20'
                       : 'border-gray-300 hover:border-gray-400',

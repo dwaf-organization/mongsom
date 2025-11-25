@@ -7,10 +7,13 @@ import CartButton from '../../../layout/button/CartButton';
 import { useModal } from '../../../context/ModalContext';
 import InquireModal from '../../ui/InquireModal';
 
-export default function PurchaseInfo({ product }) {
+export default function PurchaseInfo({ product, isLoading }) {
   const { openModal } = useModal();
   const [totalPrice, setTotalPrice] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
+
+  // 로딩 중이거나 상품이 없으면 렌더링하지 않음
+  if (isLoading || !product) return null;
 
   const handleTotalPriceChange = newTotalPrice => {
     setTotalPrice(newTotalPrice);
