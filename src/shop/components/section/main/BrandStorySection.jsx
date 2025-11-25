@@ -12,12 +12,12 @@ export default function BrandStorySection() {
           filter: 'brightness(0.95)',
         }}
       >
-        <p className='absolute inset-0 top-1/3 left-1/2 -translate-x-1/2 text-center text-lg md:text-4xl font-montserrat font-bold text-black-100 pb-8 text-center'>
+        <p className='absolute inset-0 top-1/3 left-1/2 -translate-x-1/2 text-center text-lg md:text-4xl font-montserrat font-bold text-black-100 pb-8'>
           Brand Story
         </p>
-        <p className='absolute inset-0 text-center top-1/2 left-1/2 -translate-x-1/2 text-sm md:text-3xl font-pretendard font-semibold text-black-100 pb-8'>
+        {/* <p className='absolute inset-0 text-center top-1/2 left-1/2 -translate-x-1/2 text-sm md:text-3xl font-pretendard font-semibold text-black-100 pb-8'>
           몽솜의 이야기
-        </p>
+        </p> */}
       </div>
       <MoreButton />
     </section>

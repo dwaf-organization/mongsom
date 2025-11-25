@@ -15,5 +15,4 @@ export const CATEGORY_OPTIONS = [
   { id: 'premium', label: '프리미엄 선물', Icon: Gift },
   { id: 'return', label: '답례품', Icon: HandShake },
   { id: 'promo', label: '판촉물/홍보용', Icon: Promotion },
-  { id: 'engrave', label: '각인서비스', Icon: EngravingIcon },
 ];
