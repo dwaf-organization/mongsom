@@ -13,6 +13,7 @@ import Meta from '../../components/seo/Meta';
 import { SITE_URL } from '../../constants/seo';
 import FlutingButton from '../components/ui/FlutingButton';
 import { BannerSlider } from '../components/section/main/BannerSlider';
+import InstagramButton from '../components/ui/InstagramButton';
 
 export default function Main() {
   return (
@@ -35,6 +36,7 @@ export default function Main() {
           <MoblieTopProduct />
           <BestReviewSection />
           <BrandStorySection />
+          <InstagramButton />
           <FlutingButton />
           {/* <ChatFlutingButton /> */}
         </motion.div>
