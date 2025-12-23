@@ -33,7 +33,8 @@ export default function ExchangeReturnTab({ product }) {
         <h3 class='mt-6 mb-2 text-lg font-semibold'>3) 배송 및 비용</h3>
         <ul class='list-disc pl-5 space-y-1'>
           <li>
-            기본 배송비: <b>3,000원</b> (제주/도서산간 추가비용 발생)
+            기본 배송비: <b>3,000원</b> (제주/도서산간 추가비용 발생) <br />
+            50,000원 이상 구매시 무료, 제주 및 도서산간 7,000원 추가 안내(가능)
           </li>
           <li>
             배송기간: <b>2~3일 (영업일 기준)</b>

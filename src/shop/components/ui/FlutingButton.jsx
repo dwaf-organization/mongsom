@@ -107,7 +107,7 @@ export default function FloatingChat() {
               : 'opacity-0 translate-y-2 pointer-events-none',
           ].join(' ')}
         >
-          <div className='bg-gradient-to-t from-white/80 to-primary-100 h-32'>
+          <div className='bg-gradient-to-t from-white/80 to-primary-100 h-20'>
             <img
               src={mongsomTextLogo}
               alt='몽솜로고'
@@ -146,7 +146,7 @@ export default function FloatingChat() {
                   </p>
                   <p className='mt-0.5 text-[11px] md:text-xs text-gray-300 leading-snug'>
                     By your side, every little moment <br />
-                    사소한 순간까지 당신곁에, 몽솜
+                    사소한 순간까지 당신 곁에, 몽솜
                     <br />
                     <br />
                     안녕하세요 몽솜입니다 😊 <br />

@@ -202,7 +202,7 @@ export default function ReviewTab() {
               >
                 <div className='flex items-center px-2'>
                   <ul className='flex flex-col items-start md:text-lg gap-2'>
-                    <li className='text-gray-500'>
+                    <li className='text-black-100 font-montserrat font-semibold w-full'>
                       {review.userName
                         ? review.userName.charAt(0) +
                           '*'.repeat(Math.max(0, review.userName.length - 1))
