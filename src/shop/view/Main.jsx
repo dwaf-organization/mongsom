@@ -2,12 +2,10 @@ import { motion } from 'framer-motion';
 
 import Mainwrapper from '../wrapper/Mainwrapper';
 import {
-  HeroSection,
   TopProductSection,
   BestReviewSection,
   BrandStorySection,
 } from '../components/section/main';
-import ChatFlutingButton from '../components/ui/ChatFlutingButton';
 import MoblieTopProduct from '../components/section/main/MobileTopProduct';
 import Meta from '../../components/seo/Meta';
 import { SITE_URL } from '../../constants/seo';
