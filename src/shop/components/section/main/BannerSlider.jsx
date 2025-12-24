@@ -19,7 +19,6 @@ export function BannerSlider() {
   const handleClick = () => openModal(<InquireModal />);
   return (
     <section className='w-full overflow-hidden'>
-      {/* 여기서 굳이 h-[400px] 이런 거 안 줌 */}
       <Carousel
         opts={{ align: 'start', loop: true }}
         plugins={[
@@ -31,10 +30,6 @@ export function BannerSlider() {
         ]}
       >
         <CarouselContent>
-          <CarouselItem>
-            <HeroSection />
-          </CarouselItem>
-
           {simpleImageBanners.map(banner => (
             <CarouselItem key={banner.id}>
               <div className='relative w-full h-[380px] md:h-[600px] overflow-hidden'>
@@ -59,8 +54,6 @@ export function BannerSlider() {
           ))}
         </CarouselContent>
 
-        {/* <CarouselPrevious className='hidden md:flex' /> */}
-        {/* <CarouselNext className='hidden md:flex' /> */}
         <CarouselDots />
       </Carousel>
     </section>
