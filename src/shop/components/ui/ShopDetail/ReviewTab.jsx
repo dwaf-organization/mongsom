@@ -221,7 +221,7 @@ export default function ReviewTab() {
                       </span>
                     </div>
 
-                    <div className='text-gray-500 font-montserrat text-start'>
+                    <div className='text-black-100 font-montserrat text-start'>
                       <p>
                         {expandedReviews[key] ? content : truncateText(content)}
                       </p>
