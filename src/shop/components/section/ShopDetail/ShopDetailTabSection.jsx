@@ -8,6 +8,7 @@ export default function ShopDetailTabSection() {
   const tabs = [
     { id: 'info', label: '상품정보' },
     { id: 'review', label: '리뷰' },
+    { id: 'qna', label: 'QnA' },
     { id: 'exchange', label: '교환/반품' },
   ];
 

@@ -13,16 +13,27 @@ export default function ExchangeReturnTab({ product }) {
             제품 <b>하자</b> 또는 <b>오배송</b> 시: 동일 상품 교환 또는 전액
             환불 (배송비 <b>판매자 부담</b>)
           </li>
+        </ul>
+
+        <p className='font-semibold'>단순 변심 시</p>
+        <ul class='list-disc pl-5 space-y-1'>
+          <li>미개봉·미사용 & 구성품 완비 상태에 한해 7일 이내 가능</li>
+          <li>편도 배송비 3,000원 / 교환 배송비 6000원</li>
+          <li> 최초 배송비 무료인 경우 6,000원</li>
+        </ul>
+
+        <p className='font-semibold'>제품 불량 또는 오배송 시</p>
+        <ul class='list-disc pl-5 space-y-1'>
+          <li> 동일 상품 교환 또는 전액 환불</li>
+          <li> 배송비 판매자 부담 </li>
+          <li>교환/반품 주소지 : 부산광역시 강서구 녹산산단361로 42</li>
+        </ul>
+
+        <p className='font-semibold'>교환 및 반품 불가</p>
+        <ul class='list-disc pl-5 space-y-1'>
           <li>
-            <b>단순 변심</b> 시: 미개봉·미사용 & 구성품 완비 상태에 한해 가능
-            (왕복 배송비 <b>고객 부담</b>)
-          </li>
-          <li>
-            고객 부주의로 상품·포장·구성품이 훼손되거나 사용 흔적이 있는 경우
-          </li>
-          <li>
-            <b>주문제작/인쇄/각인 등 맞춤형 상품</b> (제작 착수 이후부터는
-            교환·환불 불가)
+            반품 요청기간이 지난 경우 고객 부주의로 상품·포장·구성품이
+            훼손되거나 사용 흔적이 있는 경우
           </li>
           <li>
             구매일로부터 시간이 지나 재판매가 곤란할 정도로 가치가 감소한 경우
@@ -30,28 +41,12 @@ export default function ExchangeReturnTab({ product }) {
           <li>프로모션/한정 특가 등에서 사전에 별도 고지된 상품</li>
         </ul>
 
-        <h3 class='mt-6 mb-2 text-lg font-semibold'>3) 배송 및 비용</h3>
-        <ul class='list-disc pl-5 space-y-1'>
-          <li>
-            기본 배송비: <b>3,000원</b> (제주/도서산간 추가비용 발생) <br />
-            50,000원 이상 구매시 무료, 제주 및 도서산간 7,000원 추가 안내(가능)
-          </li>
-          <li>
-            배송기간: <b>2~3일 (영업일 기준)</b>
-          </li>
-          <li>
-            하자·오배송: 왕복 배송비 <b>판매자 부담</b> / 단순 변심: 왕복 배송비{' '}
-            <b>고객 부담</b>
-          </li>
-        </ul>
-
-        <h3 class='mt-6 mb-2 text-lg font-semibold'>4) 신청 방법</h3>
+        <h3 class='mt-6 mb-2 text-lg font-semibold'>2) 신청 방법</h3>
         <ol class='list-decimal pl-5 space-y-1'>
           <li>수령 후 7일 이내 고객센터로 교환/환불 신청</li>
-          <li>하자·오배송의 경우 확인 가능한 사진 첨부</li>
+          <li>불량·오배송의 경우 확인 가능한 사진 첨부</li>
           <li>사전 접수 후 안내된 주소로 상품 반송</li>
         </ol>
-
         {/* <div class='mt-6 grid gap-2 rounded-lg bg-gray-50 p-4 text-sm'>
           <p>
             <b>고객센터</b> : 0000-0000 / weekdays 10:00–17:00 (점심
