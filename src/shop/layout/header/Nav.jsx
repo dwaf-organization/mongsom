@@ -12,7 +12,7 @@ export default function Nav() {
 
   return (
     <nav className='hidden justify-between items-center h-full w-full font-pretendard font-medium md:flex'>
-      <ul className='grid grid-cols-3 justify-center items-center h-full'>
+      <ul className='grid grid-cols-4 justify-center items-center h-full'>
         <li className='text-center'>
           <Link to='/'>홈</Link>
         </li>
@@ -21,6 +21,9 @@ export default function Nav() {
         </li> */}
         <li className='text-left'>
           <Link to='/shop'>상품</Link>
+        </li>
+        <li>
+          <Link to='/qna'>Q&A</Link>
         </li>
         <li className='text-center'>
           <Link to='/notice'>공지사항</Link>

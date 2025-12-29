@@ -36,6 +36,8 @@ import './index.css';
 import OnlyGuests from './routes/OnlyGuests';
 import RequireAuth from './routes/RequireAuth';
 import EssentialInfo from './view/EssentialInfo';
+import QnA from './view/QnA';
+
 export default function ShopApp() {
   return (
     <AuthProvider>
@@ -63,6 +65,7 @@ export default function ShopApp() {
                 <Route path='/find-id' element={<FindId />} />
                 <Route path='/find-password' element={<FindPassword />} />
                 <Route path='/essential-info' element={<EssentialInfo />} />
+                <Route path='/qna' element={<QnA />} />
               </Route>
 
               <Route element={<RequireAuth />}>

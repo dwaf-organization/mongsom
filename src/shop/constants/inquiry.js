@@ -8,7 +8,6 @@ export const PRICE_OPTIONS = [
   { id: '200-500', label: '200 ~ 500만원', min: 2_000_000, max: 5_000_000 },
   { id: '500-1000', label: '500 ~ 1000만원', min: 5_000_000, max: 10_000_000 },
   { id: 'gt1000', label: '1000만원 이상', min: 10_000_000, max: 15_000_000 },
-  { id: 'gt1500', label: '1000만원 이상', min: 10_000_000, max: 15_000_000 },
 ];
 
 export const CATEGORY_OPTIONS = [
