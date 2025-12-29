@@ -14,17 +14,54 @@ export default function AddProductInfoSection() {
   const editorRef = useRef(null);
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  const [optionInput, setOptionInput] = useState('');
   const [errors, setErrors] = useState({});
   const { addToast } = useToast();
+
+  // 옵션 추가 체크박스 상태
+  const [hasOption, setHasOption] = useState(false);
+
+  // 옵션 타입 관리 (카테고리 2개 고정)
+  const defaultOptionTypes = [
+    {
+      typeName: '',
+      isRequired: 1,
+      sortOrder: 1,
+      optionValues: [
+        {
+          valueName: '선택안함',
+          priceAdjustment: 0,
+          stockStatus: 1,
+          sortOrder: 1,
+        },
+      ],
+    },
+    {
+      typeName: '',
+      isRequired: 1,
+      sortOrder: 2,
+      optionValues: [
+        {
+          valueName: '선택안함',
+          priceAdjustment: 0,
+          stockStatus: 1,
+          sortOrder: 1,
+        },
+      ],
+    },
+  ];
+  const [optionTypes, setOptionTypes] = useState(defaultOptionTypes);
+
+  // 각 옵션 타입별 새 옵션값 입력
+  const [newOptionValues, setNewOptionValues] = useState({});
 
   const [productData, setProductData] = useState({
     name: '',
     contents: '',
     productImgUrls: [],
     premium: 1,
-    optNames: [],
     price: '',
+    stockStatus: 1,
+    isAvailable: 1,
     salesMargin: '',
     discountPer: '',
     discountPrice: '',
@@ -87,27 +124,64 @@ export default function AddProductInfoSection() {
     });
   };
 
-  const addOption = () => {
-    if (!optionInput.trim()) return;
-    setProductData(prev => ({
-      ...prev,
-      optNames: [...prev.optNames, optionInput.trim()],
-    }));
-    setOptionInput('');
-    setErrors(prev => ({ ...prev, optNames: undefined }));
+  // 카테고리명 변경
+  const updateTypeName = (typeIdx, name) => {
+    setOptionTypes(prev =>
+      prev.map((type, i) =>
+        i === typeIdx ? { ...type, typeName: name } : type,
+      ),
+    );
   };
 
-  const removeOption = idx => {
-    setProductData(prev => ({
+  // 옵션값 추가
+  const addOptionValue = typeIdx => {
+    const inputValue = newOptionValues[typeIdx] || {
+      name: '',
+      price: 0,
+      isSoldOut: false,
+    };
+    if (!inputValue.name?.trim()) return;
+
+    setOptionTypes(prev =>
+      prev.map((type, i) => {
+        if (i !== typeIdx) return type;
+        return {
+          ...type,
+          optionValues: [
+            ...type.optionValues,
+            {
+              valueName: inputValue.name.trim(),
+              priceAdjustment: Number(inputValue.price) || 0,
+              stockStatus: inputValue.isSoldOut ? 0 : 1,
+              sortOrder: type.optionValues.length + 1,
+            },
+          ],
+        };
+      }),
+    );
+    setNewOptionValues(prev => ({
       ...prev,
-      optNames: prev.optNames.filter((_, i) => i !== idx),
+      [typeIdx]: { name: '', price: 0, isSoldOut: false },
     }));
   };
 
-  const onOptionKeyDown = e => {
+  // 옵션값 삭제
+  const removeOptionValue = (typeIdx, valueIdx) => {
+    setOptionTypes(prev =>
+      prev.map((type, i) => {
+        if (i !== typeIdx) return type;
+        return {
+          ...type,
+          optionValues: type.optionValues.filter((_, vi) => vi !== valueIdx),
+        };
+      }),
+    );
+  };
+
+  const onOptionValueKeyDown = (e, typeIdx) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      addOption();
+      addOptionValue(typeIdx);
     }
   };
 
@@ -163,6 +237,14 @@ export default function AddProductInfoSection() {
       discountPer: toNum(productData.discountPer),
       discountPrice: toNum(finalDiscountPrice),
       deliveryPrice: toNum(productData.deliveryPrice || 3000),
+      // 옵션 추가 체크박스가 체크되어 있으면 카테고리명이 있는 옵션만 전송, 아니면 null
+      optionTypes: (() => {
+        if (!hasOption) return null;
+        const filtered = optionTypes.filter(
+          type => type.typeName.trim() !== '',
+        );
+        return filtered.length > 0 ? filtered : null;
+      })(),
     };
 
     const result = ProductSchema.safeParse(finalData);
@@ -190,13 +272,16 @@ export default function AddProductInfoSection() {
         contents: '',
         productImgUrls: [],
         premium: 1,
-        optNames: [],
         price: '',
         salesMargin: '',
         discountPer: '',
         discountPrice: '',
         deliveryPrice: 3000,
       });
+      // 옵션 관련 상태 초기화
+      setHasOption(false);
+      setOptionTypes(defaultOptionTypes);
+      setNewOptionValues({});
       editorRef.current?.setHTML?.('');
       resetUpload();
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -316,9 +401,9 @@ export default function AddProductInfoSection() {
       {/* 표시 설정 */}
       <section className='py-10' data-field='premium'>
         <p className='font-semibold text-xl mb-4'>표시 설정</p>
-        <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
+        <div className='grid grid-cols-[200px_1fr] rounded-t-lg border border-t-none border-gray-400'>
           <div className='bg-primary-100 font-semibold px-6 py-4 border-b whitespace-nowrap'>
-            상품분류 선택
+            카테고리 선택
           </div>
           <div className='p-6 flex items-center gap-3'>
             <Button
@@ -358,58 +443,206 @@ export default function AddProductInfoSection() {
             )}
           </div>
         </div>
-      </section>
 
-      {/* 옵션 등록 */}
-      <section className='py-10' data-field='optNames'>
-        <p className='font-semibold text-xl mb-4'>옵션 등록</p>
-        <div className='grid grid-cols-[200px_1fr] rounded-lg border border-gray-400'>
+        {/* 품절여부 */}
+        <div className='grid grid-cols-[200px_1fr]  border border-t-none border-gray-400'>
           <div className='bg-primary-100 font-semibold px-6 py-4 border-b whitespace-nowrap'>
-            옵션 등록
+            품절여부
           </div>
-          <div className='p-6 flex flex-col gap-3'>
-            <div className='flex items-start gap-3'>
+          <div className='p-6 flex items-center gap-3'>
+            <label className='flex items-center gap-2 cursor-pointer'>
               <input
-                type='text'
-                value={optionInput}
-                placeholder='옵션명을 입력하세요'
-                className='border rounded-md p-2 w-full max-w-[500px] focus:outline-primary-200 border-gray-400'
-                onChange={e => setOptionInput(e.target.value)}
-                onKeyDown={onOptionKeyDown} // ✅ Enter → 옵션 추가, 제출 방지
+                type='checkbox'
+                checked={productData.stockStatus === 0}
+                onChange={e => {
+                  setProductData(prev => ({
+                    ...prev,
+                    stockStatus: e.target.checked ? 0 : 1,
+                  }));
+                  setErrors(prev => ({ ...prev, stockStatus: undefined }));
+                }}
+                className='w-5 h-5 accent-primary-500 cursor-pointer'
               />
-              <div className='flex flex-col gap-2'>
-                <Button
-                  type='button'
-                  className='w-fit py-2 px-4'
-                  onClick={addOption}
-                >
-                  + 등록
-                </Button>
-              </div>
-            </div>
+              <span className='text-gray-700'>품절처리</span>
+            </label>
 
-            {productData.optNames.map((opt, idx) => (
-              <div key={idx} className='flex items-center gap-3'>
-                <p className='text-gray-600 w-full max-w-[500px]'>
-                  {idx + 1}) {opt}
-                </p>
-                <Button
-                  type='button'
-                  className='w-fit py-2 px-4 border-gray-500 text-gray-500'
-                  variant='outline'
-                  onClick={() => removeOption(idx)}
-                >
-                  X 삭제
-                </Button>
-              </div>
-            ))}
+            {errors.stockStatus && (
+              <p className='text-red-500 text-sm w-full mt-2'>
+                {errors.stockStatus[0]}
+              </p>
+            )}
+          </div>
+        </div>
 
-            {errors.optNames && (
-              <p className='text-red-500 text-sm mt-2'>{errors.optNames[0]}</p>
+        {/* 판매여부 */}
+        <div className='grid grid-cols-[200px_1fr] rounded-b-lg border border-t-none border-gray-400'>
+          <div className='bg-primary-100 font-semibold px-6 py-4 border-b whitespace-nowrap'>
+            판매여부
+          </div>
+          <div className='p-6 flex items-center gap-3'>
+            <label className='flex items-center gap-2 cursor-pointer'>
+              <input
+                type='checkbox'
+                checked={productData.isAvailable === 0}
+                onChange={e => {
+                  setProductData(prev => ({
+                    ...prev,
+                    isAvailable: e.target.checked ? 0 : 1,
+                  }));
+                  setErrors(prev => ({ ...prev, isAvailable: undefined }));
+                }}
+                className='w-5 h-5 accent-primary-500 cursor-pointer'
+              />
+              <span className='text-gray-700'>판매중단</span>
+            </label>
+
+            {errors.isAvailable && (
+              <p className='text-red-500 text-sm w-full mt-2'>
+                {errors.isAvailable[0]}
+              </p>
             )}
           </div>
         </div>
       </section>
+
+      <section className='border-b border-gray-500 border-t py-4'>
+        <label className='flex items-center gap-2 cursor-pointer'>
+          <input
+            type='checkbox'
+            checked={hasOption}
+            onChange={e => {
+              setHasOption(e.target.checked);
+              if (!e.target.checked) {
+                setOptionTypes(defaultOptionTypes);
+                setNewOptionValues({});
+              }
+            }}
+            className='w-5 h-5 accent-primary-500 cursor-pointer'
+          />
+          <span className='text-gray-700'>옵션 추가</span>
+        </label>
+      </section>
+
+      {/* 옵션 등록 - 체크박스가 체크되어 있을 때만 표시 */}
+      {hasOption && (
+        <section className='py-10' data-field='optionTypes'>
+          <p className='font-semibold text-xl mb-4'>옵션 등록</p>
+
+          {/* 고정 2개 카테고리 */}
+          {optionTypes.map((type, typeIdx) => (
+            <div
+              key={typeIdx}
+              className={`grid grid-cols-[200px_1fr] border border-gray-400 ${
+                typeIdx === 0 ? 'rounded-t-lg' : 'border-t-0'
+              } ${typeIdx === optionTypes.length - 1 ? 'rounded-b-lg' : ''}`}
+            >
+              <div className='bg-primary-100 font-semibold px-6 py-4 border-b whitespace-nowrap'>
+                <input
+                  type='text'
+                  value={type.typeName}
+                  placeholder={`카테고리명: ex) ${typeIdx === 0 ? '색상' : '포장'}`}
+                  className='border rounded-md p-2 w-full focus:outline-primary-200 border-gray-400'
+                  onChange={e => updateTypeName(typeIdx, e.target.value)}
+                />
+              </div>
+              <div className='p-6 border-b flex flex-col gap-3'>
+                {/* 새 옵션값 입력 */}
+                <div className='flex items-center gap-3'>
+                  <input
+                    type='text'
+                    placeholder='옵션명'
+                    value={newOptionValues[typeIdx]?.name || ''}
+                    onChange={e =>
+                      setNewOptionValues(prev => ({
+                        ...prev,
+                        [typeIdx]: { ...prev[typeIdx], name: e.target.value },
+                      }))
+                    }
+                    onKeyDown={e => onOptionValueKeyDown(e, typeIdx)}
+                    className='border rounded-md p-2 flex-1 max-w-[300px] focus:outline-primary-200 border-gray-400'
+                  />
+                  <input
+                    type='number'
+                    placeholder='옵션추가금액'
+                    value={newOptionValues[typeIdx]?.price || ''}
+                    onChange={e =>
+                      setNewOptionValues(prev => ({
+                        ...prev,
+                        [typeIdx]: {
+                          ...prev[typeIdx],
+                          price: e.target.value,
+                        },
+                      }))
+                    }
+                    onKeyDown={e => onOptionValueKeyDown(e, typeIdx)}
+                    className='border rounded-md p-2 w-[150px] focus:outline-primary-200 border-gray-400'
+                  />
+                  <label className='flex items-center gap-1 cursor-pointer'>
+                    <input
+                      type='checkbox'
+                      checked={newOptionValues[typeIdx]?.isSoldOut || false}
+                      onChange={e =>
+                        setNewOptionValues(prev => ({
+                          ...prev,
+                          [typeIdx]: {
+                            ...prev[typeIdx],
+                            isSoldOut: e.target.checked,
+                          },
+                        }))
+                      }
+                      className='w-4 h-4 accent-primary-500 cursor-pointer'
+                    />
+                    <span className='text-sm text-gray-700'>품절</span>
+                  </label>
+                  <Button
+                    type='button'
+                    className='w-fit'
+                    onClick={() => addOptionValue(typeIdx)}
+                  >
+                    + 등록
+                  </Button>
+                </div>
+
+                {/* 등록된 옵션값 목록 */}
+                {type.optionValues.map((val, valIdx) => (
+                  <div key={valIdx} className='flex items-center gap-3 text-sm'>
+                    <div className='flex flex-1 items-center border rounded-md p-2 border-gray-400 max-w-[550px]'>
+                      <p className='flex-1 max-w-[300px] text-gray-600'>
+                        {valIdx + 1}) {val.valueName}
+                      </p>
+                      <p className='w-[150px] text-gray-600 whitespace-nowrap'>
+                        옵션추가금 : {val.priceAdjustment.toLocaleString()}원
+                      </p>
+                      {val.stockStatus === 0 && (
+                        <label className='flex items-center gap-1'>
+                          <input
+                            type='checkbox'
+                            checked
+                            readOnly
+                            className='w-4 h-4 accent-primary-500'
+                          />
+                          <span className='text-sm text-gray-700'>품절</span>
+                        </label>
+                      )}
+                    </div>
+                    <button
+                      type='button'
+                      onClick={() => removeOptionValue(typeIdx, valIdx)}
+                      className='text-gray-500 hover:text-gray-700 text-xl'
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {errors.optionTypes && (
+            <p className='text-red-500 text-sm mt-2'>{errors.optionTypes[0]}</p>
+          )}
+        </section>
+      )}
 
       {/* 가격 섹션 */}
       <section className='py-10'>
