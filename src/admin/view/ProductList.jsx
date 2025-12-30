@@ -116,7 +116,7 @@ export default function ProductList() {
       <ProductTableSection
         rows={rows}
         loading={loading}
-        onDeleted={handleDeleted} // ← 핵심
+        onDeleted={handleDeleted}
       />
 
       <div className='mt-6 flex items-center justify-center'>

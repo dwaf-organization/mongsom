@@ -22,12 +22,16 @@ const normalizeImages = imgs => {
         if (typeof img === 'string')
           return { productImgId: null, productImgUrl: img };
         if (img && typeof img === 'object' && img.productImgUrl)
-          return { productImgId: img.productImgId ?? null, productImgUrl: img.productImgUrl };
+          return {
+            productImgId: img.productImgId ?? null,
+            productImgUrl: img.productImgUrl,
+          };
         return null;
       })
       .filter(Boolean);
   }
-  if (typeof imgs === 'string') return imgs ? [{ productImgId: null, productImgUrl: imgs }] : [];
+  if (typeof imgs === 'string')
+    return imgs ? [{ productImgId: null, productImgUrl: imgs }] : [];
   return [];
 };
 
@@ -202,7 +206,10 @@ export default function EditProductInfoSection({ product }) {
   const mergedImageObjects = useMemo(
     () => [
       ...form.productImages,
-      ...uploadedImageUrls.map(url => ({ productImgId: null, productImgUrl: url })),
+      ...uploadedImageUrls.map(url => ({
+        productImgId: null,
+        productImgUrl: url,
+      })),
     ],
     [form.productImages, uploadedImageUrls],
   );
@@ -433,7 +440,7 @@ export default function EditProductInfoSection({ product }) {
       setSubmitting(true);
       await updateProduct(form.productId, payload);
       addToast('상품 수정이 완료되었습니다.', 'success');
-      // navigate('/admin/products-list');
+      navigate('/admin/products-list');
     } catch (err) {
       console.error('❌ 상품 수정 실패:', err);
       addToast('상품 수정에 실패했습니다.', 'error');
@@ -442,8 +449,15 @@ export default function EditProductInfoSection({ product }) {
     }
   };
 
+  // 폼 내 Enter 키로 제출 방지 (버튼 클릭으로만 제출)
+  const handleFormKeyDown = e => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+    }
+  };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} onKeyDown={handleFormKeyDown}>
       <div className='rounded-lg border border-gray-400 w-full max-w-[980px] h-full'>
         <div className='grid grid-cols-[200px_1fr] rounded-2xl'>
           <div className='bg-primary-100 font-semibold px-6 py-4 border-b'>
@@ -460,6 +474,9 @@ export default function EditProductInfoSection({ product }) {
               maxLength={80}
               value={form.name}
               onChange={onChange}
+              onKeyDown={e => {
+                if (e.key === 'Enter') e.preventDefault();
+              }}
               className='w-full max-w-[600px] border rounded-md p-2 focus:outline-primary-200 border-gray-400'
             />
             <p className='text-red-500 text-xs'>* 최대 80자</p>
@@ -679,6 +696,9 @@ export default function EditProductInfoSection({ product }) {
                   placeholder={`카테고리명: ex) ${typeIdx === 0 ? '색상' : '포장'}`}
                   className='border rounded-md p-2 w-full focus:outline-primary-200 border-gray-400'
                   onChange={e => updateTypeName(typeIdx, e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') e.preventDefault();
+                  }}
                 />
               </div>
               <div className='p-6 border-b flex flex-col gap-3'>
