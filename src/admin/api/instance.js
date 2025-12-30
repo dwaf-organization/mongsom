@@ -1,6 +1,7 @@
 const BASE_URL =
   (typeof process !== 'undefined' && process.env?.REACT_APP_BASE_API_URL) ||
-  'https://api.mongsom.co.kr/';
+  'http://localhost:8000/';
+// 'https://api.mongsom.co.kr/';'
 
 /**
  * @typedef {Object} CommonResponse
@@ -79,9 +80,12 @@ async function fetchInstance(url, options = {}) {
     });
 
     const contentType = response.headers.get('content-type') || '';
+    console.log('📡 Response status:', response.status, response.statusText);
+    console.log('📡 Content-Type:', contentType);
     if (!contentType.includes('application/json')) {
       const text = await response.text().catch(() => '');
-      console.error('Unexpected content type:', contentType, text);
+      console.error('Unexpected content type:', contentType);
+      console.error('Response body:', text);
       throw new Error('Invalid response format');
     }
 

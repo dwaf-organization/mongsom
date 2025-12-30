@@ -229,15 +229,17 @@ export default function AddProductInfoSection() {
       productData.discountPer === '' ? base : Math.floor(base * (1 - dp / 100));
 
     const finalData = {
-      ...productData,
+      name: productData.name,
       contents: html,
-      productImgUrls: uploadedImageUrls,
-      price: toNum(productData.price),
+      premium: productData.premium,
+      basePrice: toNum(productData.price),
       salesMargin: toNum(productData.salesMargin),
       discountPer: toNum(productData.discountPer),
       discountPrice: toNum(finalDiscountPrice),
       deliveryPrice: toNum(productData.deliveryPrice || 3000),
-      // 옵션 추가 체크박스가 체크되어 있으면 카테고리명이 있는 옵션만 전송, 아니면 null
+      stockStatus: productData.stockStatus,
+      isAvailable: productData.isAvailable,
+      productImgUrls: uploadedImageUrls,
       optionTypes: (() => {
         if (!hasOption) return null;
         const filtered = optionTypes.filter(

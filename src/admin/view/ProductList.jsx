@@ -78,7 +78,7 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchList();
-  }, [page, query, fetchList]);
+  }, [page, query]);
 
   const handleSearch = values => {
     setQuery({

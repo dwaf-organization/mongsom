@@ -3,10 +3,10 @@ import { fetchData } from '../instance';
 export const createProduct = async product => {
   console.log('🚀 ~ createProduct ~ product:', product);
   const response = await fetchData.post('api/v1/admin/product/regist', {
-    body: JSON.stringify(product),
+    body: product,
   });
   console.log('🚀 ~ createProduct ~ response:', response);
-  return response.data;
+  return response;
 };
 
 export const getProductList = async ({
@@ -14,13 +14,17 @@ export const getProductList = async ({
   size = 5,
   name = '',
   premium = 2,
+  outOfStock = 0,
+  paused = 0,
 }) => {
   const qs = new URLSearchParams();
   if (name) qs.set('name', name);
   qs.set('premium', String(premium));
   qs.set('size', String(size));
+  qs.set('outOfStock', String(outOfStock));
+  qs.set('paused', String(paused));
 
-  const url = `api/v1/admin/product/select/list/${page}?${qs.toString()}`;
+  const url = `api/v1/admin/product/select/${page}?${qs.toString()}`;
   console.log('GET:', url);
   const res = await fetchData.get(url);
   console.log('🚀 ~ getProductList ~ res:', res);
@@ -38,7 +42,7 @@ export const getProductDetail = async id => {
 export const updateProduct = async (id, product) => {
   console.log('🚀 ~ updateProduct ~ product:', product);
   const response = await fetchData.put(`api/v1/admin/product/update/${id}`, {
-    body: JSON.stringify(product),
+    body: product,
   });
   console.log('🚀 ~ updateProduct ~ response:', response);
   return response.data;
