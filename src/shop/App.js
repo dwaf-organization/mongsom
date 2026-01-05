@@ -37,6 +37,7 @@ import OnlyGuests from './routes/OnlyGuests';
 import RequireAuth from './routes/RequireAuth';
 import EssentialInfo from './view/EssentialInfo';
 import QnA from './view/QnA';
+import QnADetail from './view/QnADetail';
 
 export default function ShopApp() {
   return (
@@ -65,7 +66,6 @@ export default function ShopApp() {
                 <Route path='/find-id' element={<FindId />} />
                 <Route path='/find-password' element={<FindPassword />} />
                 <Route path='/essential-info' element={<EssentialInfo />} />
-                <Route path='/qna' element={<QnA />} />
               </Route>
 
               <Route element={<RequireAuth />}>
@@ -78,6 +78,8 @@ export default function ShopApp() {
                 <Route path='/payment' element={<Payment />} />
                 <Route path='/payment/success' element={<PaymentSuccess />} />
                 <Route path='/payment/fail' element={<PaymentFail />} />
+                <Route path='/qna' element={<QnA />} />
+                <Route path='/qna/:id' element={<QnADetail />} />
               </Route>
             </Routes>
 

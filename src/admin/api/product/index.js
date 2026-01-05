@@ -45,7 +45,7 @@ export const updateProduct = async (id, product) => {
     body: product,
   });
   console.log('🚀 ~ updateProduct ~ response:', response);
-  return response.data;
+  return response;
 };
 
 export const deleteProduct = async productId => {

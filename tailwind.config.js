@@ -29,6 +29,10 @@ module.exports = {
           100: '#F6E3E0',
           200: '#96ADD7',
         },
+        red: {
+          100: '#F78585',
+          200: '#96ADD7',
+        },
       },
       fontFamily: {
         pretendard: ['Pretendard', 'ui-sans-serif', 'system-ui'],

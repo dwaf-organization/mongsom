@@ -18,3 +18,12 @@ export const deleteUser = async userCode => {
     return response;
   }
 };
+
+export const chargeMileage = async (userCode, mileage) => {
+  console.log('🚀 ~ chargeMileage ~ userCode, mileage:', userCode, mileage);
+  const response = await fetchData.post(`api/v1/admin/user/mileage/charge`, {
+    body: { userCode: userCode, chargeAmount: mileage },
+  });
+  console.log('🚀 ~ chargeMileage ~ response:', response);
+  return response;
+};

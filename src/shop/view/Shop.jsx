@@ -20,15 +20,15 @@ export default function Shop() {
   });
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
-  const sort = searchParams.get('sort') || 'all';
-  const page = searchParams.get('page') || '1';
+  const sort = searchParams.get('sort') || '';
+  const premium = searchParams.get('premium') || '';
+  const page = searchParams.get('page') || '0';
 
   useEffect(() => {
     setIsLoading(true); // 데이터 로딩 시작
-    const size = sort === 'popular' ? 9 : undefined;
-    getAllProductList(sort, page, { size })
+    getAllProductList(sort, page)
       .then(res => {
-        const items = res?.items || [];
+        const items = res?.products || [];
         setProductItems(items);
 
         const paginationData = res?.pagination || {
@@ -43,10 +43,10 @@ export default function Shop() {
         setPagination({ currentPage: 1, totalPage: 1 });
       })
       .finally(() => setIsLoading(false)); // 데이터 로딩 완료
-  }, [sort, page]);
+  }, [sort, page, premium]);
 
   const sortOptions = [
-    { value: 'new', label: '최신순' },
+    { value: 'latest', label: '최신순' },
     { value: 'popular', label: '인기순' },
     { value: 'review', label: '리뷰많은순' },
   ];
@@ -55,7 +55,7 @@ export default function Shop() {
     setSearchParams(prev => {
       const newParams = new URLSearchParams(prev);
       newParams.set('sort', newSort);
-      newParams.set('page', '1');
+      newParams.set('page', '0');
       return newParams;
     });
   };
@@ -82,22 +82,22 @@ export default function Shop() {
             value={sort}
             onChange={handleSortChange}
             className='w-24 md:order-last'
-            hidden={sort === 'premium'}
+            // hidden={sort === 'premium'}
           />
 
           <div className='flex items-center justify-center gap-4'>
             <Link
-              to={`${routes.shop}?sort=all`}
+              to={`${routes.shop}?premium=`}
               className={`rounded-full border border-gray-50 px-4 py-2 text-xs whitespace-nowrap text-gray-50 w-fit 
-          ${sort !== 'premium' ? 'border-primary-200 font-bold text-primary-200' : ''}
+          ${premium !== '1' ? 'border-primary-200 font-bold text-primary-200' : ''}
           `}
             >
               일반 상품
             </Link>
             <Link
-              to={`${routes.shop}?sort=premium`}
+              to={`${routes.shop}?premium=1`}
               className={`rounded-full border border-gray-50 px-4 py-2 text-xs whitespace-nowrap text-gray-50 w-fit 
-          ${sort === 'premium' ? 'border-primary-200 font-semibold text-primary-200' : ''}
+          ${premium === '1' ? 'border-primary-200 font-semibold text-primary-200' : ''}
           `}
             >
               프리미엄 선물용
@@ -133,10 +133,11 @@ export default function Shop() {
                     >
                       <li className='roudned-lg'>
                         <ImageSkeleton
-                          src={item.productImgUrls[0]}
+                          src={item.mainImageUrl}
                           alt={item.name}
-                          className='w-full h-[120px] md:max-w-[320px] md:h-[320px] object-cover rounded-lg'
-                          skeletonClassName='rounded-t-lg'
+                          containerClassName='w-full h-[120px] md:max-w-[320px] md:h-[320px] rounded-lg'
+                          imgClassName='object-cover rounded-lg'
+                          skeletonClassName='rounded-lg'
                           loading='eager'
                           decoding='async'
                         />
@@ -168,10 +169,7 @@ export default function Shop() {
                                   {item.name}
                                 </p>
                                 <p className='line-through text-gray-500 whitespace-nowrap hidden md:block'>
-                                  {(
-                                    item.price + item.salesMargin
-                                  ).toLocaleString()}
-                                  원
+                                  {item.basePrice.toLocaleString()}원
                                 </p>
                               </div>
                               <div className='flex justify-start md:justify-end gap-2'>
