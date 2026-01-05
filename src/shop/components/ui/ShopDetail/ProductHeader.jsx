@@ -1,13 +1,13 @@
 export default function ProductHeader({ product }) {
   if (!product) return null;
 
-  // 필수 필드들이 모두 있는지 확인
-  const price = product.price || 0;
+  // 새로운 형식: basePrice가 직접 제공됨
+  // 기존 형식: price + salesMargin
   const salesMargin = product.salesMargin || 0;
+  const basePrice = product.basePrice || (product.price || 0) + salesMargin;
   const discountPrice = product.discountPrice || 0;
   const discountPer = product.discountPer;
-
-  const basePrice = price + salesMargin;
+  const deliveryPrice = product.deliveryPrice || 3000;
 
   return (
     <ul className=''>
@@ -42,7 +42,7 @@ export default function ProductHeader({ product }) {
 
       <li className='flex items-center justify-between border-b-2 text-lg text-gray-500 border-gray-500 pb-4 mt-4'>
         <p>배송비</p>
-        <p>3,000원</p>
+        <p>{Number(deliveryPrice).toLocaleString()}원</p>
       </li>
     </ul>
   );

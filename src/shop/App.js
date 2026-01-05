@@ -38,6 +38,8 @@ import RequireAuth from './routes/RequireAuth';
 import EssentialInfo from './view/EssentialInfo';
 import QnA from './view/QnA';
 import QnADetail from './view/QnADetail';
+import CreateQnA from './view/CreateQnA';
+import EditQnA from './view/EditQnA';
 
 export default function ShopApp() {
   return (
@@ -80,6 +82,8 @@ export default function ShopApp() {
                 <Route path='/payment/fail' element={<PaymentFail />} />
                 <Route path='/qna' element={<QnA />} />
                 <Route path='/qna/:id' element={<QnADetail />} />
+                <Route path='/qna/create' element={<CreateQnA />} />
+                <Route path='/qna/edit' element={<EditQnA />} />
               </Route>
             </Routes>
 

@@ -5,6 +5,9 @@ import { getQnAList } from '../api/qna';
 import Pagination from '../components/ui/Pagination';
 import { useState } from 'react';
 import { formatDate } from '../utils/dateUtils';
+import { maskName } from '../../admin/utils/dateUtils';
+import { Lock } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function QnA() {
   const [searchParams] = useSearchParams();
@@ -12,8 +15,13 @@ export default function QnA() {
   const [pagination, setPagination] = useState({});
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const { userCode } = useAuth();
 
-  const handleRowClick = qnaCode => {
+  const handleRowClick = (qnaCode, item) => {
+    if (item.lockStatus === 1 && item.userCode !== userCode) {
+      alert('본인만 확인 가능한 비공개 글입니다.');
+      return;
+    }
     navigate(`/qna/${qnaCode}`);
   };
 
@@ -49,7 +57,7 @@ export default function QnA() {
             <tr
               key={item.qnaCode}
               className='border-b border-gray-300 w-full text-sm cursor-pointer hover:bg-primary-100/60'
-              onClick={() => handleRowClick(item.qnaCode)}
+              onClick={() => handleRowClick(item.qnaCode, item)}
             >
               <td className='px-4 py-2 text-center' colSpan={1}>
                 {index + 1}
@@ -58,10 +66,24 @@ export default function QnA() {
                 {item.productName}
               </td>
               <td className='px-4 py-2 text-center' colSpan={1}>
-                {item.qnaTitle}
+                {item.lockStatus === 1 ? (
+                  item.userCode === userCode ? (
+                    <div className='flex items-center justify-center gap-1'>
+                      {item.qnaTitle}
+                      <Lock size={12} />
+                    </div>
+                  ) : (
+                    <div className='flex items-center justify-center gap-1 text-gray-600'>
+                      비공개 글입니다.
+                      <Lock size={12} />
+                    </div>
+                  )
+                ) : (
+                  item.qnaTitle
+                )}
               </td>
               <td className='px-4 py-2 text-center' colSpan={1}>
-                {item.qnaWriter}
+                {maskName(item.qnaWriter)}
               </td>
               <td className='px-4 py-2 text-center' colSpan={1}>
                 {item.answerStatus}

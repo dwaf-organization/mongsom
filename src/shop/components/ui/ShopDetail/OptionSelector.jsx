@@ -9,7 +9,25 @@ export default function OptionSelector({
 }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
-  const optionList = useMemo(() => {
+  // 새로운 형식: optionTypes 배열 (각 optionType에 optionValues 배열)
+  const optionTypes = useMemo(() => {
+    const types = Array.isArray(product?.optionTypes) ? product.optionTypes : [];
+    return types.map(type => ({
+      typeId: type.optionTypeId,
+      typeName: type.typeName,
+      isRequired: type.isRequired === 1,
+      options: (type.optionValues || []).map(v => ({
+        label: v.valueName,
+        value: String(v.optionValueId),
+        name: v.valueName,
+        id: v.optionValueId,
+        priceAdjustment: v.priceAdjustment || 0,
+      })),
+    }));
+  }, [product]);
+
+  // 기존 형식 호환: productOptions
+  const legacyOptionList = useMemo(() => {
     const arr = Array.isArray(product?.productOptions)
       ? product.productOptions
       : [];
@@ -18,18 +36,35 @@ export default function OptionSelector({
       value: String(o.optId),
       name: o.optName,
       id: o.optId,
+      priceAdjustment: 0,
     }));
   }, [product]);
 
+  // 새로운 형식 또는 기존 형식에서 옵션 리스트 가져오기
+  const optionList = useMemo(() => {
+    // 새로운 형식이 있으면 모든 optionTypes의 옵션들을 합침
+    if (optionTypes.length > 0) {
+      return optionTypes.flatMap(type =>
+        type.options.map(opt => ({
+          ...opt,
+          typeId: type.typeId,
+          typeName: type.typeName,
+        }))
+      );
+    }
+    return legacyOptionList;
+  }, [optionTypes, legacyOptionList]);
+
   const unitPrice = useMemo(() => {
-    const price = Number(product?.price ?? 0);
-    const dPrice = Number(product?.discountPrice ?? price);
-    return dPrice || price;
+    // 새로운 형식: basePrice 또는 기존 형식: price
+    const basePrice = Number(product?.basePrice ?? product?.price ?? 0);
+    const dPrice = Number(product?.discountPrice ?? basePrice);
+    return dPrice || basePrice;
   }, [product]);
 
   useEffect(() => {
     const total = selectedOptions.reduce(
-      (sum, opt) => sum + unitPrice * opt.quantity,
+      (sum, opt) => sum + (unitPrice + (opt.priceAdjustment || 0)) * opt.quantity,
       0,
     );
     onTotalPriceChange(total);
@@ -49,7 +84,16 @@ export default function OptionSelector({
         next[i] = { ...next[i], quantity: next[i].quantity + 1 };
         return next;
       } else {
-        return [...prev, { value: meta.value, name: meta.name, quantity: 1 }];
+        return [
+          ...prev,
+          {
+            value: meta.value,
+            name: meta.name,
+            quantity: 1,
+            priceAdjustment: meta.priceAdjustment || 0,
+            typeName: meta.typeName,
+          },
+        ];
       }
     });
   };
@@ -98,7 +142,7 @@ export default function OptionSelector({
                   setValue={q => handleQuantityChange(opt.value, q)}
                 />
                 <span className='text-gray-900 font-semibold'>
-                  {(unitPrice * opt.quantity).toLocaleString()}원
+                  {((unitPrice + (opt.priceAdjustment || 0)) * opt.quantity).toLocaleString()}원
                 </span>
               </div>
             </li>

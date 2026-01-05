@@ -24,6 +24,7 @@ module.exports = {
         black: {
           50: '#000000',
           100: '#332819',
+          200: '#3A3A3A',
         },
         secondary: {
           100: '#F6E3E0',
