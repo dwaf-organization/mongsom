@@ -40,6 +40,7 @@ import QnA from './view/QnA';
 import QnADetail from './view/QnADetail';
 import CreateQnA from './view/CreateQnA';
 import EditQnA from './view/EditQnA';
+import OrderComplete from './view/OrderComplete';
 
 export default function ShopApp() {
   return (
@@ -84,6 +85,7 @@ export default function ShopApp() {
                 <Route path='/qna/:id' element={<QnADetail />} />
                 <Route path='/qna/create' element={<CreateQnA />} />
                 <Route path='/qna/edit' element={<EditQnA />} />
+                <Route path='/order/complete' element={<OrderComplete />} />
               </Route>
             </Routes>
 

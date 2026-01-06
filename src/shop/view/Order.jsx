@@ -86,9 +86,15 @@ export default function Order() {
         ]);
         if (!cancelled) {
           setUserInfo(u);
-          // mileage가 객체인 경우 mileage 프로퍼티를 추출, 그렇지 않으면 그대로 사용
+          // mileage 값 추출 (m이 이미 data이므로 직접 사용하거나, m.mileage가 숫자면 그대로 사용)
           const mileageValue =
-            typeof m === 'object' ? m?.mileage || 0 : (m ?? 0);
+            typeof m === 'number' ? m : (m?.mileage ?? m ?? 0);
+          console.log(
+            '🚀 ~ Order ~ mileage API response:',
+            m,
+            'extracted:',
+            mileageValue,
+          );
           setMileage(mileageValue);
         }
       } catch (e) {
@@ -143,6 +149,27 @@ export default function Order() {
     if (buyNowItems.length > 0) return buyNowItems;
     return (cart || []).filter(i => i.checkStatus);
   }, [buyNowItems, cart]);
+
+  // 마일리지 최대 사용 가능 금액 (상품 금액만, 배송비 제외)
+  const maxMileageUsable = useMemo(() => {
+    const calcItemPrice = item => {
+      if (item.totalPrice !== undefined) {
+        return Number(item.totalPrice);
+      }
+      const unitPrice = Number(
+        item.unitPrice ?? item.discountPrice ?? item.price ?? 0,
+      );
+      return unitPrice * Number(item.quantity ?? 1);
+    };
+
+    const totalPrice = selectedItems.reduce(
+      (sum, item) => sum + calcItemPrice(item),
+      0,
+    );
+
+    // 보유 마일리지와 상품 금액 중 작은 값으로 제한 (배송비 제외)
+    return Math.min(mileage || 0, totalPrice);
+  }, [selectedItems, mileage]);
 
   const handleFormValidChange = useCallback((isValid, customerData) => {
     setIsFormValid(isValid);
@@ -211,7 +238,11 @@ export default function Order() {
                   }
                   // 숫자로 변환하여 앞의 0 제거
                   const numValue = Number(inputValue);
-                  const value = Math.max(0, Math.min(numValue, mileage || 0));
+                  // 보유 마일리지와 총 주문 금액 중 작은 값을 최대값으로 설정
+                  const value = Math.max(
+                    0,
+                    Math.min(numValue, maxMileageUsable),
+                  );
                   setUseMileage(value);
                 }}
                 onFocus={e => {
@@ -230,7 +261,7 @@ export default function Order() {
                 onClick={e => e.stopPropagation()}
                 className=' py-1 text-right w-full focus:outline-none focus:border-none'
                 min='0'
-                max={mileage || 0}
+                max={maxMileageUsable}
               />
               <span className='pr-2'>원</span>
             </div>
@@ -242,7 +273,7 @@ export default function Order() {
               if (useMileage > 0) {
                 setUseMileage(0);
               } else {
-                setUseMileage(mileage || 0);
+                setUseMileage(maxMileageUsable);
               }
             }}
             className='px-3 py-2 border border-gray-400 rounded hover:bg-gray-100 whitespace-nowrap'
@@ -251,7 +282,7 @@ export default function Order() {
           </button>
         </div>
         <p className='text-sm text-gray-600'>
-          사용가능: {((mileage || 0) - useMileage).toLocaleString()}원 | 보유
+          사용가능: {(maxMileageUsable - useMileage).toLocaleString()}원 | 보유
           마일리지: {(mileage || 0).toLocaleString()}원
         </p>
       </section>

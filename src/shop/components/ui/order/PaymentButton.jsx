@@ -25,32 +25,47 @@ export default function PaymentButton({
 
   const { totalPrice, totalDiscountPrice, deliveryPrice, finalPrice } =
     useMemo(() => {
-      const base = (selectedItems || []).reduce(
-        (acc, it) => {
-          const quantity = Number(it.quantity ?? 1);
-          const price = Number(it.price ?? 0);
-          const discountPrice = Number(
-            it.discountPrice ?? it.salePrice ?? it.price ?? 0,
-          );
-          acc.totalPrice += discountPrice * quantity;
-          acc.totalDiscountPrice +=
-            Math.max(0, price - discountPrice) * quantity;
-          return acc;
-        },
-        { totalPrice: 0, totalDiscountPrice: 0 },
+      const calcItemPrice = item => {
+        if (item.totalPrice !== undefined) {
+          return Number(item.totalPrice);
+        }
+        const unitPrice = Number(
+          item.unitPrice ?? item.discountPrice ?? item.price ?? 0,
+        );
+        return unitPrice * Number(item.quantity ?? 1);
+      };
+
+      const totalItemPrice = (selectedItems || []).reduce(
+        (sum, item) => sum + calcItemPrice(item),
+        0,
       );
-      const dp =
-        typeof deliveryPriceProp === 'number' ? deliveryPriceProp : 3000;
-      const finalP = base.totalPrice - base.totalDiscountPrice + dp;
-      console.log(
-        '🚀 ~ PaymentButton ~ base.totalDiscountPrice:',
-        base.totalDiscountPrice,
-      );
-      console.log('🚀 ~ PaymentButton ~ finalP:', finalP);
+
+      // 할인 금액 계산
+      const totalDiscount = (selectedItems || []).reduce((sum, item) => {
+        const quantity = Number(item.quantity ?? 1);
+        const basePrice = Number(item.basePrice ?? item.price ?? 0);
+        const discountPrice = Number(item.discountPrice ?? basePrice);
+        if (basePrice > discountPrice) {
+          return sum + (basePrice - discountPrice) * quantity;
+        }
+        return sum;
+      }, 0);
+
+      // 배송비 계산 (5만원 이상 무료)
+      const shippingFee =
+        totalItemPrice >= 50000 ? 0 : totalItemPrice > 0 ? 3000 : 0;
+
+      // 최종 금액 = 상품금액 + 배송비
+      const finalP = totalItemPrice + shippingFee;
+
+      console.log('🚀 ~ PaymentButton ~ totalItemPrice:', totalItemPrice);
+      console.log('🚀 ~ PaymentButton ~ shippingFee:', shippingFee);
+      console.log('🚀 ~ PaymentButton ~ finalPrice (before mileage):', finalP);
+
       return {
-        totalPrice: base.totalPrice,
-        totalDiscountPrice: base.totalDiscountPrice,
-        deliveryPrice: dp,
+        totalPrice: totalItemPrice,
+        totalDiscountPrice: totalDiscount,
+        deliveryPrice: shippingFee,
         finalPrice: finalP,
       };
     }, [selectedItems, deliveryPriceProp]);
@@ -128,8 +143,10 @@ export default function PaymentButton({
     if (disabled || !isOptionSelected) return alert('선택된 상품이 없습니다.');
     if (!userCode) return alert('로그인이 필요합니다.');
     if (!customerInfo?.name) return alert('고객 정보를 입력해주세요.');
-    if (!Number.isFinite(finalPrice) || finalPrice < 100)
-      return alert('결제 금액이 올바르지 않습니다. (최소 100원)');
+
+    const finalPaymentAmount = finalPrice - useMileage;
+    if (!Number.isFinite(finalPaymentAmount) || finalPaymentAmount < 100)
+      return alert('결제 금액이 100원 이상이어야 합니다.');
 
     try {
       setIsLoading(true);
