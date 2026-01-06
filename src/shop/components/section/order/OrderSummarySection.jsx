@@ -1,4 +1,4 @@
-export default function OrderSummarySection({ items }) {
+export default function OrderSummarySection({ items, useMileage = 0 }) {
   const calcItemPrice = item => {
     if (item.totalPrice !== undefined) {
       return Number(item.totalPrice);
@@ -23,7 +23,7 @@ export default function OrderSummarySection({ items }) {
 
   const shippingFee = totalPrice >= 50000 ? 0 : totalPrice > 0 ? 3000 : 0;
 
-  const finalPrice = totalPrice + shippingFee;
+  const finalPrice = totalPrice + shippingFee - useMileage;
 
   return (
     <section className='py-10 border-y-2 border-black-100'>
@@ -41,10 +41,19 @@ export default function OrderSummarySection({ items }) {
             + {shippingFee.toLocaleString()} won
           </p>
         </li>
+        {discount > 0 && (
+          <li className='flex justify-between'>
+            <p className='text-gray-700 text-xl'>할인</p>
+            <p className='font-semibold font-montserrat text-xl text-primary-200'>
+              - {discount.toLocaleString()} won
+            </p>
+          </li>
+        )}
+
         <li className='flex justify-between'>
-          <p className='text-gray-700 text-xl'>할인/부가결제</p>
+          <p className='text-gray-700 text-xl'>마일리지 사용</p>
           <p className='font-semibold font-montserrat text-xl text-primary-200'>
-            {discount.toLocaleString()} won
+            - {useMileage.toLocaleString()} won
           </p>
         </li>
       </ul>

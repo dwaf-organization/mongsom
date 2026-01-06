@@ -194,7 +194,9 @@ export default function Order() {
 
         <div className='flex items-center w-full gap-2'>
           <div className=' flex justify-between items-center border border-gray-400 rounded-md p-1 w-full'>
-            <span className='font-semibold whitespace-nowrap'>마일리지</span>
+            <span className='font-semibold whitespace-nowrap px-2'>
+              마일리지
+            </span>
 
             <div className='flex items-center w-full'>
               <input
@@ -230,7 +232,7 @@ export default function Order() {
                 min='0'
                 max={mileage || 0}
               />
-              <span className=''>원</span>
+              <span className='pr-2'>원</span>
             </div>
           </div>
 
@@ -243,7 +245,7 @@ export default function Order() {
                 setUseMileage(mileage || 0);
               }
             }}
-            className='px-3 py-1.5 border border-gray-400 rounded hover:bg-gray-100 whitespace-nowrap'
+            className='px-3 py-2 border border-gray-400 rounded hover:bg-gray-100 whitespace-nowrap'
           >
             {useMileage > 0 ? '사용 취소' : '모두 사용'}
           </button>
@@ -283,13 +285,14 @@ export default function Order() {
         </div>
       </section>
 
-      <OrderSummarySection items={selectedItems} />
+      <OrderSummarySection items={selectedItems} useMileage={useMileage} />
 
       <PaymentButton
         selectedItems={selectedItems}
         customerInfo={customerInfo}
         disabled={!isFormValid}
         paymentMethod={paymentMethod}
+        useMileage={useMileage}
       />
     </InnerPaddingSectionWrapper>
   );

@@ -14,6 +14,7 @@ export default function PaymentButton({
   disabled = false,
   deliveryPrice: deliveryPriceProp,
   paymentMethod = 'card',
+  useMileage = 0,
 }) {
   console.log('🚀 ~ PaymentButton ~ selectedItems:', selectedItems);
   const { userCode } = useAuth();
@@ -84,22 +85,32 @@ export default function PaymentButton({
       totalPrice,
       deliveryPrice,
       totalDiscountPrice,
-      finalPrice,
+      finalPrice: finalPrice - useMileage,
+      usedMileage: useMileage,
+      paymentType: paymentMethod === 'ACCOUNT' ? 'ACCOUNT' : 'CARD',
 
-      // 결제 전 단계: 안전값으로 둔다
-      paymentAt: new Date().toISOString(),
-      paymentMethod: paymentMethod === 'ACCOUNT' ? '무통장입금' : '카드',
-      paymentAmount: finalPrice,
-      paymentStatus: paymentMethod === 'ACCOUNT' ? 'WAIT' : 'PAUSE',
-      paymentKey: paymentMethod === 'ACCOUNT' ? null : 'toss_12345',
-      pgProvider: paymentMethod === 'ACCOUNT' ? '무통장입금' : '토스페이먼츠',
+      orderDetails: (selectedItems || []).map(it => {
+        const quantity = Number(it.quantity ?? 1);
+        // basePrice는 할인 전 원가
+        const basePrice = Number(it.basePrice ?? it.price ?? 0);
+        // discountPrice는 할인된 판매가
+        const discountPrice = Number(it.discountPrice ?? basePrice);
+        const optionPrice = Number(it.optionPrice ?? 0);
+        // unitTotalPrice = 할인된 판매가 + 옵션가
+        const unitTotalPrice = discountPrice + optionPrice;
+        const lineTotalPrice = unitTotalPrice * quantity;
 
-      orderDetails: (selectedItems || []).map(it => ({
-        optId: it.optId ?? null,
-        productId: it.productId,
-        quantity: Number(it.quantity ?? 1),
-        price: Number(it.discountPrice ?? it.price ?? 0),
-      })),
+        return {
+          productId: it.productId,
+          option1: it.option1 ?? null,
+          option2: it.option2 ?? null,
+          quantity: quantity,
+          basePrice: basePrice,
+          optionPrice: optionPrice,
+          unitTotalPrice: unitTotalPrice,
+          lineTotalPrice: lineTotalPrice,
+        };
+      }),
     };
   };
 
@@ -145,7 +156,7 @@ export default function PaymentButton({
       // 일반결제: 토스 결제 위젯 열기
       const paymentData = createPaymentData(selectedItems, customerInfo, {
         orderId,
-        amount: finalPrice,
+        amount: finalPrice - useMileage,
       });
 
       await openPaymentWidget(paymentData);
