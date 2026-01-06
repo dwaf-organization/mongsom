@@ -6,12 +6,14 @@ import {
   createPaymentData,
 } from '../../../utils/tossPayments';
 import { createOrder } from '../../../api/order';
+import { clearInstantPurchase } from '../../../utils/instantPurchase';
 
 export default function PaymentButton({
   selectedItems,
   customerInfo,
   disabled = false,
   deliveryPrice: deliveryPriceProp,
+  paymentMethod = 'card',
 }) {
   console.log('🚀 ~ PaymentButton ~ selectedItems:', selectedItems);
   const { userCode } = useAuth();
@@ -85,12 +87,12 @@ export default function PaymentButton({
       finalPrice,
 
       // 결제 전 단계: 안전값으로 둔다
-      paymentAt: '2024-09-17T15:30:00',
-      paymentMethod: '카드',
+      paymentAt: new Date().toISOString(),
+      paymentMethod: paymentMethod === 'ACCOUNT' ? '무통장입금' : '카드',
       paymentAmount: finalPrice,
-      paymentStatus: 'PAUSE',
-      paymentKey: 'toss_12345',
-      pgProvider: '토스페이먼츠',
+      paymentStatus: paymentMethod === 'ACCOUNT' ? 'WAIT' : 'PAUSE',
+      paymentKey: paymentMethod === 'ACCOUNT' ? null : 'toss_12345',
+      pgProvider: paymentMethod === 'ACCOUNT' ? '무통장입금' : '토스페이먼츠',
 
       orderDetails: (selectedItems || []).map(it => ({
         optId: it.optId ?? null,
@@ -130,6 +132,17 @@ export default function PaymentButton({
         throw new Error(msg);
       }
 
+      // 바로구매 데이터 삭제
+      clearInstantPurchase();
+
+      // 무통장입금: 결제 위젯 없이 주문 완료 페이지로 이동
+      if (paymentMethod === 'ACCOUNT') {
+        alert('주문이 완료되었습니다.\n입금 확인 후 배송이 진행됩니다.');
+        window.location.href = `/order/complete?orderId=${orderId}`;
+        return;
+      }
+
+      // 일반결제: 토스 결제 위젯 열기
       const paymentData = createPaymentData(selectedItems, customerInfo, {
         orderId,
         amount: finalPrice,
