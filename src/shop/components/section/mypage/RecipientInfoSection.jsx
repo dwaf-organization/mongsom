@@ -13,13 +13,14 @@ export default function RecipientInfoSection({ order }) {
           <li>배송 메시지</li>
         </ul>
         <ul className='flex flex-col gap-4 text-left px-4'>
-          <li>{order.receivedUserName}</li>
-          <li>{order.receivedUserPhone}</li>
+          <li>{order.deliveryInfo.receivedUserName}</li>
+          <li>{order.deliveryInfo.receivedUserPhone}</li>
           <li>
-            ({order.receivedUserZipCode}){order.receivedUserAddress}
-            {order.receivedUserAddress2}
+            ({order.deliveryInfo.receivedUserZipCode})
+            {order.deliveryInfo.receivedUserAddress}
+            {order.deliveryInfo.receivedUserAddress2}
           </li>
-          <li>{order.message || '-'}</li>
+          <li>{order.deliveryInfo.message || '-'}</li>
         </ul>
       </div>
     </section>

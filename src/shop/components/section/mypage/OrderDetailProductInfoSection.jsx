@@ -3,14 +3,19 @@ import { pickFirstImageUrl } from '../../../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
 
 export default function OrderDetailProductInfoSection({ order }) {
+  console.log('🚀 ~ OrderDetailProductInfoSection ~ order:', order);
   const navigate = useNavigate();
-  if (!order || !Array.isArray(order.details)) {
+  if (
+    !order ||
+    !Array.isArray(order.orderItems) ||
+    order.orderItems.length === 0
+  ) {
     return (
       <p className='text-center text-gray-600'>주문 정보를 찾을 수 없습니다.</p>
     );
   }
 
-  const orderNo = order.orderId;
+  const orderNo = order.orderInfo.orderId;
 
   const fmtPrice = n => {
     const num = Number(n);
@@ -24,11 +29,10 @@ export default function OrderDetailProductInfoSection({ order }) {
 
   return (
     <ul className='flex flex-col gap-4 pt-4'>
-      {order.details.map(d => {
-        const image = pickFirstImageUrl(d.productImgUrls);
+      {order.orderItems.map(d => {
         const name = d.productName || '-';
         const option = d.optName || '-';
-        const price = d.price;
+        const price = d.lineTotalPrice;
         const quantity = d.quantity ?? 1;
 
         const statusPerItem = Array.isArray(d.changeStatus)
@@ -50,7 +54,6 @@ export default function OrderDetailProductInfoSection({ order }) {
           orderDetailId: d.orderDetailId,
           name,
           option,
-          image,
           price,
           quantity,
         };
@@ -67,9 +70,9 @@ export default function OrderDetailProductInfoSection({ order }) {
                 className='flex items-start gap-4'
                 onClick={() => handleProductClick(d.productId)}
               >
-                {image ? (
+                {d.productImgUrl ? (
                   <img
-                    src={image}
+                    src={d.productImgUrl}
                     alt={name}
                     className='w-[80px] h-[80px] object-cover rounded-lg'
                   />
@@ -84,7 +87,7 @@ export default function OrderDetailProductInfoSection({ order }) {
                     </p>
                   </div>
                   <p className='text-sm text-gray-600 mb-2 truncate max-w-[5rem] md:max-w-[27rem] text-left'>
-                    옵션: {option}
+                    옵션: {d.option1Name} / {d.option2Name}
                   </p>
                   <div className='flex items-center gap-4 text-sm'>
                     <span className='font-semibold'>{fmtPrice(price)}</span>

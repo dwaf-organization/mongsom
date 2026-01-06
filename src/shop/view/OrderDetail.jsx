@@ -21,10 +21,9 @@ export default function OrderDetail() {
       try {
         setLoading(true);
         const res = await getOrderDetail(id);
-        const data = res?.data && typeof res.data === 'object' ? res.data : res;
 
         if (!cancel) {
-          setOrder(data || null);
+          setOrder(res || null);
         }
       } catch (e) {
         console.error('주문 상세 조회 실패:', e);

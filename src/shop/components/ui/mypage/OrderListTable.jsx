@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { getOrderList } from '../../../api/order';
 import { formatDate } from '../../../utils/dateUtils';
-import { pickFirstImageUrl } from '../../../utils/dateUtils';
 
 export default function OrderListTable() {
   const { userCode } = useAuth();
@@ -27,15 +26,10 @@ export default function OrderListTable() {
     (async () => {
       try {
         setLoading(true);
-        const data = await getOrderList(userCode);
-        console.log('🚀 ~ OrderListTable ~ data:', data);
-        const list = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : Array.isArray(data?.data?.items)
-              ? data.data.items
-              : [];
+        const response = await getOrderList(userCode);
+        console.log('🚀 ~ OrderListTable ~ response:', response);
+        const list = Array.isArray(response.orders) ? response.orders : [];
+        console.log('🚀 ~ OrderListTable ~ list:', list);
         if (!cancel) setOrderList(list);
       } catch (e) {
         console.error('주문 리스트 조회 실패:', e);
@@ -89,7 +83,6 @@ export default function OrderListTable() {
       <table className='w-full'>
         <thead>
           <tr>
-            <th className='py-4 px-3'>NO</th>
             <th className='text-center'>주문일자</th>
             <th className='text-center'>주문정보</th>
             <th className='text-center'>주문금액</th>
@@ -100,12 +93,12 @@ export default function OrderListTable() {
 
         <tbody className='w-full'>
           {orderList.slice(0, 5).map(order => {
-            const details = Array.isArray(order.details) ? order.details : [];
-            const first = details[0] || {};
-            const thumb = pickFirstImageUrl(first.productImgUrls);
-            const name = first.productName || '-';
-            const opt = first.optName ? `옵션 | ${first.optName}` : '옵션 | -';
-            const shippingFee = 3000;
+            const name = order.productName || '-';
+            const option1Name = order.option1Name || '';
+            const option2Name = order.option2Name || '';
+            const optionText = [option1Name, option2Name]
+              .filter(Boolean)
+              .join(', ');
 
             return (
               <tr
@@ -113,37 +106,25 @@ export default function OrderListTable() {
                 className='border-y border-gray-500 px-3 cursor-pointer'
                 onClick={() => handleOrderDetail(order.orderId)}
               >
-                <td className='font-montserrat py-4 text-center'>
+                {/* <td className='font-montserrat py-4 text-center'>
                   {order.orderId}
-                </td>
+                </td> */}
                 <td className='font-montserrat py-4 px-3 text-center'>
                   {formatDate(order.paymentAt)}
                 </td>
 
                 <td className='py-4 pl-14 max-w-[250px] truncate'>
                   <div className='flex items-center gap-3'>
-                    {thumb ? (
-                      <img
-                        src={thumb}
-                        alt={name}
-                        className='w-[80px] h-[80px] object-cover rounded-lg'
-                      />
-                    ) : (
-                      <div className='w-[80px] h-[80px] rounded-lg bg-gray-100' />
-                    )}
+                    <div className='w-[80px] h-[80px] rounded-lg bg-gray-100' />
                     <div className='flex flex-col justify-between text-left gap-2'>
                       <div className='flex items-center gap-2'>
                         <p className='font-medium truncate max-w-[200px]'>
                           {name}
                         </p>
-                        {details.length > 1 && (
-                          <p className='text-sm text-gray-600'>
-                            외 {details.length - 1}개
-                          </p>
-                        )}
                       </div>
-                      {/* <p className='text-sm text-gray-500'>{opt}</p> */}
-                      <p></p>
+                      {optionText && (
+                        <p className='text-sm text-gray-500'>{optionText}</p>
+                      )}
                     </div>
                   </div>
                 </td>
@@ -152,7 +133,7 @@ export default function OrderListTable() {
                   {Number(order.finalPrice || 0).toLocaleString()}원
                 </td>
                 <td className='text-right font-montserrat py-4'>
-                  {Number(shippingFee).toLocaleString()}원
+                  {Number(order.deliveryPrice || 0).toLocaleString()}원
                 </td>
                 <td className='py-4 px-3 text-center'>
                   {order.deliveryStatus || '-'}
