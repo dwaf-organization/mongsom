@@ -93,12 +93,13 @@ export default function OrderListTable() {
 
         <tbody className='w-full'>
           {orderList.slice(0, 5).map(order => {
-            const name = order.productName || '-';
-            const option1Name = order.option1Name || '';
-            const option2Name = order.option2Name || '';
+            const name = order.productInfo.productName || '-';
+            const option1Name = order.productInfo.option1Name || '';
+            const option2Name = order.productInfo.option2Name || '';
             const optionText = [option1Name, option2Name]
               .filter(Boolean)
               .join(', ');
+            const productImgUrl = order.productInfo.productImgUrl;
 
             return (
               <tr
@@ -115,7 +116,15 @@ export default function OrderListTable() {
 
                 <td className='py-4 pl-14 max-w-[250px] truncate'>
                   <div className='flex items-center gap-3'>
-                    <div className='w-[80px] h-[80px] rounded-lg bg-gray-100' />
+                    {productImgUrl ? (
+                      <img
+                        src={productImgUrl}
+                        alt={name}
+                        className='w-[80px] h-[80px] object-cover rounded-lg'
+                      />
+                    ) : (
+                      <div className='w-[80px] h-[80px] rounded-lg bg-gray-100' />
+                    )}
                     <div className='flex flex-col justify-between text-left gap-2'>
                       <div className='flex items-center gap-2'>
                         <p className='font-medium truncate max-w-[200px]'>

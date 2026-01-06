@@ -40,7 +40,9 @@ export default function OrderDetail() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <BackButton />
+      <div className='md:hidden'>
+        <BackButton />
+      </div>
       <div className='flex justify-start gap-4 items-center border-b border-gray-500 pb-4'>
         <p className='text-2xl font-semibold text-left'>주문상세</p>
       </div>

@@ -8,8 +8,10 @@ export const createOrder = async order => {
   return response.data;
 };
 
-export const getOrderList = async userCode => {
-  const response = await fetchData.get(`api/v1/my/order/${userCode}`);
+export const getOrderList = async (userCode, page = 0, size = 10) => {
+  const response = await fetchData.get(
+    `api/v1/my/order/${userCode}?page=${page}&size=${size}`,
+  );
   if (response.code === 1) {
     return response.data;
   }

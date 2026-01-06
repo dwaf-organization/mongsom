@@ -41,7 +41,10 @@ export default function OrderDetailProductInfoSection({ order }) {
             ? [d.changeStatus]
             : [];
         const deliveryStatusForItem =
-          order.deliveryStatus ?? order.status ?? d.deliveryStatus ?? '';
+          order.orderInfo.deliveryStatus ??
+          order.status ??
+          d.deliveryStatus ??
+          '';
 
         const orderStatusForItem = Array.isArray(d.orderStatus)
           ? d.orderStatus

@@ -14,6 +14,7 @@ export default function Exchange() {
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [exchangeReason, setExchangeReason] = useState('');
+  const [deliveryStatus, setDeliveryStatus] = useState('');
   const [exchangeType, setExchangeType] = useState('exchange');
 
   // ✅ 반품 전용 입력값
@@ -31,17 +32,24 @@ export default function Exchange() {
       try {
         setLoading(true);
         const res = await getOrderDetail(orderId);
-        const data =
-          res &&
-          typeof res === 'object' &&
-          res.data &&
-          typeof res.data === 'object'
-            ? res.data
-            : res;
-        if (!cancel) setOrder(data || null);
+        const data = res.orderItems;
+        const exchangeDeliveryStatus = res.orderInfo || '';
+        // const data =
+        //   res.orderItems &&
+        //   typeof res === 'object' &&
+        //   res.orderItems &&
+        //   typeof res.orderItems === 'object'
+        //     ? res.orderItems
+        //     : res;
+        if (!cancel) {
+          setOrder(data || null);
+          setDeliveryStatus(exchangeDeliveryStatus);
+        }
       } catch (e) {
         console.error('주문 상세 조회 실패:', e);
-        if (!cancel) setOrder(null);
+        if (!cancel) {
+          setOrder(null);
+        }
       } finally {
         if (!cancel) setLoading(false);
       }
@@ -50,6 +58,8 @@ export default function Exchange() {
       cancel = true;
     };
   }, [orderId]);
+
+  console.log('🚀 ~ Exchange ~ order1234:', order);
 
   const allProducts = useMemo(() => {
     if (!order) return [];
@@ -85,6 +95,7 @@ export default function Exchange() {
     const target = allProducts.find(p => p.id === productId);
     if (!target) return;
     const isDisabled = target.changeStatus != null;
+    console.log('🚀 ~ Exchange ~ isDisabled:', isDisabled);
     if (isDisabled) return;
     setSelectedProduct(productId);
   };
@@ -192,8 +203,9 @@ export default function Exchange() {
           </h2>
 
           <div className='space-y-2 max-h-96 overflow-y-auto mb-6'>
-            {allProducts.map(product => {
+            {order.map(product => {
               const isDisabled = product.changeStatus != null;
+              console.log('🚀 ~ Exchange ~ isDisabled:', isDisabled);
               return (
                 <div
                   key={`${product.orderId}-${product.id}`}
@@ -202,23 +214,23 @@ export default function Exchange() {
                       ? 'opacity-60 cursor-not-allowed bg-gray-300'
                       : ''
                   }`}
-                  onClick={() => handleProductSelect(product.id)}
+                  onClick={() => handleProductSelect(product.orderDetailId)}
                   aria-disabled={isDisabled}
                 >
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selectedProduct === product.id
+                      selectedProduct === product.orderDetailId
                         ? 'bg-primary-200 border-primary-200'
                         : 'border-gray-300'
                     } ${isDisabled ? 'opacity-50' : ''}`}
                   >
-                    {selectedProduct === product.id && (
+                    {selectedProduct === product.orderDetailId && (
                       <div className='w-2 h-2 bg-white rounded-full' />
                     )}
                   </div>
 
                   <img
-                    src={product.image}
+                    src={product.productImgUrl}
                     alt={product.name}
                     className='w-16 h-16 object-cover rounded-lg'
                   />
@@ -234,20 +246,17 @@ export default function Exchange() {
                         </span>
                       )}
                     </div>
-                    <p className='text-gray-600 text-sm mb-1 truncate max-w-[100px]'>
-                      옵션: {product.option}
+                    <p className='text-gray-600 text-sm mb-1 truncate max-w-[150px]'>
+                      옵션: {product.option1Name} / {product.option2Name}
                     </p>
                     <p className='text-gray-600 text-sm mb-1'>
                       수량: {product.quantity}개
-                    </p>
-                    <p className='text-gray-600 text-sm'>
-                      상태: {product.orderStatus}
                     </p>
                   </div>
 
                   <div className='text-right'>
                     <p className='font-semibold text-lg'>
-                      {Number(product.totalPrice ?? 0).toLocaleString()}원
+                      {Number(product.lineTotalPrice ?? 0).toLocaleString()}원
                     </p>
                   </div>
                 </div>

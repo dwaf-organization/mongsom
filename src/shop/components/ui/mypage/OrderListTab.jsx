@@ -15,7 +15,7 @@ export default function OrderListTab() {
   const [pagination, setPagination] = useState();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const page = parseInt(searchParams.get('page')) || 1;
+  const page = parseInt(searchParams.get('page')) || 0;
 
   const handleOrderDetail = orderId => {
     navigate(`/order-detail/${orderId}`);
@@ -32,7 +32,8 @@ export default function OrderListTab() {
     (async () => {
       try {
         setLoading(true);
-        const response = await getOrderList(userCode);
+        const response = await getOrderList(userCode, page);
+        console.log('🚀 ~ OrderListTab ~ page:', page);
         console.log('🚀 ~ OrderListTab ~ response:', response);
         const list = Array.isArray(response.orders) ? response.orders : [];
 
@@ -84,12 +85,13 @@ export default function OrderListTab() {
   return (
     <ul>
       {orderList.map(order => {
-        const name = order.productName || '-';
-        const option1Name = order.option1Name || '';
-        const option2Name = order.option2Name || '';
+        const name = order.productInfo.productName || '-';
+        const option1Name = order.productInfo.option1Name || '';
+        const option2Name = order.productInfo.option2Name || '';
         const optionText =
           [option1Name, option2Name].filter(Boolean).join(', ') || '-';
         const totalAmount = Number(order.finalPrice || 0);
+        const productImgUrl = order.productInfo.productImgUrl;
 
         return (
           <li key={order.orderId} className='border-b border-gray-400 py-4'>
@@ -108,7 +110,15 @@ export default function OrderListTab() {
               </div>
 
               <div className='flex items-start gap-4'>
-                <div className='w-[100px] h-[100px] rounded-lg bg-gray-100' />
+                {productImgUrl ? (
+                  <img
+                    src={productImgUrl}
+                    alt={name}
+                    className='w-[100px] h-[100px] object-cover rounded-lg'
+                  />
+                ) : (
+                  <div className='w-[100px] h-[100px] rounded-lg bg-gray-100' />
+                )}
 
                 <div className='flex-1'>
                   <p className='text-left text-sm text-gray-500'>
