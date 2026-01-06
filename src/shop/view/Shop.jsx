@@ -132,15 +132,24 @@ export default function Shop() {
                       to={`${routes.shopDetail}/${item.productId}`}
                     >
                       <li className='roudned-lg'>
-                        <ImageSkeleton
-                          src={item.mainImageUrl}
-                          alt={item.name}
-                          containerClassName='w-full h-[120px] md:max-w-[320px] md:h-[320px] rounded-lg'
-                          imgClassName='object-cover rounded-lg'
-                          skeletonClassName='rounded-lg'
-                          loading='eager'
-                          decoding='async'
-                        />
+                        <div className='relative'>
+                          <ImageSkeleton
+                            src={item.mainImageUrl}
+                            alt={item.name}
+                            containerClassName='w-full h-[120px] md:max-w-[320px] md:h-[320px] rounded-lg'
+                            imgClassName={`object-cover rounded-lg ${item.stockStatus === 0 ? 'opacity-60' : ''}`}
+                            skeletonClassName='rounded-lg'
+                            loading='eager'
+                            decoding='async'
+                          />
+                          {item.stockStatus === 0 && (
+                            <div className='absolute inset-0 flex items-center justify-center bg-black-50/50 rounded-lg'>
+                              <span className='text-white text-xs md:text-sm font-semibold px-3 py-1.5'>
+                                품절
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         <div className='p-2'>
                           {!item.discountPer && (
                             <div className='gap-2 md:hidden '>
@@ -169,7 +178,10 @@ export default function Shop() {
                                   {item.name}
                                 </p>
                                 <p className='line-through text-gray-500 whitespace-nowrap hidden md:block'>
-                                  {item.basePrice.toLocaleString()}원
+                                  {(
+                                    item.basePrice + item.salesMargin
+                                  ).toLocaleString()}
+                                  원
                                 </p>
                               </div>
                               <div className='flex justify-start md:justify-end gap-2'>

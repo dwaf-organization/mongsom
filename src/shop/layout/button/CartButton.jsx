@@ -72,12 +72,16 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
     try {
       const results = await Promise.all(
         selectedOptions.map(opt => {
+          // selectedInfos에서 option1, option2 추출
+          const optionIds = (opt.selectedInfos || []).map(
+            info => info.optionValueId,
+          );
           const payload = {
             userCode,
-            optId: Number(opt.value ?? opt.optId),
             productId,
+            option1: optionIds[0] ?? null,
+            option2: optionIds[1] ?? null,
             quantity: Number(opt.quantity) || 1,
-            checkStatus: 1,
           };
           return addCart(payload);
         }),

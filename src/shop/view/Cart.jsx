@@ -22,6 +22,17 @@ export default function Cart() {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchCart = async () => {
+    if (!userCode) return;
+    try {
+      const items = await getCart(userCode);
+      setCart(items.cartItems ?? []);
+    } catch (e) {
+      console.error(e);
+      setCart([]);
+    }
+  };
+
   useEffect(() => {
     let cancelled = false;
     if (!userCode) {
@@ -33,7 +44,7 @@ export default function Cart() {
       try {
         setLoading(true);
         const items = await getCart(userCode);
-        if (!cancelled) setCart(items);
+        if (!cancelled) setCart(items.cartItems ?? []);
       } catch (e) {
         console.error(e);
         if (!cancelled) setCart([]);
@@ -121,9 +132,10 @@ export default function Cart() {
       <AllCheckBoxSection
         allChecked={allChecked}
         onAllCheckChange={handleAllCheckChange}
+        refreshCart={fetchCart}
       />
 
-      <CartItemListSection cart={cart} updateCart={updateCart} />
+      <CartItemListSection cart={cart} updateCart={updateCart} refreshCart={fetchCart} />
 
       <CartPriceSummarySection cart={cart} />
 
