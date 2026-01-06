@@ -1,33 +1,61 @@
-import { deleteUser } from '../../../api/user';
-import { useToast } from '../../../context/ToastContext';
+import { useState } from 'react';
 import DeleteUserModal from '../../ui/DeleteUserModal';
 import { useModal } from '../../../context/ModalContext';
+import { Button } from '../../ui/button';
+import { chargeMileage } from '../../../api/user';
+import { useToast } from '../../../context/ToastContext';
 
 export default function UserTableSection({ userList }) {
   const { openModal } = useModal();
+  const [mileageInputs, setMileageInputs] = useState({});
+  const { addToast } = useToast();
 
   const handleDelete = async userCode => {
     openModal(<DeleteUserModal userCode={userCode} />);
-    // const res = await deleteUser(userCode);
-    // console.log('🚀 ~ handleDelete ~ res:', res);
-    // if (res.code === 1) {
-    //   addToast('회원이 삭제되었습니다.', 'success');
-    // } else {
-    //   addToast(res?.data || '회원 삭제에 실패했습니다.', 'error');
-    // }
+  };
+
+  const handleMileageChange = (userCode, value) => {
+    setMileageInputs(prev => ({
+      ...prev,
+      [userCode]: value,
+    }));
+  };
+
+  const handleChargeButton = async (e, userCode) => {
+    e.preventDefault();
+    const mileage = mileageInputs[userCode];
+    if (!mileage) return;
+
+    const response = await chargeMileage(userCode, Number(mileage));
+    addToast('마일리지가 충전되었습니다.', 'success');
+    console.log('🚀 ~ handleChargeButton ~ response:', response);
+
+    setMileageInputs(prev => ({
+      ...prev,
+      [userCode]: '',
+    }));
   };
 
   return (
     <section className='py-6'>
       <table className='w-full'>
-        <thead className='border-b border-gray-500'>
-          <tr className='text-center'>
-            <th>회원 코드</th>
-            <th>이름</th>
-            <th>아이디</th>
-            <th>전화번호</th>
-            <th>이메일</th>
-            <th>삭제</th>
+        <colgroup>
+          <col className='w-[10%]' />
+          <col className='w-[10%]' />
+          <col className='w-[10%]' />
+          <col className='w-[10%]' />
+          <col className='w-[30%]' />
+          <col className='w-[20%]' />
+        </colgroup>
+        <thead className='border-y border-gray-500'>
+          <tr className='text-center  '>
+            <th className='py-4'>회원 코드</th>
+            <th className='py-4'>이름</th>
+            <th className='py-4'>아이디</th>
+            <th className='py-4'>전화번호</th>
+            <th className='py-4'>이메일</th>
+            <th className='py-4'>마일리지</th>
+            <th className='py-4'>삭제</th>
           </tr>
         </thead>
         <tbody className='text-center'>
@@ -40,12 +68,37 @@ export default function UserTableSection({ userList }) {
               <td>{user.email}</td>
 
               <td className=' py-4'>
-                <button
-                  className='text-red-500'
+                <div>
+                  <p>보유마일리지: {user.mileage}</p>
+                </div>
+                <form
+                  className='flex items-center gap-2 justify-center mt-2'
+                  onSubmit={e => handleChargeButton(e, user.userCode)}
+                >
+                  <input
+                    type='number'
+                    className='border rounded border-gray-400 max-w-28 p-1'
+                    value={mileageInputs[user.userCode] || ''}
+                    onChange={e =>
+                      handleMileageChange(user.userCode, e.target.value)
+                    }
+                  />
+                  <Button
+                    type='submit'
+                    className='bg-primary-200 text-white text-sm w-fit'
+                  >
+                    충전
+                  </Button>
+                </form>
+              </td>
+
+              <td className=' py-4'>
+                <Button
+                  className='bg-red-100'
                   onClick={() => handleDelete(user.userCode)}
                 >
                   회원삭제
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

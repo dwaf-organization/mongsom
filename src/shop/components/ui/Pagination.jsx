@@ -12,15 +12,15 @@ export default function Pagination({
 
   const rawPage = Number(searchParams.get('page'));
   const currentPage =
-    propCurrentPage || (isNaN(rawPage) || rawPage < 1 ? 1 : rawPage);
+    propCurrentPage ?? (isNaN(rawPage) || rawPage < 0 ? 0 : rawPage);
 
   const GROUP_SIZE = 4;
-  const currentGroup = Math.floor((currentPage - 1) / GROUP_SIZE);
+  const currentGroup = Math.floor(currentPage / GROUP_SIZE);
 
   const getPageGroup = (currentPage, totalPage, groupSize) => {
-    const currentGroup = Math.floor((currentPage - 1) / groupSize);
-    const startPage = currentGroup * groupSize + 1;
-    const endPage = Math.min(startPage + groupSize - 1, totalPage);
+    const currentGroup = Math.floor(currentPage / groupSize);
+    const startPage = currentGroup * groupSize;
+    const endPage = Math.min(startPage + groupSize - 1, totalPage - 1);
 
     return Array.from(
       { length: endPage - startPage + 1 },
@@ -47,9 +47,9 @@ export default function Pagination({
             <button
               type='button'
               className='flex items-center justify-center hover:bg-gray-100 disabled:bg-gray-300 disabled:text-white disabled:cursor-not-allowed'
-              disabled={currentPage === 1}
+              disabled={currentPage === 0}
               onClick={() =>
-                handleChangePage(Math.max(1, currentGroup * GROUP_SIZE))
+                handleChangePage(Math.max(0, currentGroup * GROUP_SIZE - 1))
               }
             >
               <LeftChevron className='w-6 h-6' />
@@ -80,7 +80,7 @@ export default function Pagination({
               }`}
               onClick={() => handleChangePage(page)}
             >
-              {page}
+              {page + 1}
             </button>
           </li>
         ))}
@@ -93,11 +93,9 @@ export default function Pagination({
               disabled={!hasNextGroup}
               onClick={() => {
                 if (hasNextGroup) {
-                  handleChangePage(
-                    Math.ceil(currentPage / GROUP_SIZE) * GROUP_SIZE + 1,
-                  );
+                  handleChangePage((currentGroup + 1) * GROUP_SIZE);
                 } else {
-                  handleChangePage(totalPage);
+                  handleChangePage(totalPage - 1);
                 }
               }}
             >

@@ -74,3 +74,14 @@ export const cancelOrder = async data => {
   console.log('🚀 ~ cancelOrder ~ response:', response);
   return response.data;
 };
+
+export const getmileage = async userCode => {
+  const response = await fetchData.get(`api/v1/order/mileage/${userCode}`);
+  console.log('🚀 ~ getmileage ~ response:', response);
+  if (response.code === 1) {
+    return response.data;
+  }
+  if (response.code === -1) {
+    return response;
+  }
+};

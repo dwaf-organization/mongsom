@@ -88,6 +88,15 @@ export default function ShopDetail() {
   }, [id]);
 
   const imgs = useMemo(() => {
+    // 새로운 형식: productImages 배열 (각 항목에 productImgUrl)
+    const productImages = product?.productImages ?? [];
+    if (Array.isArray(productImages) && productImages.length > 0) {
+      return productImages
+        .map(it => it?.productImgUrl || '')
+        .filter(Boolean);
+    }
+
+    // 기존 형식 호환: productImgUrl
     const raw = product?.productImgUrl ?? [];
     let arr = [];
     if (Array.isArray(raw)) {

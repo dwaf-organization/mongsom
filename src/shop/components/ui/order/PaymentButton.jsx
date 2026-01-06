@@ -6,12 +6,15 @@ import {
   createPaymentData,
 } from '../../../utils/tossPayments';
 import { createOrder } from '../../../api/order';
+import { clearInstantPurchase } from '../../../utils/instantPurchase';
 
 export default function PaymentButton({
   selectedItems,
   customerInfo,
   disabled = false,
   deliveryPrice: deliveryPriceProp,
+  paymentMethod = 'card',
+  useMileage = 0,
 }) {
   console.log('🚀 ~ PaymentButton ~ selectedItems:', selectedItems);
   const { userCode } = useAuth();
@@ -22,32 +25,47 @@ export default function PaymentButton({
 
   const { totalPrice, totalDiscountPrice, deliveryPrice, finalPrice } =
     useMemo(() => {
-      const base = (selectedItems || []).reduce(
-        (acc, it) => {
-          const quantity = Number(it.quantity ?? 1);
-          const price = Number(it.price ?? 0);
-          const discountPrice = Number(
-            it.discountPrice ?? it.salePrice ?? it.price ?? 0,
-          );
-          acc.totalPrice += discountPrice * quantity;
-          acc.totalDiscountPrice +=
-            Math.max(0, price - discountPrice) * quantity;
-          return acc;
-        },
-        { totalPrice: 0, totalDiscountPrice: 0 },
+      const calcItemPrice = item => {
+        if (item.totalPrice !== undefined) {
+          return Number(item.totalPrice);
+        }
+        const unitPrice = Number(
+          item.unitPrice ?? item.discountPrice ?? item.price ?? 0,
+        );
+        return unitPrice * Number(item.quantity ?? 1);
+      };
+
+      const totalItemPrice = (selectedItems || []).reduce(
+        (sum, item) => sum + calcItemPrice(item),
+        0,
       );
-      const dp =
-        typeof deliveryPriceProp === 'number' ? deliveryPriceProp : 3000;
-      const finalP = base.totalPrice - base.totalDiscountPrice + dp;
-      console.log(
-        '🚀 ~ PaymentButton ~ base.totalDiscountPrice:',
-        base.totalDiscountPrice,
-      );
-      console.log('🚀 ~ PaymentButton ~ finalP:', finalP);
+
+      // 할인 금액 계산
+      const totalDiscount = (selectedItems || []).reduce((sum, item) => {
+        const quantity = Number(item.quantity ?? 1);
+        const basePrice = Number(item.basePrice ?? item.price ?? 0);
+        const discountPrice = Number(item.discountPrice ?? basePrice);
+        if (basePrice > discountPrice) {
+          return sum + (basePrice - discountPrice) * quantity;
+        }
+        return sum;
+      }, 0);
+
+      // 배송비 계산 (5만원 이상 무료)
+      const shippingFee =
+        totalItemPrice >= 50000 ? 0 : totalItemPrice > 0 ? 3000 : 0;
+
+      // 최종 금액 = 상품금액 + 배송비
+      const finalP = totalItemPrice + shippingFee;
+
+      console.log('🚀 ~ PaymentButton ~ totalItemPrice:', totalItemPrice);
+      console.log('🚀 ~ PaymentButton ~ shippingFee:', shippingFee);
+      console.log('🚀 ~ PaymentButton ~ finalPrice (before mileage):', finalP);
+
       return {
-        totalPrice: base.totalPrice,
-        totalDiscountPrice: base.totalDiscountPrice,
-        deliveryPrice: dp,
+        totalPrice: totalItemPrice,
+        totalDiscountPrice: totalDiscount,
+        deliveryPrice: shippingFee,
         finalPrice: finalP,
       };
     }, [selectedItems, deliveryPriceProp]);
@@ -82,22 +100,32 @@ export default function PaymentButton({
       totalPrice,
       deliveryPrice,
       totalDiscountPrice,
-      finalPrice,
+      finalPrice: finalPrice - useMileage,
+      usedMileage: useMileage,
+      paymentType: paymentMethod === 'ACCOUNT' ? 'ACCOUNT' : 'CARD',
 
-      // 결제 전 단계: 안전값으로 둔다
-      paymentAt: '2024-09-17T15:30:00',
-      paymentMethod: '카드',
-      paymentAmount: finalPrice,
-      paymentStatus: 'PAUSE',
-      paymentKey: 'toss_12345',
-      pgProvider: '토스페이먼츠',
+      orderDetails: (selectedItems || []).map(it => {
+        const quantity = Number(it.quantity ?? 1);
+        // basePrice는 할인 전 원가
+        const basePrice = Number(it.basePrice ?? it.price ?? 0);
+        // discountPrice는 할인된 판매가
+        const discountPrice = Number(it.discountPrice ?? basePrice);
+        const optionPrice = Number(it.optionPrice ?? 0);
+        // unitTotalPrice = 할인된 판매가 + 옵션가
+        const unitTotalPrice = discountPrice + optionPrice;
+        const lineTotalPrice = unitTotalPrice * quantity;
 
-      orderDetails: (selectedItems || []).map(it => ({
-        optId: it.optId ?? null,
-        productId: it.productId,
-        quantity: Number(it.quantity ?? 1),
-        price: Number(it.discountPrice ?? it.price ?? 0),
-      })),
+        return {
+          productId: it.productId,
+          option1: it.option1 ?? null,
+          option2: it.option2 ?? null,
+          quantity: quantity,
+          basePrice: basePrice,
+          optionPrice: optionPrice,
+          unitTotalPrice: unitTotalPrice,
+          lineTotalPrice: lineTotalPrice,
+        };
+      }),
     };
   };
 
@@ -115,8 +143,10 @@ export default function PaymentButton({
     if (disabled || !isOptionSelected) return alert('선택된 상품이 없습니다.');
     if (!userCode) return alert('로그인이 필요합니다.');
     if (!customerInfo?.name) return alert('고객 정보를 입력해주세요.');
-    if (!Number.isFinite(finalPrice) || finalPrice < 100)
-      return alert('결제 금액이 올바르지 않습니다. (최소 100원)');
+
+    const finalPaymentAmount = finalPrice - useMileage;
+    if (!Number.isFinite(finalPaymentAmount) || finalPaymentAmount < 100)
+      return alert('결제 금액이 100원 이상이어야 합니다.');
 
     try {
       setIsLoading(true);
@@ -130,9 +160,20 @@ export default function PaymentButton({
         throw new Error(msg);
       }
 
+      // 바로구매 데이터 삭제
+      clearInstantPurchase();
+
+      // 무통장입금: 결제 위젯 없이 주문 완료 페이지로 이동
+      if (paymentMethod === 'ACCOUNT') {
+        alert('주문이 완료되었습니다.\n입금 확인 후 배송이 진행됩니다.');
+        window.location.href = `/order/complete?orderId=${orderId}`;
+        return;
+      }
+
+      // 일반결제: 토스 결제 위젯 열기
       const paymentData = createPaymentData(selectedItems, customerInfo, {
         orderId,
-        amount: finalPrice,
+        amount: finalPrice - useMileage,
       });
 
       await openPaymentWidget(paymentData);

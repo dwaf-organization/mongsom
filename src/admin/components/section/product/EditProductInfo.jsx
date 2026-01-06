@@ -42,7 +42,7 @@ const defaultOptionTypes = [
     typeName: '',
     isRequired: 1,
     sortOrder: 1,
-    isDeleted: false,
+    isDeleted: 0,
     optionValues: [
       {
         optionValueId: null,
@@ -50,7 +50,7 @@ const defaultOptionTypes = [
         priceAdjustment: 0,
         stockStatus: 1,
         sortOrder: 1,
-        isDeleted: false,
+        isDeleted: 0,
       },
     ],
   },
@@ -59,7 +59,7 @@ const defaultOptionTypes = [
     typeName: '',
     isRequired: 1,
     sortOrder: 2,
-    isDeleted: false,
+    isDeleted: 0,
     optionValues: [
       {
         optionValueId: null,
@@ -67,7 +67,7 @@ const defaultOptionTypes = [
         priceAdjustment: 0,
         stockStatus: 1,
         sortOrder: 1,
-        isDeleted: false,
+        isDeleted: 0,
       },
     ],
   },
@@ -85,7 +85,7 @@ const normalizeOptionTypes = p => {
     typeName: type.typeName ?? '',
     isRequired: type.isRequired ?? 1,
     sortOrder: type.sortOrder ?? idx + 1,
-    isDeleted: false,
+    isDeleted: 0,
     optionValues: Array.isArray(type.optionValues)
       ? type.optionValues.map((val, valIdx) => ({
           optionValueId: val.optionValueId ?? null,
@@ -93,7 +93,7 @@ const normalizeOptionTypes = p => {
           priceAdjustment: val.priceAdjustment ?? 0,
           stockStatus: val.stockStatus ?? 1,
           sortOrder: val.sortOrder ?? valIdx + 1,
-          isDeleted: false,
+          isDeleted: 0,
         }))
       : [],
   }));
@@ -266,7 +266,7 @@ export default function EditProductInfoSection({ product }) {
               priceAdjustment: Number(inputValue.price) || 0,
               stockStatus: inputValue.isSoldOut ? 0 : 1,
               sortOrder: type.optionValues.length + 1,
-              isDeleted: false,
+              isDeleted: 0,
             },
           ],
         };
@@ -287,7 +287,7 @@ export default function EditProductInfoSection({ product }) {
         return {
           ...type,
           optionValues: type.optionValues.map((val, vi) =>
-            vi === valueIdx ? { ...val, isDeleted: true } : val,
+            vi === valueIdx ? { ...val, isDeleted: 1 } : val,
           ),
         };
       }),
@@ -395,13 +395,39 @@ export default function EditProductInfoSection({ product }) {
 
     const html = editorRef.current?.getHTML?.() ?? form.contents ?? '';
 
-    // optionTypes 구성 - hasOption이 false면 null 반환
+    // optionTypes 구성
     const buildOptionTypes = () => {
-      if (!hasOption) return null;
       if (!form.optionTypes || form.optionTypes.length === 0) return null;
 
+      // hasOption이 false면 기존에 있던 옵션들(optionTypeId가 있는)을 isDeleted: true로 전송
+      if (!hasOption) {
+        const existingTypes = form.optionTypes.filter(
+          type => type.optionTypeId !== null,
+        );
+        if (existingTypes.length === 0) return null;
+
+        return existingTypes.map(type => ({
+          optionTypeId: type.optionTypeId,
+          typeName: type.typeName,
+          isRequired: type.isRequired,
+          sortOrder: type.sortOrder,
+          isDeleted: 1,
+          optionValues: type.optionValues.map(val => ({
+            optionValueId: val.optionValueId ?? null,
+            valueName: val.valueName,
+            priceAdjustment: val.priceAdjustment,
+            stockStatus: val.stockStatus,
+            sortOrder: val.sortOrder,
+            isDeleted: 1,
+          })),
+        }));
+      }
+
+      // hasOption이 true인 경우 - 카테고리명이 있는 것만 필터링
       const filtered = form.optionTypes
-        .filter(type => type.typeName.trim() !== '')
+        .filter(
+          type => type.typeName.trim() !== '' || type.optionTypeId !== null,
+        )
         .map(type => ({
           optionTypeId: type.optionTypeId ?? null,
           typeName: type.typeName,
@@ -438,9 +464,12 @@ export default function EditProductInfoSection({ product }) {
 
     try {
       setSubmitting(true);
-      await updateProduct(form.productId, payload);
-      addToast('상품 수정이 완료되었습니다.', 'success');
-      navigate('/admin/products-list');
+      const response = await updateProduct(form.productId, payload);
+      console.log('🚀 ~ onSubmit ~ response:', response.code);
+      if (response.code === 1) {
+        addToast('상품 수정이 완료되었습니다.', 'success');
+        navigate('/admin/products-list');
+      }
     } catch (err) {
       console.error('❌ 상품 수정 실패:', err);
       addToast('상품 수정에 실패했습니다.', 'error');
@@ -654,17 +683,32 @@ export default function EditProductInfoSection({ product }) {
             onChange={e => {
               setHasOption(e.target.checked);
               if (e.target.checked) {
-                // 체크 시 원본 옵션 데이터 복원
+                // 체크 시 원본 옵션 데이터 복원 (isDeleted를 0으로 되돌림)
                 setForm(prev => ({
                   ...prev,
-                  optionTypes: originalOptionTypes,
+                  optionTypes: originalOptionTypes.map(type => ({
+                    ...type,
+                    isDeleted: 0,
+                    optionValues: type.optionValues.map(val => ({
+                      ...val,
+                      isDeleted: 0,
+                    })),
+                  })),
                 }));
               } else {
-                // 체크 해제 시 현재 옵션 데이터를 원본으로 저장 후 초기화
+                // 체크 해제 시 현재 옵션 데이터를 원본으로 저장하고
+                // 기존에 있던 옵션들(optionTypeId가 있는)은 isDeleted: 1로 마킹
                 setOriginalOptionTypes(form.optionTypes);
                 setForm(prev => ({
                   ...prev,
-                  optionTypes: defaultOptionTypes,
+                  optionTypes: prev.optionTypes.map(type => ({
+                    ...type,
+                    isDeleted: 1,
+                    optionValues: type.optionValues.map(val => ({
+                      ...val,
+                      isDeleted: 1,
+                    })),
+                  })),
                 }));
                 setNewOptionValues({});
                 setEditingOptionValues({});
@@ -761,7 +805,7 @@ export default function EditProductInfoSection({ product }) {
 
                 {/* 등록된 옵션값 목록 */}
                 {type.optionValues.map((val, valIdx) => {
-                  if (val.isDeleted) return null;
+                  if (val.isDeleted === 1) return null;
                   const editKey = `${typeIdx}-${valIdx}`;
                   const isEditing = !!editingOptionValues[editKey];
                   const editData = editingOptionValues[editKey];

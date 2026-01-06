@@ -19,3 +19,9 @@ export const getFirstThumb = order => {
     ? first.productImgUrls[0] || null
     : first.productImgUrls || null;
 };
+
+export const maskName = name => {
+  if (!name) return '';
+  if (name.length === 1) return name;
+  return name[0] + '*'.repeat(name.length - 1);
+};

@@ -4,6 +4,7 @@ import UserTableSection from '../components/section/userManagement/UserTableSect
 import Pagination from '../components/ui/Pagination';
 import { getUserList } from '../api/user';
 import { useSearchParams } from 'react-router-dom';
+import SearchForm from '../components/ui/SearchForm';
 
 export default function UserManagement() {
   const [searchParams] = useSearchParams();
@@ -28,6 +29,25 @@ export default function UserManagement() {
   return (
     <InnerPaddingSectionWrapper>
       <h2 className='text-2xl font-bold text-gray-900 mb-6'>회원관리</h2>
+
+      <section>
+        {' '}
+        <SearchForm submitButtonText='조회'>
+          <div className='grid grid-cols-[120px_1fr]'>
+            <div className='bg-primary-100 text-gray-900 font-semibold px-6 py-4 border-b'>
+              회원정보
+            </div>
+
+            <div className='p-4 border-b flex flex-wrap items-center gap-3'>
+              <input
+                placeholder='전화번호 또는 이름을 입력하세요'
+                name='name'
+                className='w-full border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+              />
+            </div>
+          </div>
+        </SearchForm>
+      </section>
       <UserTableSection userList={userList} />
       <Pagination totalPage={pagination} />
     </InnerPaddingSectionWrapper>

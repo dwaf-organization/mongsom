@@ -9,7 +9,11 @@ import {
 import { useToast } from '../../../context/ToastContext';
 import { useAuth } from '../../../context/AuthContext';
 
-export default function CartItemListSection({ cart = [], updateCart }) {
+export default function CartItemListSection({
+  cart = [],
+  updateCart,
+  refreshCart,
+}) {
   const { userCode } = useAuth();
   const { addToast } = useToast();
 
@@ -50,12 +54,11 @@ export default function CartItemListSection({ cart = [], updateCart }) {
     setPending(item.cartId, true);
 
     try {
-      const res = await updateCheckStatus({
-        userCode,
-        productId: item.productId,
-        optId: item.optId ?? null,
-      });
-      if (res?.code !== 1) {
+      const res = await updateCheckStatus(item.cartId);
+      if (res?.code === 1) {
+        // 성공 시 최신 데이터 재조회
+        if (refreshCart) await refreshCart();
+      } else {
         updateCart(prev);
         addToast(res?.message || '체크 상태 변경에 실패했습니다.', 'error');
       }
@@ -77,11 +80,7 @@ export default function CartItemListSection({ cart = [], updateCart }) {
     updateCart(prev.filter(i => i.cartId !== item.cartId));
 
     try {
-      const res = await deleteCart(
-        userCode,
-        item.productId,
-        item.optId ?? null,
-      );
+      const res = await deleteCart(item.cartId);
       if (res?.code === 1) {
         addToast('상품이 삭제되었습니다.', 'success');
       } else {
@@ -141,9 +140,7 @@ export default function CartItemListSection({ cart = [], updateCart }) {
 
     try {
       const res = await updateQuantity({
-        userCode,
-        productId: item.productId,
-        optId: item.optId ?? null,
+        cartId: item.cartId,
         quantity: newQty,
       });
 
@@ -154,6 +151,7 @@ export default function CartItemListSection({ cart = [], updateCart }) {
           delete copy[item.cartId];
           return copy;
         });
+        if (refreshCart) await refreshCart();
       } else {
         updateOne(item.cartId, { quantity: prevQty });
         addToast(res?.message || '수량 변경에 실패했습니다.', 'error');
@@ -167,23 +165,48 @@ export default function CartItemListSection({ cart = [], updateCart }) {
   };
 
   const calcTotalPrice = item => {
-    const unit = Number(item.discountPrice ?? item.price ?? 0);
+    // 새 API에서는 totalPrice를 직접 제공
+    if (item.totalPrice !== undefined) {
+      return Number(item.totalPrice);
+    }
+    const unit = Number(
+      item.unitPrice ?? item.discountPrice ?? item.price ?? 0,
+    );
     return unit * Number(item.quantity ?? 1);
+  };
+
+  const formatOptionText = item => {
+    if (item.selectedOptions && item.selectedOptions.length > 0) {
+      return item.selectedOptions
+        .map(opt => `${opt.optionTypeName}: ${opt.optionValueName}`)
+        .join(', ');
+    }
+    return item.optName ?? '';
   };
 
   return (
     <>
       <ul className='flex flex-col items-start justify-start gap-4 w-full border-b border-gray-500 pb-10 mb-4'>
         {cart.map(item => {
-          const hasDiscount = Number(item.discountPer ?? 0) > 0;
-          const basePrice =
-            Number(item.price ?? 0) + Number(item.salesMargin ?? 0);
+          // 새 API: basePrice와 unitPrice 비교로 할인 여부 판단
+          const hasDiscount =
+            Number(item.discountPer ?? 0) > 0 ||
+            (item.basePrice !== undefined &&
+              item.unitPrice !== undefined &&
+              Number(item.basePrice) > Number(item.unitPrice));
 
-          const imgSrc = Array.isArray(item.productImgUrl)
-            ? item.productImgUrl[0]
-            : Array.isArray(item.productImgUrls)
-              ? item.productImgUrls[0]
-              : '';
+          // 새 API는 basePrice 직접 제공, 기존 API는 price + salesMargin
+          const basePrice =
+            item.basePrice !== undefined
+              ? Number(item.basePrice)
+              : Number(item.price ?? 0) + Number(item.salesMargin ?? 0);
+
+          // 단가: 새 API는 unitPrice, 기존 API는 discountPrice
+          const unitPrice = Number(
+            item.unitPrice ?? item.discountPrice ?? basePrice,
+          );
+
+          const imgSrc = item.mainImageUrl;
 
           const busy = pendingIds.has(item.cartId);
 
@@ -209,12 +232,12 @@ export default function CartItemListSection({ cart = [], updateCart }) {
 
               <div className='flex flex-col items-start gap-2 md:px-6 w-full'>
                 <div className='flex justify-between gap-2 w-full'>
-                  <p className='md:text-xl font-semibold whitespace-nowrap truncate max-w-[8rem] md:max-w-[500px]'>
+                  <p className=' font-semibold whitespace-nowrap truncate max-w-[8rem] md:max-w-[500px]'>
                     {item.productName}
                   </p>
                   <div className='flex items-center gap-2'>
                     <button
-                      className='text-pretendart text-sm md:text-base text-gray-500 disabled:opacity-50 whitespace-nowrap'
+                      className='text-pretendart text-sm text-gray-500 disabled:opacity-50 whitespace-nowrap'
                       onClick={() => handleDelete(item)}
                       disabled={busy}
                     >
@@ -222,38 +245,84 @@ export default function CartItemListSection({ cart = [], updateCart }) {
                     </button>
                     <CheckBox
                       id={`checkbox-${item.cartId}`}
-                      checked={Boolean(item.checkStatus)}
+                      checked={Boolean(item.checked ?? item.checkStatus)}
                       disabled={busy}
                       onChange={v => handleCheckboxChange(item, v)}
                     />
                   </div>
                 </div>
 
-                <div className='flex items-center gap-2'>
-                  <p className='text-pretendart border-r border-gray-500 pr-2 text-gray-500 leading-none'>
-                    옵션
-                  </p>
-                  <p className='text-pretendart text-gray-600 truncate max-w-[400px]'>
-                    {item.optName ?? ''}
-                  </p>
-                </div>
-
-                {hasDiscount ? (
-                  <div className='flex items-center gap-2'>
-                    <p className='text-pretendart text-primary-200 font-semibold'>
-                      {item.discountPer}%
+                {formatOptionText(item) && (
+                  <div className='flex items-center gap-2 text-sm'>
+                    <p className='text-pretendart border-r border-gray-500 pr-2 text-gray-500 leading-none'>
+                      옵션
                     </p>
-                    <p className='text-pretendart text-gray-500 line-through'>
-                      {Number(basePrice).toLocaleString()} 원
+                    <p className='text-pretendart text-gray-600 truncate max-w-[400px]'>
+                      {formatOptionText(item)}
+                      {item.optionPrice !== undefined &&
+                        item.optionPrice !== 0 && (
+                          <span
+                            className={
+                              item.optionPrice > 0
+                                ? 'text-primary-200 ml-1'
+                                : 'text-blue-500 ml-1'
+                            }
+                          >
+                            ({item.optionPrice > 0 ? '+' : ''}
+                            {Number(item.optionPrice).toLocaleString()}원)
+                          </span>
+                        )}
                     </p>
                   </div>
-                ) : (
-                  <p>
-                    {Number(item.discountPrice ?? basePrice).toLocaleString()}원
-                  </p>
                 )}
 
-                <p className='text-pretendart font-semibold text-xl'>
+                {hasDiscount ? (
+                  <div className='flex flex-col gap-1 text-sm'>
+                    <div className='flex items-center gap-2'>
+                      {item.discountPer && (
+                        <p className='text-pretendart text-primary-200 font-semibold'>
+                          {item.discountPer}%
+                        </p>
+                      )}
+                      <p className='text-pretendart text-gray-500 line-through'>
+                        {(basePrice + item.salesMargin).toLocaleString()}원
+                      </p>
+                      <p className='text-pretendart'>
+                        {Number(
+                          item.discountPrice ?? basePrice,
+                        ).toLocaleString()}
+                        원
+                      </p>
+                    </div>
+                    {item.optionPrice !== undefined &&
+                      item.optionPrice !== 0 && (
+                        <p className='text-pretendart text-gray-600'>
+                          옵션 적용가: {unitPrice.toLocaleString()}원
+                        </p>
+                      )}
+                  </div>
+                ) : (
+                  <div className='flex flex-col gap-1 text-sm'>
+                    {item.optionPrice !== undefined &&
+                    item.optionPrice !== 0 ? (
+                      <>
+                        <p className='text-pretendart text-gray-500'>
+                          {Number(
+                            item.discountPrice ?? basePrice,
+                          ).toLocaleString()}
+                          원
+                        </p>
+                        <p className='text-pretendart'>
+                          옵션 적용가: {unitPrice.toLocaleString()}원
+                        </p>
+                      </>
+                    ) : (
+                      <p>{unitPrice.toLocaleString()}원</p>
+                    )}
+                  </div>
+                )}
+
+                <p className='text-pretendart font-semibold'>
                   {calcTotalPrice(item).toLocaleString()}원
                 </p>
 

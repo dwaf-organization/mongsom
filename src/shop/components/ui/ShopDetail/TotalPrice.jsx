@@ -1,6 +1,8 @@
 export default function TotalPrice({ totalPrice, shippingFee = 3000 }) {
-  // 5만원 미만일 때만 배송비 추가
-  const actualShippingFee = 3000;
+  // 5만원 이상이면 배송비 무료
+  const FREE_SHIPPING_THRESHOLD = 50000;
+  const actualShippingFee =
+    totalPrice >= FREE_SHIPPING_THRESHOLD ? 0 : shippingFee;
   const finalTotal = totalPrice + actualShippingFee;
 
   return (
@@ -15,7 +17,11 @@ export default function TotalPrice({ totalPrice, shippingFee = 3000 }) {
       <div className='flex justify-between items-center'>
         <span className='text-gray-600'>배송비</span>
         <span className='text-gray-900 font-semibold'>
-          {actualShippingFee.toLocaleString()}원
+          {actualShippingFee === 0 ? (
+            <span className='text-primary-600'>0원</span>
+          ) : (
+            `${actualShippingFee.toLocaleString()}원`
+          )}
         </span>
       </div>
 
