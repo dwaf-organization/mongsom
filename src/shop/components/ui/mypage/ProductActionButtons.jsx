@@ -13,6 +13,7 @@ export default function ProductActionButtons({
   deliveryStatus,
   orderStatus,
 }) {
+  console.log('🚀 ~ ProductActionButtons ~ changeStatus:', changeStatus);
   console.log('🚀 ~ ProductActionButtons ~ deliveryStatus:', deliveryStatus);
 
   const navigate = useNavigate();
@@ -30,8 +31,8 @@ export default function ProductActionButtons({
       ? [Number(orderStatus)].filter(v => !Number.isNaN(v))
       : [];
 
-  const hasExchangeCancel = statuses.includes(1);
-  const hasReturnCancel = statuses.includes(2);
+  const hasExchangeCancel = changeStatus.includes('교환신청');
+  const hasReturnCancel = changeStatus.includes('반품신청');
   const hasAnyChange = hasExchangeCancel || hasReturnCancel;
 
   const isPreShipping =
@@ -62,8 +63,15 @@ export default function ProductActionButtons({
     openModal(<ExchangeCancelModal orderDetailId={odid} orderId={orderId} />);
 
   return (
-    <div className='flex flex-col text-sm gap-2'>
-      <p className='text-right text-gray-500'>{deliveryStatus}</p>
+    <div className='flex flex-col text-xs gap-2'>
+      {changeStatus == null ||
+      changeStatus === '' ||
+      changeStatus === undefined ||
+      changeStatus.length === 0 ? (
+        <p className='text-right text-gray-500'>{deliveryStatus}</p>
+      ) : (
+        <p className='text-right text-gray-500'>{changeStatus}</p>
+      )}
       {/* 결제 대기 상태가 아닐 때만 배송조회 버튼 표시 */}
       {!isNotDelivered && (
         <button
@@ -103,14 +111,12 @@ export default function ProductActionButtons({
       {/* 리뷰 작성 버튼 - 배송완료 상태일 때만 표시 */}
       {deliveryStatus === '배송완료' && (
         <button
-          className='border border-gray-500 text-sm md:base whitespace-nowrap text-gray-50 rounded-lg px-2 md:px-6 py-2'
+          className='border border-gray-500 md:base whitespace-nowrap text-gray-50 rounded-lg px-2 md:px-6 py-2'
           onClick={handleReview}
         >
           리뷰 작성하기
         </button>
       )}
-
-      <button className='text-xs text-right'>주문취소</button>
     </div>
   );
 }

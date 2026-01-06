@@ -64,10 +64,12 @@ export default function OrderDetailProductInfoSection({ order }) {
         return (
           <li
             key={d.orderDetailId ?? `${d.productId}-${d.optId ?? '0'}`}
-            className='border border-gray-400 rounded-xl px-4 py-6 flex items-start justify-between'
+            className='border border-gray-400 rounded-xl px-4 py-4 flex items-start justify-between'
           >
             <div className='flex flex-col gap-4'>
-              <p className='text-gray-500 text-left'>주문번호 : {orderNo}</p>
+              <p className='text-gray-500 text-sm text-left'>
+                주문번호 : {orderNo}
+              </p>
 
               <button
                 className='flex items-start gap-4'
@@ -77,10 +79,10 @@ export default function OrderDetailProductInfoSection({ order }) {
                   <img
                     src={d.productImgUrl}
                     alt={name}
-                    className='w-[80px] h-[80px] object-cover rounded-lg'
+                    className='w-[100px] h-[100px] object-cover rounded-lg'
                   />
                 ) : (
-                  <div className='w-[80px] h-[80px] rounded-lg bg-gray-100' />
+                  <div className='w-[100px] h-[100px] rounded-lg bg-gray-100' />
                 )}
 
                 <div className='flex-1'>

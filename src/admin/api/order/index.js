@@ -60,3 +60,16 @@ export const cancelOrder = async data => {
   });
   return response;
 };
+
+export const DownLoadExcel = async deliveryStatus => {
+  const qs = new URLSearchParams();
+  if (deliveryStatus) qs.set('deliveryStatus', String(deliveryStatus).trim());
+
+  const url = `api/v1/admin/export/orders/excel?${qs.toString()}`;
+  console.log('🚀 ~ DownLoadExcel ~ url:', url);
+  const response = await fetchData.get(url, {
+    responseType: 'blob',
+  });
+  console.log('🚀 ~ DownLoadExcel ~ response:', response);
+  return response;
+};

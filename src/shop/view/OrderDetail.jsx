@@ -6,6 +6,7 @@ import OrderDetailProductInfoSection from '../components/section/mypage/OrderDet
 import RecipientInfoSection from '../components/section/mypage/RecipientInfoSection';
 import PaymentInfoSection from '../components/section/mypage/PaymentInfoSection';
 import { getOrderDetail } from '../api/order';
+import OrderCancelButton from '../components/ui/OrderCancelButton';
 import BackButton from '../components/ui/BackButton';
 
 export default function OrderDetail() {
@@ -54,6 +55,12 @@ export default function OrderDetail() {
           <OrderDetailProductInfoSection order={order} />
           <RecipientInfoSection order={order} />
           <PaymentInfoSection order={order} />
+          <div className='flex justify-end mt-6 mb-10 '>
+            <OrderCancelButton
+              orderId={order?.orderInfo.orderId}
+              deliveryStatus={order?.orderInfo.deliveryStatus}
+            />
+          </div>
         </>
       )}
     </InnerPaddingSectionWrapper>

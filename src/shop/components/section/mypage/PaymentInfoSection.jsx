@@ -37,7 +37,7 @@ export default function PaymentInfoSection({ order }) {
       </div>
 
       <section className='grid grid-cols-6 items-center border-y border-gray-500 my-6 py-6'>
-        <p className='text-lg font-semibold text-left'>결제 금액</p>
+        <p className='text-lg font-semibold text-left px-4'>결제 금액</p>
         <p className='font-semibold text-right px-4'>
           {order.paymentInfo.paymentAmount?.toLocaleString()}원
         </p>

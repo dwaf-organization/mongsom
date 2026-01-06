@@ -61,43 +61,47 @@ export default function Exchange() {
 
   console.log('🚀 ~ Exchange ~ order1234:', order);
 
-  const allProducts = useMemo(() => {
-    if (!order) return [];
-    const details = Array.isArray(order.details) ? order.details : [];
-    return details.map(d => {
-      const firstImg = Array.isArray(d.productImgUrls)
-        ? d.productImgUrls.find(
-            u => typeof u === 'string' && u.startsWith('http'),
-          ) || ''
-        : '';
-      return {
-        id:
-          d.orderDetailId ??
-          d.id ??
-          `${order.orderId ?? order.id}-${d.productId ?? 'p'}`,
-        orderDetailId: d.orderDetailId ?? d.id ?? null,
-        image: firstImg,
-        name: d.productName ?? d.name ?? '',
-        option: d.optName ?? d.option ?? '',
-        quantity: d.quantity ?? 1,
-        totalPrice:
-          typeof d.price === 'number' ? d.price : (order.finalPrice ?? 0),
-        changeStatus: d.changeStatus ?? null,
-        orderId: order.orderId ?? order.id,
-        orderNumber: order.orderNumber ?? order.orderId,
-        orderDate: order.paymentAt ?? order.orderDate,
-        orderStatus: order.deliveryStatus ?? order.status,
-      };
-    });
-  }, [order]);
+  // const allProducts = useMemo(() => {
+  //   if (!order) return [];
+  //   const details = Array.isArray(order.details) ? order.details : [];
+  //   return details.map(d => {
+  //     const firstImg = Array.isArray(d.productImgUrls)
+  //       ? d.productImgUrls.find(
+  //           u => typeof u === 'string' && u.startsWith('http'),
+  //         ) || ''
+  //       : '';
+  //     return {
+  //       id:
+  //         d.orderDetailId ??
+  //         d.id ??
+  //         `${order.orderId ?? order.id}-${d.productId ?? 'p'}`,
+  //       orderDetailId: d.orderDetailId ?? d.id ?? null,
+  //       image: firstImg,
+  //       name: d.productName ?? d.name ?? '',
+  //       option: d.optName ?? d.option ?? '',
+  //       quantity: d.quantity ?? 1,
+  //       totalPrice:
+  //         typeof d.price === 'number' ? d.price : (order.finalPrice ?? 0),
+  //       changeStatus: d.changeStatus ?? null,
+  //       orderId: order.orderId ?? order.id,
+  //       orderNumber: order.orderNumber ?? order.orderId,
+  //       orderDate: order.paymentAt ?? order.orderDate,
+  //       orderStatus: order.deliveryStatus ?? order.status,
+  //     };
+  //   });
+  // }, [order]);
 
   const handleProductSelect = productId => {
-    const target = allProducts.find(p => p.id === productId);
+    console.log('🚀 ~ handleProductSelect called with:', productId);
+    const target = order.find(p => p.orderDetailId === productId);
+    console.log('🚀 ~ handleProductSelect ~ target:', target);
     if (!target) return;
-    const isDisabled = target.changeStatus != null;
+    const isDisabled = target.changeStatus !== null;
+    console.log('🚀 ~ Exchange ~ target.changeStatus:', target.changeStatus);
     console.log('🚀 ~ Exchange ~ isDisabled:', isDisabled);
     if (isDisabled) return;
     setSelectedProduct(productId);
+    console.log('🚀 ~ selectedProduct set to:', productId);
   };
 
   const handleSubmit = async () => {
@@ -122,7 +126,7 @@ export default function Exchange() {
       }
     }
 
-    const target = allProducts.find(p => p.id === selectedProduct);
+    const target = order.find(p => p.orderDetailId === selectedProduct);
     if (!target) {
       addToast('선택한 상품 정보를 찾을 수 없습니다.');
       return;
@@ -133,29 +137,39 @@ export default function Exchange() {
     }
 
     // ✅ contents 조합: 사유 + (반품이면) 은행/계좌 문구 추가
-    const contents =
+    const reason =
       exchangeType === 'return'
         ? `${exchangeReason.trim()}\n[환불 계좌]\n- 은행: ${refundBank.trim()}\n- 계좌: ${refundAccount.trim()}`
         : exchangeReason.trim();
 
     const payloadBase = {
       orderDetailId: target.orderDetailId ?? selectedProduct,
-      orderId,
-      contents,
+      reason,
       userCode,
     };
 
     try {
       if (exchangeType === 'exchange') {
-        const payload = { ...payloadBase, changeStatus: 1 };
+        const payload = {
+          ...payloadBase,
+          changeType: '교환',
+          refundBanck: null,
+          refundAccount: null,
+        };
         const res = await exchangeOrder(payload);
+        console.log('🚀 ~ handleSubmit ~ res:', res);
         if (res?.code === 1) {
           addToast('교환 신청이 완료되었습니다.');
           navigate(-1);
           return;
         }
       } else {
-        const payload = { ...payloadBase, changeStatus: 2 };
+        const payload = {
+          ...payloadBase,
+          changeType: '반품',
+          refundBanck: refundBank.trim(),
+          refundAccount: refundAccount.trim(),
+        };
         const res = await exchangeOrder(payload);
         if (res?.code === 1) {
           addToast('반품 신청이 완료되었습니다.');
@@ -204,17 +218,30 @@ export default function Exchange() {
 
           <div className='space-y-2 max-h-96 overflow-y-auto mb-6'>
             {order.map(product => {
-              const isDisabled = product.changeStatus != null;
+              const isDisabled = product.changeStatus !== null;
+              console.log(
+                '🚀 ~ Exchange ~ product.changeStatus:',
+                product.changeStatus,
+              );
               console.log('🚀 ~ Exchange ~ isDisabled:', isDisabled);
               return (
                 <div
-                  key={`${product.orderId}-${product.id}`}
+                  key={`${product.orderId}-${product.orderDetailId}`}
                   className={`flex items-center gap-4 md:p-4 cursor-pointer transition-colors rounded-lg ${
                     isDisabled
                       ? 'opacity-60 cursor-not-allowed bg-gray-300'
                       : ''
                   }`}
-                  onClick={() => handleProductSelect(product.orderDetailId)}
+                  onClick={() => {
+                    console.log(
+                      '🚀 ~ onClick triggered for:',
+                      product.orderDetailId,
+                    );
+                    console.log('🚀 ~ onClick isDisabled:', isDisabled);
+                    if (!isDisabled) {
+                      handleProductSelect(product.orderDetailId);
+                    }
+                  }}
                   aria-disabled={isDisabled}
                 >
                   <div
