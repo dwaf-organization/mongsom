@@ -8,15 +8,15 @@ const OrderStatusSelect = ({ value, onChange, name = 'status' }) => {
         value={value}
       >
         <option value='' className='text-gray-500'>
-          전체 주문 상태
+          전체
         </option>
-        <option value='결제 대기' className='text-gray-700'>
-          결제 대기
+        <option value='결제대기' className='text-gray-700'>
+          결제대기
         </option>
         <option value='결제완료' className='text-gray-700'>
           결제완료
         </option>
-        <option value='상품 준비중' className='text-gray-700'>
+        <option value='상품준비중' className='text-gray-700'>
           상품 준비중
         </option>
         <option value='배송중' className='text-gray-700'>
@@ -25,7 +25,7 @@ const OrderStatusSelect = ({ value, onChange, name = 'status' }) => {
         <option value='배송완료' className='text-gray-700'>
           배송완료
         </option>
-        <option value='주문 취소' className='text-gray-700'>
+        <option value='주문취소' className='text-gray-700'>
           주문 취소
         </option>
       </select>

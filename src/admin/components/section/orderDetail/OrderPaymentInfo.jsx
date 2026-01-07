@@ -1,4 +1,4 @@
-import { formatDate } from '../../../utils/dateUtils';
+import { formatDate, formatDateTime } from '../../../utils/dateUtils';
 
 export default function OrderPaymentInfo({ order }) {
   if (!order) {
@@ -7,17 +7,34 @@ export default function OrderPaymentInfo({ order }) {
     );
   }
 
+  const { paymentInfo } = order;
+
   const fmtPrice = n =>
     typeof n === 'number' ? n.toLocaleString() + '원' : (n ?? '').toString();
 
   const rows = [
-    { label: '결제 수단', value: order.paymentMethod },
-    { label: '결제 일자', value: formatDate(order.paymentAt) },
+    { label: '결제 방법', value: paymentInfo?.deliveryStatusReason || '-' },
+    { label: '결제 수단', value: paymentInfo?.paymentMethod || '무통장 입금' },
+    { label: '결제 상태', value: paymentInfo?.paymentStatus || '-' },
     {
-      label: '주문 상태',
-      value: order.changeState === 0 ? '결제 완료' : '기타',
+      label: '총 상품 금액',
+      value: fmtPrice(
+        order?.orderItems?.reduce((acc, item) => acc + item.lineTotalPrice, 0),
+      ),
     },
-    { label: '총 결제 금액', value: fmtPrice(order.finalPrice) },
+    {
+      label: '마일리지 할인',
+      value: '-' + fmtPrice(paymentInfo?.usedMileage),
+    },
+    {
+      label: '배송비',
+      value: fmtPrice(paymentInfo?.deliveryPrice),
+    },
+    { label: '총 결제 금액', value: fmtPrice(paymentInfo?.finalPrice) },
+    {
+      label: '결제 일시',
+      value: formatDateTime(paymentInfo?.paymentCreatedAt),
+    },
   ];
 
   return (

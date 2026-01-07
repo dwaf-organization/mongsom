@@ -5,11 +5,24 @@ export default function OrderReceivedInfo({ order }) {
     );
   }
 
+  const { deliveryInfo } = order;
+
+  const fullAddress = [
+    deliveryInfo?.receivedUserAddress,
+    deliveryInfo?.receivedUserAddress2,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   const rows = [
-    { label: '받는 사람', value: order.receivedUserName },
-    { label: '연락처', value: order.receivedUserPhone },
-    { label: '주소', value: order.receivedUserAddress },
-    { label: '배송 메시지', value: order.message },
+    { label: '받는 사람', value: deliveryInfo?.receivedUserName || '-' },
+    { label: '연락처', value: deliveryInfo?.receivedUserPhone || '-' },
+    {
+      label: '우편번호',
+      value: deliveryInfo?.receivedUserZipCode || '-',
+    },
+    { label: '주소', value: fullAddress || '-' },
+    { label: '배송 메시지', value: deliveryInfo?.message || '-' },
   ];
 
   return (

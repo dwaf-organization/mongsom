@@ -22,10 +22,7 @@ const isTrivialDefault = (vals, today) => {
   const sameAsToday =
     vals.startDate === today &&
     vals.endDate === today &&
-    (vals.orderId ?? '') === '' &&
-    (vals.invoiceNum ?? '') === '' &&
-    (vals.receivedUserPhone ?? '') === '' &&
-    (vals.receivedUserName ?? '') === '' &&
+    vals.searchKeyword === '' &&
     (vals.deliveryStatus ?? '') === '';
   return !!sameAsToday;
 };
@@ -39,12 +36,7 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
     return {
       startDate: useParent ? defaultValues.startDate : monthAgo,
       endDate: useParent ? defaultValues.endDate : today,
-      orderId: useParent ? (defaultValues.orderId ?? '') : '',
-      invoiceNum: useParent ? (defaultValues.invoiceNum ?? '') : '',
-      receivedUserPhone: useParent
-        ? (defaultValues.receivedUserPhone ?? '')
-        : '',
-      receivedUserName: useParent ? (defaultValues.receivedUserName ?? '') : '',
+      searchKeyword: useParent ? (defaultValues.searchKeyword ?? '') : '',
       deliveryStatus: useParent ? (defaultValues.deliveryStatus ?? '') : '',
     };
   });
@@ -59,20 +51,10 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
           : prev.startDate,
       endDate:
         defaultValues.endDate != null ? defaultValues.endDate : prev.endDate,
-      orderId:
-        defaultValues.orderId != null ? defaultValues.orderId : prev.orderId,
-      invoiceNum:
-        defaultValues.invoiceNum != null
-          ? defaultValues.invoiceNum
-          : prev.invoiceNum,
-      receivedUserPhone:
-        defaultValues.receivedUserPhone != null
-          ? defaultValues.receivedUserPhone
-          : prev.receivedUserPhone,
-      receivedUserName:
-        defaultValues.receivedUserName != null
-          ? defaultValues.receivedUserName
-          : prev.receivedUserName,
+      searchKeyword:
+        defaultValues.searchKeyword != null
+          ? defaultValues.searchKeyword
+          : prev.searchKeyword,
       deliveryStatus:
         defaultValues.deliveryStatus != null
           ? defaultValues.deliveryStatus
@@ -84,10 +66,7 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
     if (input.startDate > input.endDate) return;
     onSearch?.({
       ...input,
-      orderId: input.orderId.trim(),
-      invoiceNum: input.invoiceNum.trim(),
-      receivedUserPhone: input.receivedUserPhone.trim(),
-      receivedUserName: input.receivedUserName.trim(),
+      searchKeyword: input.searchKeyword.trim(),
     });
   };
 
@@ -100,6 +79,17 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
       }
       return next;
     });
+  };
+
+  const handlePeriodClick = days => {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(end.getDate() - days);
+    setInput(prev => ({
+      ...prev,
+      startDate: toISODate(start),
+      endDate: toISODate(end),
+    }));
   };
 
   return (
@@ -135,6 +125,27 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
             onChange={inputChange}
             min={input.startDate}
           />
+          <button
+            type='button'
+            className='h-10 px-4 rounded-md border text-sm hover:bg-gray-100'
+            onClick={() => handlePeriodClick(1)}
+          >
+            1일
+          </button>
+          <button
+            type='button'
+            className='h-10 px-4 rounded-md border text-sm hover:bg-gray-100'
+            onClick={() => handlePeriodClick(7)}
+          >
+            7일
+          </button>
+          <button
+            type='button'
+            className='h-10 px-4 rounded-md border text-sm hover:bg-gray-100'
+            onClick={() => handlePeriodClick(30)}
+          >
+            30일
+          </button>
         </div>
       </div>
 
@@ -144,79 +155,19 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
         </div>
 
         <div className='p-4'>
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-            <div>
-              <label
-                htmlFor='orderId'
-                className='block text-sm font-medium text-gray-700 mb-1'
-              >
-                주문번호
-              </label>
-              <input
-                id='orderId'
-                type='text'
-                name='orderId'
-                placeholder='주문번호를 입력하세요'
-                className='w-full h-10 rounded-md border px-3 text-sm placeholder:text-gray-400 focus:outline-primary-200'
-                onChange={inputChange}
-                value={input.orderId}
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor='invoiceNum'
-                className='block text-sm font-medium text-gray-700 mb-1'
-              >
-                송장번호
-              </label>
-              <input
-                id='invoiceNum'
-                type='text'
-                name='invoiceNum'
-                placeholder='송장번호를 입력하세요'
-                className='w-full h-10 rounded-md border px-3 text-sm placeholder:text-gray-400 focus:outline-primary-200'
-                onChange={inputChange}
-                value={input.invoiceNum}
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor='receivedUserPhone'
-                className='block text-sm font-medium text-gray-700 mb-1'
-              >
-                전화번호
-              </label>
-              <input
-                id='receivedUserPhone'
-                type='text'
-                name='receivedUserPhone'
-                placeholder='전화번호를 입력하세요'
-                className='w-full h-10 rounded-md border px-3 text-sm placeholder:text-gray-400 focus:outline-primary-200'
-                onChange={inputChange}
-                value={input.receivedUserPhone}
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor='receivedUserName'
-                className='block text-sm font-medium text-gray-700 mb-1'
-              >
-                이름
-              </label>
-              <input
-                id='receivedUserName'
-                type='text'
-                name='receivedUserName'
-                placeholder='이름을 입력하세요'
-                className='w-full h-10 rounded-md border px-3 text-sm placeholder:text-gray-400 focus:outline-primary-200'
-                onChange={inputChange}
-                value={input.receivedUserName}
-              />
-            </div>
-          </div>
+          <label
+            htmlFor='searchKeyword'
+            className='block text-sm font-medium text-gray-700 mb-1'
+          ></label>
+          <input
+            id='searchKeyword'
+            type='text'
+            name='searchKeyword'
+            placeholder='주문번호/ 송장번호/전화번호/이름으로 검색'
+            className='w-full h-10 rounded-md border px-3 text-sm placeholder:text-gray-400 focus:outline-primary-200'
+            onChange={inputChange}
+            value={input.searchKeyword}
+          />
         </div>
       </div>
       <div className='grid grid-cols-[120px_1fr] border-t'>

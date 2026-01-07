@@ -7,22 +7,19 @@ export default function OrderInfo({ order }) {
     );
   }
 
+  const { orderInfo, paymentInfo } = order;
+
   const fmtPrice = n =>
     typeof n === 'number' ? n.toLocaleString() + '원' : (n ?? '').toString();
 
-  const shippingFee = 3000;
-
   const rows = [
-    { label: '주문 번호', value: order.orderId },
-    { label: '주문 일자', value: formatDate(order.paymentAt) },
-    {
-      label: '주문 상태',
-      value: order.changeState === 0 ? '결제 완료' : '기타',
-    },
-    { label: '결제 수단', value: order.paymentMethod || '-' },
-    { label: '총 상품 금액', value: fmtPrice(order.finalPrice) },
-    { label: '배송비', value: fmtPrice(shippingFee) },
-    { label: '총 결제 금액', value: fmtPrice(order.finalPrice) },
+    { label: '주문 번호', value: orderInfo?.orderNum || '-' },
+    { label: '주문 일자', value: formatDate(orderInfo?.orderCreatedAt) },
+    { label: '주문 상태', value: orderInfo?.deliveryStatus || '-' },
+    // { label: '총 상품 금액', value: fmtPrice(paymentInfo?.totalPrice) },
+    // { label: '배송비', value: fmtPrice(paymentInfo?.deliveryPrice) },
+    // { label: '사용 마일리지', value: fmtPrice(paymentInfo?.usedMileage) },
+    // { label: '총 결제 금액', value: fmtPrice(paymentInfo?.finalPrice) },
   ];
 
   return (

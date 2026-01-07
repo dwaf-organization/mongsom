@@ -1,32 +1,75 @@
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../utils/dateUtils';
 import { getFirstThumb } from '../../../utils/dateUtils';
+import { useState } from 'react';
+import { updateDeliveryInfo } from '../../../api/order/index';
 
-export default function OrderTableSection({ rows, loading, page, totalPages }) {
+export default function OrderTableSection({ rows, loading }) {
   const safeRows = Array.isArray(rows) ? rows : [];
+  const [deliveryDataMap, setDeliveryDataMap] = useState({});
+  console.log('🚀 ~ OrderTableSection ~ safeRows:', safeRows);
   const navigate = useNavigate();
+
+  const handleDeliveryDataChange = (orderId, field, value) => {
+    setDeliveryDataMap(prev => ({
+      ...prev,
+      [orderId]: {
+        ...prev[orderId],
+        [field]: value,
+      },
+    }));
+  };
 
   const handleOrderDetail = orderId => {
     navigate(`/admin/orders/${orderId}`);
   };
 
+  const handleSaveAll = async () => {
+    const deliveryUpdates = Object.entries(deliveryDataMap).map(
+      ([orderId, data]) => {
+        const order = safeRows.find(row => row.orderId === Number(orderId));
+        return {
+          orderId: Number(orderId),
+          userCode: order?.userCode,
+          deliveryStatus: data.deliveryStatus ?? order?.deliveryStatus,
+          deliveryCom: '로젠',
+          invoiceNum: data.invoiceNum ?? order?.invoiceNum ?? '',
+        };
+      },
+    );
+
+    if (deliveryUpdates.length === 0) {
+      alert('변경된 배송 정보가 없습니다.');
+      return;
+    }
+
+    const response = await updateDeliveryInfo({ deliveryUpdates });
+    if (response.code === 1) {
+      alert('배송 정보가 저장되었습니다.');
+      setDeliveryDataMap({});
+    }
+  };
+
   return (
     <section className='py-6'>
-      <div className='flex justify-between items-center pb-2'>
-        <div className='text-sm text-gray-600'>
-          {loading ? '불러오는 중...' : `페이지 ${page} / ${totalPages}`}
-        </div>
+      <div className='flex justify-end items-center mt-6 pb-2'>
+        <button
+          className='bg-primary-200 text-sm p-2 rounded-md text-white'
+          onClick={handleSaveAll}
+        >
+          일괄 저장
+        </button>
       </div>
-
-      <div className='overflow-hidden pt-2'>
+      <div className='overflow-hidden'>
         <div className='overflow-x-auto scrollbar-hide'>
           <table className='min-w-full table-fixed divide-y divide-gray-200'>
             <colgroup>
               <col style={{ width: 120 }} />
               <col style={{ width: 120 }} />
               <col style={{ width: 240 }} />
-              <col style={{ width: 160 }} />
-              <col style={{ width: 160 }} />
+              <col style={{ width: 120 }} />
+              <col style={{ width: 100 }} />
+              <col style={{ width: 200 }} />
               <col style={{ width: 120 }} />
             </colgroup>
 
@@ -40,8 +83,9 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
                 <th className='px-3 py-3 uppercase tracking-wider text-left'>
                   주문내역
                 </th>
-                <th className='px-6 py-3 uppercase tracking-wider'>구매금액</th>
-                <th className='px-6 py-3 uppercase tracking-wider text-left'>
+                <th className='px-2 py-3 uppercase tracking-wider'>구매금액</th>
+                <th className='px-2 py-3 uppercase tracking-wider'>결제상태</th>
+                <th className='px-2 py-3 uppercase tracking-wider text-center'>
                   배송
                 </th>
                 <th className='px-6 py-3 uppercase tracking-wider whitespace-nowrap'>
@@ -64,17 +108,14 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
 
               {safeRows.map(order => {
                 const firstItem = order.orderDetails?.[0];
-                const restCount = Math.max(
-                  0,
-                  (order.orderDetails?.length || 0) - 1,
-                );
+                const restCount = Math.max(0, (order.length || 0) - 1);
                 const thumbUrl = getFirstThumb(order);
 
                 return (
                   <tr key={order.orderId} className='text-center'>
                     <td className='px-6 py-3 text-sm text-gray-900'>
                       <div className='flex flex-col gap-1 items-center'>
-                        <p className='font-medium'>{order.orderId}</p>
+                        <p className='font-medium'>{order.orderNum}</p>
                         <p className='text-xs text-gray-600'>
                           {formatDate(order.paymentAt)}
                         </p>
@@ -82,7 +123,7 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
                     </td>
                     <td className='px-6 py-3 text-sm text-gray-900'>
                       <div className='flex flex-col gap-1 items-center'>
-                        <p className='font-medium'>{order.receivedUserName}</p>
+                        <p className='font-medium'>{order.orderUser}</p>
                         <p className='text-xs text-gray-600'>
                           {order.receivedUserPhone}
                         </p>
@@ -91,9 +132,9 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
 
                     <td className='px-3 py-3 text-sm text-gray-900'>
                       <div className='flex items-center gap-2'>
-                        {thumbUrl ? (
+                        {order.productInfo.productImgUrl ? (
                           <img
-                            src={thumbUrl}
+                            src={order.productInfo.productImgUrl}
                             alt={firstItem?.productName || '상품 이미지'}
                             className='h-14 w-14 rounded-md object-cover flex-shrink-0'
                             loading='lazy'
@@ -107,19 +148,17 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
 
                         <div className='min-w-0 flex-1'>
                           <div
-                            className='truncate max-w-[160px] text-left'
+                            className='max-w-[160px] text-left'
                             title={
-                              firstItem?.productName ||
+                              order.productInfo.productName ||
                               firstItem?.name ||
                               undefined
                             }
                           >
-                            {firstItem?.productName ||
-                              firstItem?.name ||
-                              '상품정보 없음'}
+                            {order.productInfo.productName || '상품정보 없음'}
                           </div>
                           {restCount > 0 && (
-                            <div className='text-gray-500 text-sm text-left'>
+                            <div className='text-gray-600 text-xs text-left'>
                               외 {restCount}개
                             </div>
                           )}
@@ -130,12 +169,57 @@ export default function OrderTableSection({ rows, loading, page, totalPages }) {
                     <td className='px-6 py-3 whitespace-nowrap text-sm text-gray-900'>
                       {(order.finalPrice ?? 0).toLocaleString()}원
                     </td>
+                    <td className='px-6 py-3 whitespace-nowrap text-sm text-gray-900'>
+                      {order.paymentStatus}
+                    </td>
 
                     <td className='px-6 py-3 text-left text-sm text-gray-900'>
                       <div className='space-y-1.5'>
-                        <p>상태: {order.deliveryStatus || '-'}</p>
-                        <p>택배사: {order.deliveryCom || '-'}</p>
-                        <p>송장번호: {order.invoiceNum || '-'}</p>
+                        <select
+                          name='deliveryStatus'
+                          value={
+                            deliveryDataMap[order.orderId]?.deliveryStatus ??
+                            order.deliveryStatus
+                          }
+                          className='w-full border border-gray-300 rounded-md px-2 py-1 text-sm'
+                          onChange={e =>
+                            handleDeliveryDataChange(
+                              order.orderId,
+                              'deliveryStatus',
+                              e.target.value,
+                            )
+                          }
+                        >
+                          <option value='전체'>전체</option>
+                          <option value='결제대기'>결제대기</option>
+                          <option value='결제완료'>결제완료</option>
+                          <option value='상품준비중'>상품준비중</option>
+                          <option value='배송중'>배송중</option>
+                          <option value='배송완료'>배송완료</option>
+                          <option value='예약배송'>예약배송</option>
+                          <option value='재고부족'>재고부족</option>
+                          <option value='입고지연'>입고지연</option>
+                        </select>
+                        <p className='border rounded-md border-gray-300 px-2 py-1 text-sm'>
+                          택배사 : 로젠
+                        </p>
+                        <input
+                          type='text'
+                          placeholder='송장번호'
+                          value={
+                            deliveryDataMap[order.orderId]?.invoiceNum ??
+                            order.invoiceNum ??
+                            ''
+                          }
+                          className='border border-gray-400 rounded-md px-1 py-0.5 text-sm w-full'
+                          onChange={e =>
+                            handleDeliveryDataChange(
+                              order.orderId,
+                              'invoiceNum',
+                              e.target.value,
+                            )
+                          }
+                        />
                       </div>
                     </td>
 
