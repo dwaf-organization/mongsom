@@ -21,6 +21,7 @@ import RequireAuth from './routes/RequireAuth';
 import NoticeList from './view/NoticeList';
 import NoticeDetail from './view/NoticeDetail';
 import NoticeEdit from './view/NoticeEdit';
+import ExchangeDetail from './view/ExchangeDetail';
 
 export default function AdminApp() {
   return (
@@ -40,6 +41,10 @@ export default function AdminApp() {
                 <Route path='/notice-detail/:id' element={<NoticeDetail />} />
                 <Route path='/notice-edit/:id' element={<NoticeEdit />} />
                 <Route path='/exchange-return' element={<Exchange />} />
+                <Route
+                  path='/exchange-return/:changeId'
+                  element={<ExchangeDetail />}
+                />
                 <Route path='/inquire-list' element={<InquireList />}></Route>
                 <Route
                   path='/edit-product-info/:id'

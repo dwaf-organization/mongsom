@@ -13,7 +13,7 @@ export default function Exchange() {
   const [loading, setLoading] = useState(true);
 
   const activeTab = searchParams.get('tab') || 'exchange';
-  const currentPage = Number(searchParams.get('page') || 1);
+  const currentPage = Number(searchParams.get('page') || 0);
 
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -25,18 +25,14 @@ export default function Exchange() {
     setLoading(true);
     getExchangeList(type, currentPage)
       .then(res => {
-        const items = Array.isArray(res?.changeItems)
-          ? res.changeItems
-          : Array.isArray(res?.changeItems)
-            ? res.changeItems
-            : [];
-        const pagination = res?.pagination ?? {
+        const data = res?.data ?? {};
+        const items = data.changes ?? [];
+        const paginationData = data.pagination ?? {
           currentPage: currentPage,
-          totalPage: Number(res?.totalPage ?? 1),
+          totalPage: 1,
         };
         setExchangeList(items);
-        setPagination(pagination);
-        console.log('🚀 ~ Exchange ~ items.pagination:', pagination);
+        setPagination(paginationData);
       })
       .catch(() => {
         setExchangeList([]);
@@ -46,6 +42,8 @@ export default function Exchange() {
         setLoading(false);
       });
   }, [activeTab, currentPage]);
+
+  console.log('🚀 ~ Exchange ~ exchangeList:', exchangeList);
 
   const handleTabChange = tabKey => {
     setSearchParams({ tab: tabKey, page: '1' });
