@@ -3,9 +3,10 @@ import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import OrderSearchSection from '../components/section/orderList/OrderSearchSection';
 import OrderTableSection from '../components/section/orderList/OrderTableSection';
 import { useToast } from '../context/ToastContext';
-import { getOrderList } from '../api/order';
+import { DownLoadExcel, getOrderList } from '../api/order';
 import Pagination from '../components/ui/Pagination';
 import { useSearchParams } from 'react-router-dom';
+import { de } from 'zod/v4/locales/index.cjs';
 
 const toISODate = d =>
   new Date(d.getTime() - d.getTimezoneOffset() * 60000)
@@ -25,6 +26,7 @@ const oneMonthAgoISO = () => {
 export default function OrderList() {
   const { addToast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [deliveryStatus, setDeliveryStatus] = useState();
 
   const today = useMemo(() => toISODate(new Date()), []);
   const monthAgo = useMemo(() => oneMonthAgoISO(), []);
@@ -122,9 +124,66 @@ export default function OrderList() {
     });
   };
 
+  const handleChangeExcelSelect = e => {
+    const { value } = e.target;
+    setDeliveryStatus(value);
+  };
+
+  const handleExcel = async () => {
+    try {
+      const blob = await DownLoadExcel(deliveryStatus);
+
+      // 다운로드 링크 생성
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+
+      // 파일명 설정 (배송상태_날짜.xlsx)
+      const date = new Date().toISOString().split('T')[0];
+      link.download = `주문목록_${deliveryStatus}_${date}.xlsx`;
+
+      // 다운로드 실행
+      document.body.appendChild(link);
+      link.click();
+
+      // 정리
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      addToast('엑셀 다운로드가 완료되었습니다.', 'success');
+    } catch (error) {
+      console.error('엑셀 다운로드 오류:', error);
+      addToast('엑셀 다운로드에 실패했습니다.', 'error');
+    }
+  };
+
   return (
     <InnerPaddingSectionWrapper>
-      <h2 className='text-2xl font-bold text-gray-900 mb-6'>주문조회</h2>
+      <div className='flex justify-between items-center mb-6'>
+        <h2 className='text-2xl font-bold text-gray-900'>주문조회</h2>
+        <div className='flex gap-2 items-center'>
+          <select
+            className='border border-gray-500 px-3 py-2 rounded'
+            onChange={handleChangeExcelSelect}
+            value={deliveryStatus}
+          >
+            <option value='결제대기'>결제 대기</option>
+            <option value='결제완료'>결제 완료</option>
+            <option value='상품준비중'>상품준비중</option>
+            <option value='배송중'>배송중</option>
+            <option value='배송완료'>배송완료</option>
+            <option value='예약배송'>예약배송</option>
+            <option value='재고부족'>재고부족</option>
+            <option value='입고지연'>입고지연</option>
+          </select>
+          <button
+            className='bg-green-900 text-white px-4 py-2 rounded-xl'
+            onClick={handleExcel}
+          >
+            엑셀다운로드
+          </button>
+        </div>
+      </div>
 
       <OrderSearchSection onSearch={handleSearch} defaultValues={query} />
 

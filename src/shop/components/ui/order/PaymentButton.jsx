@@ -154,9 +154,13 @@ export default function PaymentButton({
       // 1) 주문(혹은 사전 주문) 생성 -> 반드시 "새로운" orderId 반환
       const orderPayload = buildOrderPayload();
       const orderRes = await createOrder(orderPayload);
-      const orderId = orderRes;
-      if (!orderId) {
-        const msg = orderRes?.message || '서버에서 orderId를 받지 못했습니다.';
+      const {
+        orderId,
+        orderNum,
+        finalPrice: responseFinalPrice,
+      } = orderRes || {};
+      if (!orderNum) {
+        const msg = orderRes?.message || '서버에서 orderNum을 받지 못했습니다.';
         throw new Error(msg);
       }
 
@@ -166,13 +170,13 @@ export default function PaymentButton({
       // 무통장입금: 결제 위젯 없이 주문 완료 페이지로 이동
       if (paymentMethod === 'ACCOUNT') {
         alert('주문이 완료되었습니다.\n입금 확인 후 배송이 진행됩니다.');
-        window.location.href = `/order/complete?orderId=${orderId}`;
+        window.location.href = `/order/complete?orderNum=${orderNum}&finalPrice=${responseFinalPrice}`;
         return;
       }
 
       // 일반결제: 토스 결제 위젯 열기
       const paymentData = createPaymentData(selectedItems, customerInfo, {
-        orderId,
+        orderId: orderNum,
         amount: finalPrice - useMileage,
       });
 

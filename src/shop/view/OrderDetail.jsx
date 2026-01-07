@@ -6,6 +6,7 @@ import OrderDetailProductInfoSection from '../components/section/mypage/OrderDet
 import RecipientInfoSection from '../components/section/mypage/RecipientInfoSection';
 import PaymentInfoSection from '../components/section/mypage/PaymentInfoSection';
 import { getOrderDetail } from '../api/order';
+import OrderCancelButton from '../components/ui/OrderCancelButton';
 import BackButton from '../components/ui/BackButton';
 
 export default function OrderDetail() {
@@ -21,10 +22,9 @@ export default function OrderDetail() {
       try {
         setLoading(true);
         const res = await getOrderDetail(id);
-        const data = res?.data && typeof res.data === 'object' ? res.data : res;
 
         if (!cancel) {
-          setOrder(data || null);
+          setOrder(res || null);
         }
       } catch (e) {
         console.error('주문 상세 조회 실패:', e);
@@ -41,7 +41,9 @@ export default function OrderDetail() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <BackButton />
+      <div className='md:hidden'>
+        <BackButton />
+      </div>
       <div className='flex justify-start gap-4 items-center border-b border-gray-500 pb-4'>
         <p className='text-2xl font-semibold text-left'>주문상세</p>
       </div>
@@ -53,6 +55,12 @@ export default function OrderDetail() {
           <OrderDetailProductInfoSection order={order} />
           <RecipientInfoSection order={order} />
           <PaymentInfoSection order={order} />
+          <div className='flex justify-end mt-6 mb-10 '>
+            <OrderCancelButton
+              orderId={order?.orderInfo.orderId}
+              deliveryStatus={order?.orderInfo.deliveryStatus}
+            />
+          </div>
         </>
       )}
     </InnerPaddingSectionWrapper>
