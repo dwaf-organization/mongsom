@@ -87,14 +87,14 @@ export default function OrderDetailProductInfoSection({ order }) {
 
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 mb-1'>
-                    <p className='text-gray-900 truncate max-w-[5rem] md:max-w-[27rem]'>
+                    <p className='text-gray-900 text-sm md:text-base truncate max-w-[5rem] md:max-w-[27rem]'>
                       {name}
                     </p>
                   </div>
-                  <p className='text-sm text-gray-600 mb-2 truncate max-w-[5rem] md:max-w-[27rem] text-left'>
+                  <p className='text-xs md:text-sm text-gray-600 mb-2 truncate max-w-[5rem] md:max-w-[27rem] text-left'>
                     옵션: {d.option1Name} / {d.option2Name}
                   </p>
-                  <div className='flex items-center gap-4 text-sm'>
+                  <div className='flex flex-col gap-1 text-left text-sm whitespace-nowrap'>
                     <span className='font-semibold'>{fmtPrice(price)}</span>
                     <span>수량: {quantity}개</span>
                   </div>

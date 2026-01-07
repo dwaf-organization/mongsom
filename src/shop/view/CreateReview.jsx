@@ -150,12 +150,14 @@ export default function CreateReview() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <div className=' gap-4 border-b border-gray-500'>
-        <div className='md:hidden'>
-          <BackButton />
-        </div>
-        <p className='text-2xl font-semibold text-left'>리뷰 작성</p>
+      <div className='flex items-center w-full my-4 md:pb-4'>
+        <BackButton />
+
+        <p className='text-xl md:text-2xl font-semibold text-left px-4'>
+          리뷰 작성
+        </p>
       </div>
+      <hr className=' border-gray-500 md:mx-0' />
 
       {loading && (
         <div className='py-6 text-center text-gray-500'>불러오는 중…</div>

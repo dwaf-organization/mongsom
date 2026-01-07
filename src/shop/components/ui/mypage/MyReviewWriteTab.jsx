@@ -76,7 +76,7 @@ export default function MyReviewWriteTab() {
 
   return (
     <div>
-      <p className='text-xl font-semibold text-left mt-8 px-4 pb-4 border-b border-black-100'>
+      <p className='text-lg md:text-xl font-semibold text-left mt-8 md:px-4 pb-2 md:pb-4 border-b border-black-100'>
         리뷰 작성
       </p>
 

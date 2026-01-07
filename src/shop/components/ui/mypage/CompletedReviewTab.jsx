@@ -114,9 +114,9 @@ export default function CompletedReviewTab() {
 
   return (
     <section>
-      <h2 className='text-xl text-start font-semibold text-gray-800 border-b border-black-100 pb-4 mt-8 px-4'>
+      <p className='text-lg md:text-xl font-semibold text-left mt-8 md:px-4 pb-2 md:pb-4 border-b border-black-100'>
         작성한 리뷰 {reviews.length}
-      </h2>
+      </p>
 
       <ul>
         {reviews.map(review => {
@@ -124,7 +124,7 @@ export default function CompletedReviewTab() {
           return (
             <li
               key={review.reviewId}
-              className='border-t-2 border-gray-50 py-6 last:border-b-0'
+              className='border-b-2 border-gray-50 py-6 last:border-b-0'
             >
               <div className='flex items-center justify-between mb-2 border-b w-full border-gray-300 pb-4 '>
                 <div className='flex items-center gap-4'>
@@ -166,7 +166,7 @@ export default function CompletedReviewTab() {
                   </time>
                 </header>
 
-                <p className='font-montserrat text-start'>
+                <p className=' font-montserrat text-start'>
                   {expandedReviews[review.reviewId]
                     ? review.reviewContent
                     : truncateText(review.reviewContent)}

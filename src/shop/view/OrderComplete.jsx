@@ -6,6 +6,8 @@ import { useSearchParams } from 'react-router-dom';
 export default function OrderComplete() {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const finalPrice = searchParams.get('finalPrice');
+
   return (
     <InnerPaddingSectionWrapper className='max-w-[800px]'>
       <div className='flex flex-col items-center py-10'>
@@ -84,7 +86,7 @@ export default function OrderComplete() {
                 <div className='flex-1'>
                   <p className='text-sm text-gray-500 mb-1'>입금 금액</p>
                   <p className='text-lg font-semibold text-gray-800'>
-                    {orderId} 원
+                    {Number(finalPrice).toLocaleString()} 원
                   </p>
                 </div>
               </div>

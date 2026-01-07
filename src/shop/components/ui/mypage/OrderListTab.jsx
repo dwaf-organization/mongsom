@@ -57,9 +57,6 @@ export default function OrderListTab() {
   if (loading) {
     return (
       <section className='pt-10'>
-        <p className='text-xl font-semibold text-left border-b border-gray-500 pb-4'>
-          주문내역 조회
-        </p>
         <div className='py-6 text-center text-gray-500'>불러오는 중…</div>
       </section>
     );
