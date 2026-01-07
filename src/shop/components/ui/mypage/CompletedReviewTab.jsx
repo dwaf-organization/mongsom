@@ -12,7 +12,7 @@ import ReviewDeleteModal from './ReviewDeleteModal';
 export default function CompletedReviewTab() {
   const { userCode } = useAuth();
   const [searchParams] = useSearchParams();
-  const page = Number(searchParams.get('page') || '1');
+  const page = Number(searchParams.get('page') || '0');
   const { openModal } = useModal();
 
   const [expandedReviews, setExpandedReviews] = useState({});
@@ -139,9 +139,15 @@ export default function CompletedReviewTab() {
                       <div className='w-[80px] h-[80px] bg-gray-100' />
                     )}
                   </Link>
-                  <p className='text-gray-800 truncate max-w-[7rem] md:max-w-[300px]'>
-                    {review.productName ?? review.name ?? '상품명'}
-                  </p>
+                  <div>
+                    <p className='text-gray-800 truncate max-w-[7rem] md:max-w-[300px]'>
+                      {review.productName ?? review.name ?? '상품명'}
+                    </p>
+                    <p className='text-gray-800 text-sm truncate max-w-[7rem] md:max-w-[300px]'>
+                      옵션: {review.option1Name ?? '-'} /{' '}
+                      {review.option2Name ?? '-'}
+                    </p>
+                  </div>
                 </div>
                 <button
                   className='text-primary-200 cursor-pointer select-none'
@@ -160,7 +166,7 @@ export default function CompletedReviewTab() {
                   </time>
                 </header>
 
-                <p className='text-gray-500 font-montserrat text-start'>
+                <p className='font-montserrat text-start'>
                   {expandedReviews[review.reviewId]
                     ? review.reviewContent
                     : truncateText(review.reviewContent)}

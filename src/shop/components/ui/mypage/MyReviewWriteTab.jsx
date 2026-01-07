@@ -10,12 +10,12 @@ import { formatDate } from '../../../utils/dateUtils';
 export default function MyReviewWriteTab() {
   const { userCode } = useAuth();
   const [searchParams] = useSearchParams();
-  const page = Number(searchParams.get('page') || '1');
+  const page = Number(searchParams.get('page') || 0);
 
   const [reviewWriteList, setReviewWriteList] = useState([]);
   const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPage: 1,
+    currentPage: 0,
+    totalPage: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -33,21 +33,22 @@ export default function MyReviewWriteTab() {
         const res = await getReviewWriteList(userCode, page, 8);
         const payload =
           res?.data && typeof res.data === 'object' ? res.data : res;
-        const items = Array.isArray(payload?.items) ? payload.items : [];
+        // const items = Array.isArray(payload?.items) ? payload.items : [];
+        const items = res.items;
         const pgn = payload?.pagination || {};
 
         if (!cancel) {
           setReviewWriteList(items);
           setPagination({
-            currentPage: Number(pgn.currentPage ?? page ?? 1),
-            totalPage: Number(pgn.totalPage ?? 1),
+            currentPage: Number(pgn.currentPage ?? page ?? 0),
+            totalPage: Number(pgn.totalPage ?? 0),
           });
         }
       } catch (e) {
         console.error('리뷰 작성 목록 조회 실패:', e);
         if (!cancel) {
           setReviewWriteList([]);
-          setPagination({ currentPage: 1, totalPage: 1 });
+          setPagination({ currentPage: 0, totalPage: 0 });
         }
       } finally {
         if (!cancel) setLoading(false);
@@ -58,6 +59,8 @@ export default function MyReviewWriteTab() {
       cancel = true;
     };
   }, [userCode, page]);
+
+  console.log('🚀 ~ MyReviewWriteTab ~ reviewWriteList:', reviewWriteList);
 
   if (loading) {
     return <div className='py-6 text-center text-gray-500'>불러오는 중…</div>;
@@ -103,7 +106,7 @@ export default function MyReviewWriteTab() {
                     </p>
                   </div>
                   <p className='text-sm text-gray-600 mb-2 text-left truncate max-w-[7rem] md:max-w-[300px]'>
-                    옵션: {option}
+                    옵션: {item.option1Name} / {item.option2Name}
                   </p>
                   <p className='font-montserrat text-left text-sm text-gray-500'>
                     주문 일자 : {formatDate(paymentAt)}

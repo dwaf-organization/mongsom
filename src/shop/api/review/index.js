@@ -9,7 +9,13 @@ export const createReview = async review => {
   return response;
 };
 
-export const getReviewWriteList = async (userCode, page, size = 8) => {
+export const getReviewWriteList = async (userCode, page = 0, size = 8) => {
+  console.log(
+    '🚀 ~ getReviewWriteList ~ userCode, page, size = 8:',
+    userCode,
+    page,
+    (size = 8),
+  );
   const response = await fetchData.get(
     `api/v1/my/review/${userCode}/${page}/${size}`,
   );

@@ -16,7 +16,7 @@ export default function CreateReview() {
   const orderDetailId = Number(id);
   const { userCode } = useAuth();
   const [searchParams] = useSearchParams();
-  const initialPage = Number(searchParams.get('page') || '1');
+  const initialPage = Number(searchParams.get('page') || '0');
   const { addToast } = useToast();
 
   const [target, setTarget] = useState(null);
@@ -118,6 +118,7 @@ export default function CreateReview() {
 
     const payload = {
       orderDetailId,
+      productId: target?.productId,
       userCode,
       reviewRating,
       reviewContent,
@@ -150,7 +151,9 @@ export default function CreateReview() {
   return (
     <InnerPaddingSectionWrapper>
       <div className=' gap-4 border-b border-gray-500'>
-        <BackButton />
+        <div className='md:hidden'>
+          <BackButton />
+        </div>
         <p className='text-2xl font-semibold text-left'>리뷰 작성</p>
       </div>
 

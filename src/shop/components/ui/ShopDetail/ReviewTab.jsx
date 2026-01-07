@@ -201,14 +201,14 @@ export default function ReviewTab() {
                 className='border-t border-gray-300 py-6 last:border-b-0'
               >
                 <div className='flex items-center px-2'>
-                  <ul className='flex flex-col items-start md:text-lg gap-2'>
-                    <li className='text-black-100 font-montserrat font-semibold w-full'>
+                  <ul className='flex flex-col items-start gap-2'>
+                    <li className=' font-montserrat w-full'>
                       {review.userName
                         ? review.userName.charAt(0) +
                           '*'.repeat(Math.max(0, review.userName.length - 1))
                         : ''}
                     </li>
-                    <li className='text-sm md:text-lg text-gray-500 font-montserrat w-full whitespace-nowrap'>
+                    <li className='text-sm text-gray-500 font-montserrat w-full whitespace-nowrap'>
                       {formatDate(date)}
                     </li>
                   </ul>
@@ -221,7 +221,7 @@ export default function ReviewTab() {
                       </span>
                     </div>
 
-                    <div className='text-black-100 font-montserrat text-start'>
+                    <div className='font-montserrat text-start'>
                       <p>
                         {expandedReviews[key] ? content : truncateText(content)}
                       </p>
