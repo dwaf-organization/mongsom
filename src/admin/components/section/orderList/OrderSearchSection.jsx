@@ -94,7 +94,7 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
 
   return (
     <SearchForm onSubmit={handleSubmit} submitButtonText='조회'>
-      <div className='grid grid-cols-[120px_1fr]'>
+      <div className='grid grid-cols-[120px_1fr] text-center'>
         <div className='bg-primary-100 text-gray-900 font-semibold px-6 py-4 border-b'>
           기간
         </div>
@@ -149,7 +149,7 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
         </div>
       </div>
 
-      <div className='grid grid-cols-[120px_1fr]'>
+      <div className='grid grid-cols-[120px_1fr] text-center'>
         <div className='bg-primary-100 text-gray-900 font-semibold px-6 py-4'>
           검색
         </div>
@@ -170,9 +170,9 @@ export default function OrderSearchSection({ onSearch, defaultValues }) {
           />
         </div>
       </div>
-      <div className='grid grid-cols-[120px_1fr] border-t'>
+      <div className='grid grid-cols-[120px_1fr] border-t text-center'>
         <div className='bg-primary-100 text-gray-900 font-semibold px-6 py-4'>
-          필터링
+          주문상태
         </div>
 
         <div className='p-4'>

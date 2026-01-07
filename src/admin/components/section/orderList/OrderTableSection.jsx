@@ -86,7 +86,7 @@ export default function OrderTableSection({ rows, loading }) {
                 <th className='px-2 py-3 uppercase tracking-wider'>구매금액</th>
                 <th className='px-2 py-3 uppercase tracking-wider'>결제상태</th>
                 <th className='px-2 py-3 uppercase tracking-wider text-center'>
-                  배송
+                  주문상태
                 </th>
                 <th className='px-6 py-3 uppercase tracking-wider whitespace-nowrap'>
                   상세보기

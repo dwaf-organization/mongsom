@@ -43,7 +43,7 @@ export default function OrderProductInfo({ order }) {
   return (
     <section className='py-10'>
       <h2 className='text-xl font-semibold text-left'>주문 상품 정보</h2>
-      <div className='mt-4 rounded-xl overflow-hidden max-w-[1000px]'>
+      <div className='mt-4 max-w-[1000px] '>
         <table className='w-full'>
           <colgroup>
             <col style={{ width: 200 }} />
@@ -103,7 +103,7 @@ export default function OrderProductInfo({ order }) {
                   <td>
                     {optionText && (
                       <p className=' text-sm max-w-[300px] truncate'>
-                        [옵션] {optionText}
+                        {optionText}
                       </p>
                     )}
                   </td>

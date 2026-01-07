@@ -23,7 +23,7 @@ export default function OrderInfo({ order }) {
   ];
 
   return (
-    <section className='pt-10'>
+    <section className='pt-6'>
       <h2 className='text-xl font-semibold text-left'>주문 정보</h2>
 
       <div className='mt-4 rounded-xl border border-gray-500 overflow-hidden max-w-[1000px]'>

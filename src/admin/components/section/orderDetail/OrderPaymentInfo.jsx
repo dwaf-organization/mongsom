@@ -24,7 +24,7 @@ export default function OrderPaymentInfo({ order }) {
     },
     {
       label: '마일리지 할인',
-      value: '-' + fmtPrice(paymentInfo?.usedMileage),
+      value: fmtPrice(paymentInfo?.usedMileage),
     },
     {
       label: '배송비',

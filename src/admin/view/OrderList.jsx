@@ -7,6 +7,7 @@ import { DownLoadExcel, getOrderList } from '../api/order';
 import Pagination from '../components/ui/Pagination';
 import { useSearchParams } from 'react-router-dom';
 import { url } from 'zod';
+import { BookX } from 'lucide-react';
 
 const toISODate = d =>
   new Date(d.getTime() - d.getTimezoneOffset() * 60000)
@@ -188,7 +189,7 @@ export default function OrderList() {
         <h2 className='text-2xl font-bold text-gray-900'>주문조회</h2>
         <div className='flex gap-2 items-center'>
           <select
-            className='border border-gray-500 px-3 py-2 rounded'
+            className='border border-gray-500 px-3 py-1 rounded'
             onChange={handleChangeExcelSelect}
             value={deliveryStatus}
           >
@@ -202,10 +203,10 @@ export default function OrderList() {
             <option value='입고지연'>입고지연</option>
           </select>
           <button
-            className='bg-green-900 text-white px-4 py-2 rounded-xl'
+            className=' flex items-center gap-1 font-semibold bg-green-900 text-sm hover:bg-green-700 text-white px-2 py-2 rounded-xl'
             onClick={handleExcel}
           >
-            엑셀다운로드
+            <BookX size={18} /> 엑셀 다운로드
           </button>
         </div>
       </div>
