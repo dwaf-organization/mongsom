@@ -21,7 +21,7 @@ export default function MobileNav() {
 
   return (
     <nav className='fixed bottom-0 left-0 z-40 w-full bg-white shadow-md border-t border-gray-200 md:hidden'>
-      <ul className='flex justify-around items-start pb-6 pt-1 font-pretendard font-medium text-xs border-t border-gray-500'>
+      <ul className='flex justify-around items-center py-3 font-pretendard font-medium text-xs border-t border-gray-500'>
         <li>
           <Link
             to='/'

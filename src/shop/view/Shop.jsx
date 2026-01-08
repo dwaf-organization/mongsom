@@ -15,7 +15,7 @@ export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [productItems, setProductItems] = useState([]);
   const [pagination, setPagination] = useState({
-    currentPage: 1,
+    currentPage: 0,
     totalPage: 1,
   });
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
@@ -26,13 +26,14 @@ export default function Shop() {
 
   useEffect(() => {
     setIsLoading(true); // 데이터 로딩 시작
+    window.scrollTo(0, 0); // 스크롤 최상단으로
     getAllProductList(sort, page)
       .then(res => {
         const items = res?.products || [];
         setProductItems(items);
 
         const paginationData = res?.pagination || {
-          currentPage: 1,
+          currentPage: 0,
           totalPage: 1,
         };
         setPagination(paginationData);
@@ -40,7 +41,7 @@ export default function Shop() {
       .catch(error => {
         console.error('상품 목록을 불러오는데 실패했습니다:', error);
         setProductItems([]);
-        setPagination({ currentPage: 1, totalPage: 1 });
+        setPagination({ currentPage: 0, totalPage: 1 });
       })
       .finally(() => setIsLoading(false)); // 데이터 로딩 완료
   }, [sort, page, premium]);

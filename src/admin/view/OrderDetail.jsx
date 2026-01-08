@@ -40,10 +40,10 @@ export default function OrderDetail() {
 
   return (
     <InnerPaddingSectionWrapper>
-      <h2 className='text-2xl font-bold text-gray-900 mb-6'>주문상세</h2>
+      <h2 className='text-2xl font-bold text-gray-900'>주문상세</h2>
 
       <OrderInfo order={order} />
-      <OrderStatus order={order} />
+      {/* <OrderStatus order={order} /> */}
       <OrderProductInfo order={order} />
       <OrderPaymentInfo order={order} />
       <OrderReceivedInfo order={order} />

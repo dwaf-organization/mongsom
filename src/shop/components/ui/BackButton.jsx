@@ -7,7 +7,7 @@ export default function BackButton({ className, text }) {
       onClick={() => window.history.back()}
       className='flex items-center gap-2'
     >
-      <LeftChevron className='w-4 h-4' />
+      <LeftChevron className={`${className} w-6 h-6 `} />
       <p className='text-sm'>{text}</p>
     </button>
   );

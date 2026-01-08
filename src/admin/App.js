@@ -22,6 +22,8 @@ import NoticeList from './view/NoticeList';
 import NoticeDetail from './view/NoticeDetail';
 import NoticeEdit from './view/NoticeEdit';
 import ExchangeDetail from './view/ExchangeDetail';
+import QnA from './view/QnA';
+import Review from './view/Review';
 
 export default function AdminApp() {
   return (
@@ -40,6 +42,8 @@ export default function AdminApp() {
                 <Route path='/notice-list' element={<NoticeList />} />
                 <Route path='/notice-detail/:id' element={<NoticeDetail />} />
                 <Route path='/notice-edit/:id' element={<NoticeEdit />} />
+                <Route path='/qna' element={<QnA />} />
+                <Route path='/review' element={<Review />} />
                 <Route path='/exchange-return' element={<Exchange />} />
                 <Route
                   path='/exchange-return/:changeId'

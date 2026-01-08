@@ -69,7 +69,7 @@ export default function UserTableSection({ userList }) {
 
               <td className=' py-4'>
                 <div>
-                  <p>보유마일리지: {user.mileage}</p>
+                  <p>보유마일리지:5,000원 {user.mileage}</p>
                 </div>
                 <form
                   className='flex items-center gap-2 justify-center mt-2'

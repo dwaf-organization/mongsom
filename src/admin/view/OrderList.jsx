@@ -6,7 +6,8 @@ import { useToast } from '../context/ToastContext';
 import { DownLoadExcel, getOrderList } from '../api/order';
 import Pagination from '../components/ui/Pagination';
 import { useSearchParams } from 'react-router-dom';
-import { de } from 'zod/v4/locales/index.cjs';
+import { url } from 'zod';
+import { BookX } from 'lucide-react';
 
 const toISODate = d =>
   new Date(d.getTime() - d.getTimezoneOffset() * 60000)
@@ -37,9 +38,7 @@ export default function OrderList() {
     startDate: searchParams.get('startDate') || monthAgo,
     endDate: searchParams.get('endDate') || today,
     orderId: searchParams.get('orderId') || '',
-    invoiceNum: searchParams.get('invoiceNum') || '',
-    receivedUserPhone: searchParams.get('receivedUserPhone') || '',
-    receivedUserName: searchParams.get('receivedUserName') || '',
+    searchKeyword: searchParams.get('searchKeyword') || '',
     deliveryStatus: searchParams.get('deliveryStatus') || '',
   };
 
@@ -50,14 +49,11 @@ export default function OrderList() {
     const hasEnd = !!searchParams.get('endDate');
     if (!hasStart || !hasEnd) {
       const next = {
-        page: String(page || 1),
+        page: String(page || 0),
         size: String(size || 10),
         startDate: urlQuery.startDate,
         endDate: urlQuery.endDate,
-        orderId: urlQuery.orderId,
-        invoiceNum: urlQuery.invoiceNum,
-        receivedUserPhone: urlQuery.receivedUserPhone,
-        receivedUserName: urlQuery.receivedUserName,
+        searchKeyword: urlQuery.searchKeyword,
         deliveryStatus: urlQuery.deliveryStatus,
       };
       setSearchParams(next, { replace: true });
@@ -86,17 +82,18 @@ export default function OrderList() {
       if (res?.code !== 1) {
         addToast(res?.message || '주문 목록 조회에 실패했습니다.', 'error');
         setRows([]);
-        setTotalPages(1);
+        setTotalPages(0);
         return;
       }
 
       const d = res.data ?? {};
       setRows(Array.isArray(d.orders) ? d.orders : []);
-      setTotalPages(Number(d.pagination?.totalPage) || 1);
+      setTotalPages(Number(d.pagination?.totalPage) || 0);
+      // addToast('주문 목록을 불러왔습니다.', 'success');
     } catch {
       addToast('네트워크 오류로 주문 목록을 불러오지 못했습니다.', 'error');
       setRows([]);
-      setTotalPages(1);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
@@ -106,22 +103,49 @@ export default function OrderList() {
     fetchList();
   }, [searchParams]);
 
-  const handleSearch = values => {
+  const handleSearch = async values => {
     if (values.startDate > values.endDate) {
       addToast('시작일이 종료일보다 늦습니다.', 'error');
       return;
     }
-    setSearchParams({
-      page: '1',
+    const newParams = {
+      page: '0',
       size: String(size),
       startDate: values.startDate,
       endDate: values.endDate,
-      orderId: values.orderId?.trim() || '',
-      invoiceNum: values.invoiceNum?.trim() || '',
-      receivedUserPhone: values.receivedUserPhone?.trim() || '',
-      receivedUserName: values.receivedUserName?.trim() || '',
+      searchKeyword: values.searchKeyword?.trim() || '',
       deliveryStatus: values.deliveryStatus?.trim() || '',
-    });
+    };
+    setSearchParams(newParams);
+
+    // 직접 API 호출하여 조회 결과 표시
+    setLoading(true);
+    try {
+      const res = await getOrderList({
+        page: 0,
+        size,
+        ...values,
+        searchKeyword: values.searchKeyword?.trim() || '',
+        deliveryStatus: values.deliveryStatus?.trim() || '',
+      });
+
+      if (res?.code === 1) {
+        const d = res.data ?? {};
+        setRows(Array.isArray(d.orders) ? d.orders : []);
+        setTotalPages(Number(d.pagination?.totalPage) || 0);
+        addToast('주문 목록이 조회되었습니다.', 'success');
+      } else {
+        addToast(res?.message || '조회에 실패했습니다.', 'error');
+        setRows([]);
+        setTotalPages(0);
+      }
+    } catch {
+      addToast('네트워크 오류로 조회에 실패했습니다.', 'error');
+      setRows([]);
+      setTotalPages(0);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChangeExcelSelect = e => {
@@ -157,13 +181,15 @@ export default function OrderList() {
     }
   };
 
+  console.log(totalPages);
+
   return (
     <InnerPaddingSectionWrapper>
       <div className='flex justify-between items-center mb-6'>
         <h2 className='text-2xl font-bold text-gray-900'>주문조회</h2>
         <div className='flex gap-2 items-center'>
           <select
-            className='border border-gray-500 px-3 py-2 rounded'
+            className='border border-gray-500 px-3 py-1 rounded'
             onChange={handleChangeExcelSelect}
             value={deliveryStatus}
           >
@@ -177,22 +203,17 @@ export default function OrderList() {
             <option value='입고지연'>입고지연</option>
           </select>
           <button
-            className='bg-green-900 text-white px-4 py-2 rounded-xl'
+            className=' flex items-center gap-1 font-semibold bg-green-900 text-sm hover:bg-green-700 text-white px-2 py-2 rounded-xl'
             onClick={handleExcel}
           >
-            엑셀다운로드
+            <BookX size={18} /> 엑셀 다운로드
           </button>
         </div>
       </div>
 
       <OrderSearchSection onSearch={handleSearch} defaultValues={query} />
 
-      <OrderTableSection
-        rows={rows}
-        loading={loading}
-        page={page}
-        totalPages={totalPages}
-      />
+      <OrderTableSection rows={rows} loading={loading} />
 
       <div className='mt-6 flex justify-center'>
         <Pagination totalPage={totalPages} />

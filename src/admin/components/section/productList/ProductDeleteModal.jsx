@@ -11,7 +11,7 @@ export default function ProductDeleteModal({ productId, onDeleted }) {
   const handleDelete = async () => {
     const res = await deleteProduct(productId);
     if (res?.code === 1) {
-      onDeleted?.(productId); // 부모에게 "지웠다" 알림
+      onDeleted?.(productId);
       addToast('상품이 삭제되었습니다.', 'success');
       closeModal();
     } else {
