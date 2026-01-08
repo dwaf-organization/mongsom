@@ -16,6 +16,7 @@ export default function ReviewTab() {
     currentPage: 1,
     totalPage: 1,
   });
+  const [sort, setSort] = useState('latest');
 
   // 이미지 모달 관련 state
   const [modalImage, setModalImage] = useState(null);
@@ -43,7 +44,7 @@ export default function ReviewTab() {
       try {
         setLoading(true);
 
-        const res = await getProductsReviewList(id, page);
+        const res = await getProductsReviewList(id, page, sort);
 
         const payload =
           res?.data && typeof res.data === 'object' ? res.data : res;
@@ -72,7 +73,7 @@ export default function ReviewTab() {
     return () => {
       cancel = true;
     };
-  }, [id, page]);
+  }, [id, page, sort]);
 
   // ESC 키로 모달 닫기, 좌우 화살표로 이미지 이동
   useEffect(() => {
@@ -171,12 +172,54 @@ export default function ReviewTab() {
 
   if (!reviews.length) {
     return (
-      <div className='py-6 text-center text-gray-500'>리뷰가 없습니다.</div>
+      <>
+        <div className='flex justify-end gap-4 mb-4 text-sm'>
+          <button
+            onClick={() => setSort('latest')}
+            className={sort === 'latest' ? 'font-semibold' : ''}
+          >
+            최신순
+          </button>
+          <button
+            onClick={() => setSort('rating')}
+            className={sort === 'rating' ? 'font-semibold' : ''}
+          >
+            별점순
+          </button>
+          <button
+            onClick={() => setSort('recommend')}
+            className={sort === 'recommend' ? 'font-semibold' : ''}
+          >
+            추천순
+          </button>
+        </div>
+        <div className='py-6 text-center text-gray-500'>리뷰가 없습니다.</div>
+      </>
     );
   }
 
   return (
     <div>
+      <div className='flex justify-end gap-4 mb-4 text-sm'>
+        <button
+          onClick={() => setSort('latest')}
+          className={sort === 'latest' ? 'font-semibold' : ''}
+        >
+          최신순
+        </button>
+        <button
+          onClick={() => setSort('rating')}
+          className={sort === 'rating' ? 'font-semibold' : ''}
+        >
+          별점순
+        </button>
+        <button
+          onClick={() => setSort('recommend')}
+          className={sort === 'recommend' ? 'font-semibold' : ''}
+        >
+          추천순
+        </button>
+      </div>
       <div className='bg-white rounded-lg'>
         <p className='md:text-xl text-start font-semibold text-gray-800'>
           리뷰 {reviews.length} 건
@@ -255,6 +298,25 @@ export default function ReviewTab() {
                     )}
                   </div>
                 </div>
+
+                {/* 관리자 답변 */}
+                {review.adminAnswer && (
+                  <div className='mt-4 px-2 flex items-start'>
+                    <div className='min-w-[60px] md:min-w-[80px]'>
+                      <p className='text-sm font-semibold text-gray-700'>
+                        판매자
+                      </p>
+                      <p className='text-xs text-gray-500'>
+                        {review.adminAnswerAt}
+                      </p>
+                    </div>
+                    <div className='flex-1 pl-6 md:pl-12'>
+                      <p className='text-sm bg-gray-100 p-3 rounded-xl whitespace-pre-line'>
+                        {review.adminAnswer}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
