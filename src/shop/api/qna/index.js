@@ -5,7 +5,7 @@ export const getQnAList = async ({ page = 0, size = 10 }) => {
   qurery.set('page', String(page));
   qurery.set('size', String(size));
 
-  const url = `api/v1/qna/list??${qurery.toString()}`;
+  const url = `api/v1/qna/list?${qurery.toString()}`;
   console.log('GET:', url);
 
   const reponse = await fetchData.get(url);
@@ -20,12 +20,26 @@ export const getQnADetail = async id => {
   return reponse;
 };
 
-export const updateQnA = async ({ qnaCode, userCode, qnaContents }) => {
+export const updateQnA = async ({
+  qnaCode,
+  userCode,
+  qnaTitle,
+  qnaContents,
+  orderId,
+  lockStatus,
+}) => {
   const url = `api/v1/qna/update`;
   console.log('PUT:', url);
 
   const reponse = await fetchData.put(url, {
-    body: { qnaCode: qnaCode, userCode: userCode, qnaContents: qnaContents },
+    body: {
+      qnaCode: qnaCode,
+      userCode: userCode,
+      qnaTitle: qnaTitle,
+      qnaContents: qnaContents,
+      orderId: orderId,
+      lockStatus: lockStatus,
+    },
   });
   return reponse;
 };

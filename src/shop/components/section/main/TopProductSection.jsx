@@ -26,6 +26,7 @@ export default function TopProductSection() {
     getAllProductList('popular', 0, { premium: '' })
       .then(res => {
         const items = res.products || [];
+        console.log('🚀 ~ TopProductSection ~ items:', items);
         setProductItems(items);
       })
       .catch(error => {
@@ -34,7 +35,7 @@ export default function TopProductSection() {
       });
   }, [sort, page]);
 
-  console.log('🚀 ~ TopProductSection ~ productItems:', productItems);
+  console.log('🚀 ~ TopProductSectionPC~ productItems:', productItems);
 
   if (productItems.length === 0) {
     return (
@@ -71,13 +72,15 @@ export default function TopProductSection() {
         </h2>
 
         <Slider {...createSliderSettings()} className='max-w-[1000px] mx-auto'>
-          {Array.isArray(productItems) &&
+          {/* <div className='flex flex-wrap gap-4 max-w-[1000px] mx-auto'> */}
+
+          {productItems &&
             productItems.map(product => (
               <Link
                 to={`${routes.shopDetail}/${product.productId}`}
-                key={product.id}
+                key={product.productId}
               >
-                <ul key={product.id} className='px-4'>
+                <ul key={product.productId} className='px-4'>
                   <div className='rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 gap-2 bg-white'>
                     <li className='relative items-center justify-center'>
                       <img

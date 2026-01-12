@@ -10,6 +10,7 @@ export default function EditQnA() {
   const [searchParams] = useSearchParams();
   const productCode = searchParams.get('productCode');
   const productName = searchParams.get('productName');
+  const qnaCode = searchParams.get('qnaCode');
   const [formData, setFormData] = useState({
     qnaTitle: '',
     qnaContents: '',
@@ -30,7 +31,6 @@ export default function EditQnA() {
   };
 
   useEffect(() => {
-    const qnaCode = searchParams.get('qnaCode');
     // Fetch existing QnA details and populate formData
     const fetchQnADetail = async () => {
       const response = await getQnADetail(qnaCode);
@@ -55,17 +55,17 @@ export default function EditQnA() {
       return;
     }
     const response = await updateQnA({
+      qnaCode: Number(qnaCode),
       userCode: userCode,
-      productId: formData.productId,
       qnaTitle: formData.qnaTitle,
-      orderId: formData.orderId,
       qnaContents: formData.qnaContents,
+      orderId: formData.orderId,
       lockStatus: formData.lockStatus,
     });
     console.log('🚀 ~ handleSubmit ~ response:', response);
     if (response.code === 1) {
       navigate(-1);
-      addToast('QnA가 등록되었습니다.', 'success');
+      addToast('QnA가 수정되었습니다.', 'success');
     }
   };
   return (
@@ -122,7 +122,7 @@ export default function EditQnA() {
           <span className='ml-2 text-sm'>비공개</span>
         </label>
 
-        <div className='mt-6 flex items-center w-full'>
+        <div className='mt-6 flex items-center justify-end w-full'>
           <button
             className='bg-black-200 text-white p-2 rounded-md font-semibold text-xs'
             onClick={handleSubmit}

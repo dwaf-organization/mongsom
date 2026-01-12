@@ -140,7 +140,7 @@ export default function Notice() {
 
       {/* 모바일 카드 레이아웃 */}
       {!loading && notices.length > 0 && (
-        <div className='block md:hidden space-y-2'>
+        <div className='block pt-2 md:hidden space-y-2'>
           {notices.map((item, index) => {
             const id = item?.id ?? item?.noticeId ?? index;
             const dateRaw = item?.date ?? item?.createdAt;

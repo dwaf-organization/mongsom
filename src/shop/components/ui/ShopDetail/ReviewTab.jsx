@@ -200,22 +200,24 @@ export default function ReviewTab() {
 
   return (
     <div>
-      <div className='flex justify-end gap-4 mb-4 text-sm'>
+      <div className='flex justify-end gap-4 mb-4 text-xs md:text-sm pr-4'>
         <button
           onClick={() => setSort('latest')}
-          className={sort === 'latest' ? 'font-semibold' : ''}
+          className={sort === 'latest' ? 'font-semibold text-primary-200' : ''}
         >
           최신순
         </button>
         <button
           onClick={() => setSort('rating')}
-          className={sort === 'rating' ? 'font-semibold' : ''}
+          className={sort === 'rating' ? 'font-semibold text-primary-200' : ''}
         >
           별점순
         </button>
         <button
           onClick={() => setSort('recommend')}
-          className={sort === 'recommend' ? 'font-semibold' : ''}
+          className={
+            sort === 'recommend' ? 'font-semibold text-primary-200' : ''
+          }
         >
           추천순
         </button>
@@ -264,7 +266,7 @@ export default function ReviewTab() {
                       </span>
                     </div>
 
-                    <div className='font-montserrat text-start'>
+                    <div className='font-montserrat text-start text-sm md:text-base'>
                       <p>
                         {expandedReviews[key] ? content : truncateText(content)}
                       </p>

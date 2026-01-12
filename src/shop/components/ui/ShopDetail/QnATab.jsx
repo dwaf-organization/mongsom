@@ -108,7 +108,7 @@ export default function QnATab({ product }) {
             <col className='w-1/12' />
             <col className='w-1/12' />
           </colgroup>
-          <thead className='border-y border-gray-50 w-full'>
+          <thead className='border-y border-gray-50 w-full text-xs md:text-base whitespace-nowrap'>
             <tr className='w-full'>
               <th className='px-4 py-2'>답변상태</th>
               <th className='px-4 py-2'>제목</th>
@@ -124,27 +124,31 @@ export default function QnATab({ product }) {
                   className='border-b border-gray-300 w-full text-sm cursor-pointer hover:bg-primary-100/80'
                   onClick={() => handleRowClick(item.qnaCode, item)}
                 >
-                  <td className='px-4 py-2 text-center'>{item.answerStatus}</td>
+                  <td className='px-4 py-2 text-center text-xs md:text-base'>
+                    {item.answerStatus}
+                  </td>
 
-                  <td className='px-4 py-2 text-left'>
+                  <td className='px-4 py-2 text-left max-w-0'>
                     {item.lockStatus === 1 ? (
                       item.userCode === userCode ? (
-                        <div className='flex items-center gap-1'>
-                          {item.qnaTitle}
-                          <Lock size={12} />
+                        <div className='flex items-center gap-1 text-xs md:text-base'>
+                          <span className='truncate'>{item.qnaTitle}</span>
+                          <Lock size={12} className='flex-shrink-0' />
                         </div>
                       ) : (
-                        <div className='flex items-center gap-1 text-gray-600'>
+                        <div className='flex items-center gap-1 text-gray-600 text-xs md:text-base'>
                           비공개 글입니다.
                           <Lock size={12} />
                         </div>
                       )
                     ) : (
-                      item.qnaTitle
+                      <span className='block truncate'>{item.qnaTitle}</span>
                     )}
                   </td>
-                  <td className='px-4 py-2 text-center'>{item.qnaWriter}</td>
-                  <td className='px-4 py-2 text-center'>
+                  <td className='px-4 py-2 text-center text-xs md:text-base whitespace-nowrap'>
+                    {item.qnaWriter}
+                  </td>
+                  <td className='px-4 py-2 text-center text-xs md:text-base whitespace-nowrap'>
                     {formatDate(item.createdAt)}
                   </td>
                 </tr>
@@ -184,7 +188,7 @@ export default function QnATab({ product }) {
                             답변
                           </span>
                         </td>
-                        <td className='px-4 py-3 text-left whitespace-pre-wrap text-gray-700'>
+                        <td className='px-4 py-3 text-left whitespace-pre-wrap text-xs text-gray-700'>
                           {item.answerContents}
                         </td>
                         <td className='px-4 py-3 text-center text-gray-500'>

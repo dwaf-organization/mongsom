@@ -48,9 +48,13 @@ export default function ProductHeader({ product }) {
           <p>배송비</p>
           <p>{Number(deliveryPrice).toLocaleString()}원</p>
         </div>
-        <p className='text-xs text-gray-50 flex items-center justify-end mt-1'>
-          <Truck size={14} />* 50,000원 이상 구매 시 무료배송
-        </p>
+
+        <div className='text-xs text-gray-50 flex items-center gap-2 justify-end mt-1'>
+          <p>
+            <Truck size={18} />
+          </p>
+          <p>50,000원 이상 구매 시 무료배송</p>
+        </div>
       </div>
     </ul>
   );
