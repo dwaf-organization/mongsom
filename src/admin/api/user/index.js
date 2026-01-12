@@ -1,8 +1,11 @@
 import { fetchData } from '../instance';
 
-export const getUserList = async ({ page, size }) => {
+export const getUserList = async ({ page, size, searchItem }) => {
+  const url = `api/v1/admin/user/list/${page}/${size}?searchItem=${searchItem}`;
+  console.log('🚀 ~ getUserList ~ url:', url);
+
   const response = await fetchData.get(
-    `api/v1/admin/user/list/${page}/${size}`,
+    `api/v1/admin/user/list/${page}/${size}?searchItem=${searchItem}`,
   );
   console.log('🚀 ~ getUserList ~ response:', response);
   return response;

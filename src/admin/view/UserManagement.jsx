@@ -8,26 +8,36 @@ import SearchForm from '../components/ui/SearchForm';
 
 export default function UserManagement() {
   const [searchParams] = useSearchParams();
-  const page = Number(searchParams.get('page') || 1);
+  const page = Number(searchParams.get('page') || 0);
   const [userList, setUserList] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPage: 1,
   });
 
-  const [searchData, setSearchData] = useState({
-    name: '',
-  });
+  const [searchParamsItem, setSearchParamsItem] = useState({});
+
+  const handleSearchChange = e => {
+    const { name, value } = e.target;
+    setSearchParamsItem(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const fetchUserList = useCallback(async () => {
     const size = 10;
-    const userList = await getUserList({ page, size });
+    const userList = await getUserList({
+      page,
+      size,
+      searchItem: searchParamsItem.name || '',
+    });
     console.log('🚀 ~ fetchUserList ~ userList:', userList);
     if (userList.code === 1) {
       setUserList(userList.data.users);
       setPagination(userList.data.pagination.totalPage);
     }
-  }, [page]);
+  }, [page, searchParamsItem]);
 
   useEffect(() => {
     fetchUserList();
@@ -38,7 +48,7 @@ export default function UserManagement() {
 
       <section>
         {' '}
-        <SearchForm submitButtonText='조회'>
+        <SearchForm submitButtonText='조회' onSubmit={fetchUserList}>
           <div className='grid grid-cols-[120px_1fr]'>
             <div className='bg-primary-100 text-gray-900 font-semibold px-6 py-4 border-b'>
               회원정보
@@ -49,6 +59,8 @@ export default function UserManagement() {
                 placeholder='전화번호 또는 이름을 입력하세요'
                 name='name'
                 className='w-full border rounded-md p-2 focus:outline-primary-200 border-gray-400'
+                value={searchParamsItem.name || ''}
+                onChange={handleSearchChange}
               />
             </div>
           </div>
