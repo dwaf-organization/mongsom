@@ -91,9 +91,7 @@ export default function ShopDetail() {
     // 새로운 형식: productImages 배열 (각 항목에 productImgUrl)
     const productImages = product?.productImages ?? [];
     if (Array.isArray(productImages) && productImages.length > 0) {
-      return productImages
-        .map(it => it?.productImgUrl || '')
-        .filter(Boolean);
+      return productImages.map(it => it?.productImgUrl || '').filter(Boolean);
     }
 
     // 기존 형식 호환: productImgUrl
@@ -219,6 +217,7 @@ export default function ShopDetail() {
           <div className='md:hidden'>
             <BackButton className='w-6 h-6' text={'뒤로가기'} />
           </div>
+
           <div
             className={[
               'relative w-[300px] md:w-[400px] h-[300px] md:h-[400px] rounded-lg overflow-hidden border border-gray-200 bg-gray-100',
@@ -251,6 +250,12 @@ export default function ShopDetail() {
                 onTransitionEnd={handleOverlayTransitionEnd}
                 draggable={false}
               />
+            )}
+
+            {product.stockStatus === 0 && (
+              <div className='absolute inset-0 bg-black-50/50 flex items-center justify-center'>
+                <span className='text-white text-2xl  font-bold'>품절</span>
+              </div>
             )}
           </div>
 

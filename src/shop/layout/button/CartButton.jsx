@@ -9,9 +9,13 @@ import {
 } from '../../utils/instantPurchase';
 
 export default function CartButton({ selectedOptions = [], product = {} }) {
+  console.log('🚀 ~ CartButton ~ product:', product);
   const { addToast } = useToast();
   const navigate = useNavigate();
   const { userCode } = useAuth();
+
+  const soldOut = product.stockStatus === 0;
+  console.log('🚀 ~ CartButton ~ soldOut:', soldOut);
 
   const productId = Number(product.productId ?? product.id);
   const isOptionSelected =
@@ -173,6 +177,7 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
         className='w-full font-bold md:text-xl font-pretendard'
         variant='outline'
         onClick={handleAddToCart}
+        disabled={soldOut}
       >
         장바구니
       </Button>
@@ -180,6 +185,7 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
         className='w-full font-bold md:text-xl font-pretendard'
         variant='default'
         onClick={handleBuy}
+        disabled={soldOut}
       >
         구매하기
       </Button>

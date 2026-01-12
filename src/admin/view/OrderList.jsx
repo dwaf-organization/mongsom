@@ -27,7 +27,7 @@ const oneMonthAgoISO = () => {
 export default function OrderList() {
   const { addToast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [deliveryStatus, setDeliveryStatus] = useState();
+  const [deliveryStatus, setDeliveryStatus] = useState('결제대기');
 
   const today = useMemo(() => toISODate(new Date()), []);
   const monthAgo = useMemo(() => oneMonthAgoISO(), []);
@@ -69,6 +69,7 @@ export default function OrderList() {
   const [rows, setRows] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const fetchList = async () => {
     setLoading(true);
@@ -154,11 +155,18 @@ export default function OrderList() {
   };
 
   const handleExcel = async () => {
+    if (isDownloading) return;
+    setIsDownloading(true);
     try {
-      const blob = await DownLoadExcel(deliveryStatus);
+      const response = await DownLoadExcel(deliveryStatus);
+
+      // API 에러 응답 체크 (blob이 아닌 경우)
+      if (!(response instanceof Blob)) {
+        throw new Error(response?.message || '엑셀 다운로드에 실패했습니다.');
+      }
 
       // 다운로드 링크 생성
-      const url = window.URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(response);
       const link = document.createElement('a');
       link.href = url;
 
@@ -177,7 +185,9 @@ export default function OrderList() {
       addToast('엑셀 다운로드가 완료되었습니다.', 'success');
     } catch (error) {
       console.error('엑셀 다운로드 오류:', error);
-      addToast('엑셀 다운로드에 실패했습니다.', 'error');
+      addToast(error.message || '엑셀 다운로드에 실패했습니다.', 'error');
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -203,10 +213,11 @@ export default function OrderList() {
             <option value='입고지연'>입고지연</option>
           </select>
           <button
-            className=' flex items-center gap-1 font-semibold bg-green-900 text-sm hover:bg-green-700 text-white px-2 py-2 rounded-xl'
+            className=' flex items-center gap-1 font-semibold bg-green-900 text-sm hover:bg-green-700 text-white px-2 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed'
             onClick={handleExcel}
+            disabled={isDownloading}
           >
-            <BookX size={18} /> 엑셀 다운로드
+            <BookX size={18} /> {isDownloading ? '다운로드 중...' : '엑셀 다운로드'}
           </button>
         </div>
       </div>

@@ -57,7 +57,10 @@ export default function OrderTableSection({ rows, loading, onRefresh }) {
 
   return (
     <section className='py-6'>
-      <div className='flex justify-end items-center mt-6 pb-2'>
+      <div className='flex justify-end gap-2 items-end mt-6 pb-2'>
+        <p className='text-sm text-red-500'>
+          * 페이지 이동 전 일괄저장 버튼을 눌러야 저장됩니다.
+        </p>
         <button
           className='bg-primary-200 text-sm p-2 rounded-md text-white'
           onClick={handleSaveAll}
@@ -195,7 +198,7 @@ export default function OrderTableSection({ rows, loading, onRefresh }) {
                             )
                           }
                         >
-                          <option value='전체'>전체</option>
+                          {/* <option value='전체'>전체</option> */}
                           <option value='결제대기'>결제대기</option>
                           <option value='결제완료'>결제완료</option>
                           <option value='상품준비중'>상품준비중</option>
