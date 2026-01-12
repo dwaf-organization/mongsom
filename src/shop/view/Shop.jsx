@@ -20,7 +20,7 @@ export default function Shop() {
   });
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
-  const sort = searchParams.get('sort') || '';
+  const sort = searchParams.get('sort') || 'latest';
   const premium = searchParams.get('premium') || '';
   const page = searchParams.get('page') || '0';
 
