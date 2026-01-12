@@ -247,7 +247,7 @@ export default function ReviewTab() {
               >
                 <div className='flex items-center px-2'>
                   <ul className='flex flex-col items-start gap-2'>
-                    <li className=' font-montserrat w-full'>
+                    <li className=' font-montserrat text-black-100 w-full'>
                       {review.userName
                         ? review.userName.charAt(0) +
                           '*'.repeat(Math.max(0, review.userName.length - 1))
@@ -266,7 +266,7 @@ export default function ReviewTab() {
                       </span>
                     </div>
 
-                    <div className='font-montserrat text-start text-sm md:text-base'>
+                    <div className='font-montserrat text-black-100 text-start text-sm md:text-base'>
                       <p>
                         {expandedReviews[key] ? content : truncateText(content)}
                       </p>

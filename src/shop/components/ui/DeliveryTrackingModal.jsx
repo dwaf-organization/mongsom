@@ -1,14 +1,14 @@
 import { getOrderDeliveryInfo } from '../../api/order';
 import { useEffect, useState, useMemo } from 'react';
 import { useToast } from '../../context/ToastContext';
+import { Package, Truck, Copy, Check, ExternalLink } from 'lucide-react';
 
 export default function DeliveryTrackingModal({ orderId }) {
-  console.log('🚀 ~ DeliveryTrackingModal ~ orderId:', orderId);
   const { addToast } = useToast();
   const [deliveryInfo, setDeliveryInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
-  // API 키 이름이 다를 수도 있으니 정규화
   const normalized = useMemo(() => {
     if (!deliveryInfo) return null;
     return {
@@ -30,14 +30,13 @@ export default function DeliveryTrackingModal({ orderId }) {
       try {
         setLoading(true);
         const res = await getOrderDeliveryInfo(orderId);
-        // console.log('res:', res);
 
         if (!ignore) {
           if (res?.code === -2) {
             addToast('요청 중 오류가 발생했습니다.', 'error');
             setDeliveryInfo(null);
           } else {
-            setDeliveryInfo(res?.data ?? res); // 백엔드 응답 형태에 맞춰 조정
+            setDeliveryInfo(res?.data ?? res);
           }
         }
       } catch (e) {
@@ -55,10 +54,28 @@ export default function DeliveryTrackingModal({ orderId }) {
     };
   }, [orderId, addToast]);
 
+  const handleCopy = async () => {
+    if (!normalized?.invoiceNumber) return;
+    try {
+      await navigator.clipboard.writeText(normalized.invoiceNumber);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      addToast('복사에 실패했습니다.', 'error');
+    }
+  };
+
+  const handleTrackingLink = () => {
+    if (!normalized?.invoiceNumber) return;
+    const url = `https://www.ilogen.com/web/personal/trace/${normalized.invoiceNumber}`;
+    window.open(url, '_blank');
+  };
+
   if (loading) {
     return (
-      <div className='text-center py-8 px-10'>
-        <p className='text-sm text-gray-500'>배송 정보를 불러오는 중…</p>
+      <div className='flex flex-col items-center justify-center py-12 px-10'>
+        <div className='w-10 h-10 border-3 border-primary-200 border-t-transparent rounded-full animate-spin mb-4' />
+        <p className='text-sm text-gray-500'>배송 정보를 불러오는 중...</p>
       </div>
     );
   }
@@ -68,37 +85,77 @@ export default function DeliveryTrackingModal({ orderId }) {
 
   if (!hasTrackingNumber) {
     return (
-      <div className='text-center py-8 px-10'>
-        <div className='text-6xl mb-4'>📦</div>
-        <p className='text-lg text-gray-600 mb-2'>
-          조회 가능한 배송 정보가 없습니다
+      <div className='flex flex-col items-center justify-center py-12 px-8'>
+        <div className='w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-5'>
+          <Package className='w-10 h-10 text-gray-400' />
+        </div>
+        <p className='text-lg font-medium text-gray-700 mb-2'>
+          배송 정보가 없습니다
         </p>
-        <p className='text-sm text-gray-500'>
-          아직 배송이 시작되지 않았거나 송장번호가 발급되지 않았습니다.
+        <p className='text-sm text-gray-500 text-center leading-relaxed'>
+          아직 배송이 시작되지 않았거나
+          <br />
+          송장번호가 발급되지 않았습니다.
         </p>
       </div>
     );
   }
 
   return (
-    <div className='space-y-6 p-6'>
-      <h2 className='text-2xl font-bold text-center mb-6'>배송 조회</h2>
+    <div className='p-6'>
+      <div className='flex items-center justify-center gap-2 mb-6'>
+        <Truck className='w-6 h-6 text-primary-200' />
+        <h2 className='text-xl font-bold text-gray-800'>배송 조회</h2>
+      </div>
 
-      <div className='bg-blue-50 p-4 rounded-lg'>
-        <h3 className='font-semibold text-lg mb-3'>송장번호</h3>
-        <div className='space-y-2'>
-          <p className='font-montserrat bg-white p-3 rounded border'>
-            {normalized.invoiceNumber}
-          </p>
-          <p className='text-sm text-gray-600'>
-            위 송장번호로 택배사에서 배송 조회가 가능합니다.
-          </p>
-          <div className='flex gap-2 mt-3'>
-            <p>택배사</p>
-            <p>{normalized.deliveryCom || '-'}</p>
+      <div className='bg-gradient-to-br from-primary-50 to-primary-100/50 rounded-2xl p-5 mb-4'>
+        <div className='flex items-center gap-2 mb-3'>
+          <div className='w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm'>
+            <Package className='w-4 h-4 text-primary-200' />
+          </div>
+          <span className='text-sm font-medium text-gray-600'>택배사</span>
+          <span className='ml-auto text-sm font-semibold text-gray-800'>
+            {normalized.deliveryCom || '로젠택배'}
+          </span>
+        </div>
+
+        <div className='bg-white rounded-xl p-4 shadow-sm'>
+          <p className='text-xs text-gray-500 mb-2'>송장번호</p>
+          <div className='flex items-center justify-between gap-3'>
+            <p className='font-mono text-lg font-semibold text-gray-800 tracking-wide'>
+              {normalized.invoiceNumber}
+            </p>
+            <button
+              onClick={handleCopy}
+              className='flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm'
+            >
+              {copied ? (
+                <>
+                  <Check className='w-4 h-4 text-green-500' />
+                  <span className='text-green-600'>복사됨</span>
+                </>
+              ) : (
+                <>
+                  <Copy className='w-4 h-4 text-gray-500' />
+                  <span className='text-gray-600'>복사</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
+
+      <button
+        onClick={handleTrackingLink}
+        className='w-full flex items-center justify-center gap-2 bg-primary-200 hover:bg-primary-300 text-white font-medium py-3 px-4 rounded-xl transition-colors'
+      >
+        <ExternalLink className='w-4 h-4' />
+        택배사에서 배송 조회하기
+      </button>
+
+      <p className='text-xs text-gray-400 text-center mt-4'>
+        버튼을 클릭하면 로젠택배 배송조회 페이지로 이동합니다
+      </p>
     </div>
   );
 }

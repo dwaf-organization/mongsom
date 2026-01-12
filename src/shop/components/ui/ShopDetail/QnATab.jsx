@@ -86,6 +86,30 @@ export default function QnATab({ product }) {
   const myQnA = data.userCode === userCode;
   console.log('🚀 ~ QnATab ~ myQnA:', myQnA);
 
+  if (data.length === 0) {
+    return (
+      <div>
+        <h2 className='font-semibold text-xl'>QnA</h2>
+
+        <div className='text-gray-50 text-xs pb-4'>
+          구매하시려는 상품에 대해 궁금한 점이 있으신 경우 문의해주세요.
+        </div>
+        <button
+          className='bg-black-200 text-white p-2 text-sm font-semibold rounded-md'
+          onClick={handleQnACreation}
+        >
+          상품 QnA 작성하기
+        </button>
+
+        <section className='mt-2'>
+          <div className='text-center text-gray-500 py-10'>
+            등록된 QnA가 없습니다.
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h2 className='font-semibold text-xl'>QnA</h2>

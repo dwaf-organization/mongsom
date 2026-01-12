@@ -7,6 +7,7 @@ import { useToast } from '../context/ToastContext';
 import { formatDate, formatDateTime } from '../utils/dateUtils';
 import { Link } from 'react-router-dom';
 import { changeExchangeStatus } from '../api/exchange';
+import { useNavigate } from 'react-router-dom';
 
 export default function ExchangeDetail() {
   const params = useParams();
@@ -15,11 +16,14 @@ export default function ExchangeDetail() {
   const { addToast } = useToast();
   const [exchangeStatus, setExchangeStatus] = useState('');
 
+  const navigate = useNavigate();
+
   const fetchData = async () => {
     const response = await getExchangeDetail(changeId);
     console.log('🚀 ~ fetchData ~ response:', response);
     if (response.code === 1) {
       setExchangeData(response.data);
+      setExchangeStatus(response.data?.changeInfo?.changeStatus || '');
     } else {
       setExchangeData(null);
       addToast('교환/반품 상세 정보를 불러오는데 실패했습니다.', 'error');
@@ -49,6 +53,7 @@ export default function ExchangeDetail() {
     if (res.code === 1) {
       addToast('교환/반품 상태가 변경되었습니다.', 'success');
       fetchData();
+      navigate(-1);
     } else {
       addToast(res.data || '교환/반품 상태 변경에 실패했습니다.', 'error');
     }

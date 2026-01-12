@@ -54,6 +54,7 @@ export default function QnA() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await getQnAList({ page, size: 10 });
+      console.log('🚀 ~ fetchData ~ response:', response);
       if (response.code === 1) {
         setPagination(response.data.pagination);
         setData(response.data.qnaList);

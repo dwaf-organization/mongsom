@@ -2,7 +2,7 @@ import { fetchData } from '../instance';
 
 export const getReviewAllList = async (page = 0) => {
   const response = await fetchData.get(
-    `api/v1/my/review/all?page=${page}&size=10`,
+    `api/v1/my/review/all?page=${page}&size=5`,
   );
   return response;
 };

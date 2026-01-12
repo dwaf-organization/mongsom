@@ -189,9 +189,9 @@ export default function Review() {
       <h2 className='text-2xl font-bold text-gray-900 mb-6'>리뷰관리</h2>
       <div>
         <div className='bg-white rounded-lg'>
-          <p className='md:text-xl text-start font-semibold text-gray-800 mb-4'>
+          {/* <p className='md:text-xl text-start font-semibold text-gray-800 mb-4'>
             리뷰 {review?.length || 0} 건
-          </p>
+          </p> */}
 
           <div>
             {review?.map((item, idx) => {
