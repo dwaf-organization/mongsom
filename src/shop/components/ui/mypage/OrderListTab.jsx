@@ -122,11 +122,11 @@ export default function OrderListTab() {
                     주문번호 : {order.orderNum || order.orderId}
                   </p>
                   <div className='flex items-center gap-2 mb-1'>
-                    <p className='text-gray-900 truncate max-w-[5rem] xl:max-w-[300px]'>
+                    <p className='text-gray-900 truncate max-w-[5rem md:max-w-[300px]'>
                       {name}
                     </p>
                   </div>
-                  <p className='text-sm text-gray-600 mb-2 text-left truncate max-w-[5rem] xl:max-w-[300px]'>
+                  <p className='text-sm text-gray-600 mb-2 text-left truncate max-w-[5rem] md:max-w-[300px]'>
                     옵션: {optionText}
                   </p>
                   <div className='flex items-center gap-4 text-sm'>

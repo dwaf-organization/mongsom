@@ -31,9 +31,25 @@ export default function ProductActionButtons({
       ? [Number(orderStatus)].filter(v => !Number.isNaN(v))
       : [];
 
-  const hasExchangeCancel = changeStatus.includes('교환신청');
-  const hasReturnCancel = changeStatus.includes('반품신청');
-  const hasAnyChange = hasExchangeCancel || hasReturnCancel;
+  // 버튼을 모두 숨겨야 하는 상태들 (교환/반품 진행중이거나 완료된 상태)
+  const hiddenStatuses = [
+    '교환중',
+    '반품중',
+    '교환완료',
+    '반품완료',
+    '교환승인',
+    '반품승인',
+  ];
+  // changeStatus가 배열일 수도 있고 문자열일 수도 있음
+  const statusValue = Array.isArray(changeStatus)
+    ? (changeStatus[0]?.trim?.() ?? changeStatus[0])
+    : (changeStatus?.trim?.() ?? changeStatus);
+  const isHiddenStatus = hiddenStatuses.includes(statusValue);
+  const hasChangeStatus = statusValue != null && statusValue !== '';
+
+  console.log('🚀 ~ ProductActionButtons ~ statusValue:', statusValue);
+  console.log('🚀 ~ ProductActionButtons ~ isHiddenStatus:', isHiddenStatus);
+  console.log('🚀 ~ ProductActionButtons ~ hasChangeStatus:', hasChangeStatus);
 
   const isPreShipping =
     deliveryStatus === '결제완료' || deliveryStatus === '상품준비중';
@@ -63,7 +79,7 @@ export default function ProductActionButtons({
     openModal(<ExchangeCancelModal orderDetailId={odid} orderId={orderId} />);
 
   return (
-    <div className='flex flex-col text-xs gap-2'>
+    <div className='flex flex-col text-xs gap-2 items-end'>
       {changeStatus == null ||
       changeStatus === '' ||
       changeStatus === undefined ||
@@ -75,43 +91,37 @@ export default function ProductActionButtons({
       {/* 결제 대기 상태가 아닐 때만 배송조회 버튼 표시 */}
       {!isNotDelivered && (
         <button
-          className='border border-gray-500 text-gray-50 rounded-lg md:px-6 py-2'
+          className='border border-gray-500 text-gray-50 rounded-lg px-2 md:px-6 py-2 w-[90px] md:w-[120px]'
           onClick={handleDeliveryTracking}
         >
           배송조회
         </button>
       )}
-      {/* 교환/반품 취소 버튼들 */}
-      {hasReturnCancel && (
+      {/* 교환/반품 취소 버튼 - hiddenStatus가 아니고 changeStatus가 있을 때 표시 */}
+      {!isHiddenStatus && hasChangeStatus && (
         <button
-          className='border border-gray-500 text-gray-50 rounded-lg px-2 md:px-6 py-2'
+          className='border border-gray-500 text-gray-50 rounded-lg px-2 md:px-6 py-2 w-[90px] md:w-[120px]'
           onClick={() => handleReturnOrExchangeCancel(orderDetailId)}
         >
-          반품취소
+          교환/반품 취소
         </button>
       )}
-      {hasExchangeCancel && (
-        <button
-          className='border border-gray-500 text-gray-50 rounded-lg px-2 md:px-6 py-2'
-          onClick={() => handleReturnOrExchangeCancel(orderDetailId)}
-        >
-          교환취소
-        </button>
-      )}
-      {/* 교환, 반품 신청 버튼 - exchangeAbleStatus 또는 isNotDelivered 상태일 때 표시 */}
-      {!hasAnyChange && (exchangeAbleStatus || isNotDelivered) && (
-        <button
-          className='border border-gray-500 text-gray-50 rounded-lg px-2 md:px-6 py-2'
-          onClick={handleExchange}
-        >
-          교환, 반품 신청
-        </button>
-      )}
+      {/* 교환, 반품 신청 버튼 - hiddenStatus가 아니고 changeStatus가 없을 때 표시 */}
+      {!isHiddenStatus &&
+        !hasChangeStatus &&
+        (exchangeAbleStatus || isNotDelivered) && (
+          <button
+            className='border border-gray-500 text-gray-50 rounded-lg whitespace-nowrap px-2 md:px-6 py-2 w-[90px] md:w-[120px]'
+            onClick={handleExchange}
+          >
+            교환, 반품 신청
+          </button>
+        )}
       {/* 주문취소 버튼 - 결제 대기 상태일 때만 표시 */}
       {/* 리뷰 작성 버튼 - 배송완료 상태일 때만 표시 */}
       {deliveryStatus === '배송완료' && (
         <button
-          className='border border-gray-500 md:base whitespace-nowrap text-gray-50 rounded-lg px-2 md:px-6 py-2'
+          className='border border-gray-500 md:base whitespace-nowrap text-gray-50 rounded-lg px-2 md:px-6 py-2 w-[90px] md:w-[120px]'
           onClick={handleReview}
         >
           리뷰 작성하기
