@@ -36,9 +36,10 @@ export const getOrderDetail = async orderId => {
   console.log('🚀 ~ getOrderDetail ~ response:', response);
   return response;
 };
-
+// 배송 상태 업데이트 사용 안함
 export const updateOrderStatus = async data => {
   console.log('🚀 ~ updateOrderStatus ~ data:', data);
+
   const response = await fetchData.put(`api/v1/admin/order/delivery/update`, {
     body: JSON.stringify(data),
   });
@@ -69,7 +70,7 @@ export const DownLoadExcel = async deliveryStatus => {
 export const updateDeliveryInfo = async (data, userCode, orderId) => {
   console.log('🚀 ~ updateDeliveryInfo ~ data:', data);
   const response = await fetchData.put(`api/v1/admin/order/delivery/update`, {
-    body: { data, userCode, orderId },
+    body: { deliveryUpdates: data },
   });
   return response;
 };

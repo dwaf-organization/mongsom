@@ -3,7 +3,6 @@ import OrderInfo from '../components/section/orderDetail/OrderInfo';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getOrderDetail } from '../api/order';
-import OrderStatus from '../components/section/orderDetail/OrderStatus';
 import OrderProductInfo from '../components/section/orderDetail/OrderProductInfo';
 import OrderPaymentInfo from '../components/section/orderDetail/OrderPaymentInfo';
 import OrderReceivedInfo from '../components/section/orderDetail/OrderReceivedInfo';
@@ -19,6 +18,7 @@ export default function OrderDetail() {
     setLoading(true);
     const fetchOrderDetail = async () => {
       const response = await getOrderDetail(id);
+      console.log('🚀 ~ fetchOrderDetail ~ response:', response);
       console.log(response);
       if (response.code === 1) {
         setOrder(response.data);

@@ -3,12 +3,14 @@ import { formatDate } from '../../../utils/dateUtils';
 import { getFirstThumb } from '../../../utils/dateUtils';
 import { useState } from 'react';
 import { updateDeliveryInfo } from '../../../api/order/index';
+import { useToast } from '../../../context/ToastContext';
 
-export default function OrderTableSection({ rows, loading }) {
+export default function OrderTableSection({ rows, loading, onRefresh }) {
   const safeRows = Array.isArray(rows) ? rows : [];
   const [deliveryDataMap, setDeliveryDataMap] = useState({});
   console.log('🚀 ~ OrderTableSection ~ safeRows:', safeRows);
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const handleDeliveryDataChange = (orderId, field, value) => {
     setDeliveryDataMap(prev => ({
@@ -43,10 +45,13 @@ export default function OrderTableSection({ rows, loading }) {
       return;
     }
 
-    const response = await updateDeliveryInfo({ deliveryUpdates });
+    const response = await updateDeliveryInfo(deliveryUpdates);
+    console.log('🚀 ~ handleSaveAll ~ response:', response);
+    console.log('🚀 ~ handleSaveAll ~ deliveryUpdates:', deliveryUpdates);
     if (response.code === 1) {
-      alert('배송 정보가 저장되었습니다.');
+      addToast('배송 정보가 저장되었습니다.', 'success');
       setDeliveryDataMap({});
+      onRefresh?.();
     }
   };
 

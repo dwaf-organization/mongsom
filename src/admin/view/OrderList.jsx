@@ -213,7 +213,7 @@ export default function OrderList() {
 
       <OrderSearchSection onSearch={handleSearch} defaultValues={query} />
 
-      <OrderTableSection rows={rows} loading={loading} />
+      <OrderTableSection rows={rows} loading={loading} onRefresh={fetchList} />
 
       <div className='mt-6 flex justify-center'>
         <Pagination totalPage={totalPages} />

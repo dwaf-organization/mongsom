@@ -55,7 +55,7 @@ export const deleteChangeOrder = async data => {
 };
 
 export const getOrderDeliveryInfo = async orderId => {
-  const response = await fetchData.get(`api/v1/my/delivery/${orderId}`);
+  const response = await fetchData.get(`api/v1/my/delivery/find/${orderId}`);
   console.log('🚀 ~ getOrderDeliveryInfo ~ response:', response);
   if (response.code === 1) {
     return response;

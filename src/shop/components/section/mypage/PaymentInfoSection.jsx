@@ -29,7 +29,7 @@ export default function PaymentInfoSection({ order }) {
           <li>{order.paymentInfo.deliveryStatusReason} </li>
           <li>{formatDate(order.paymentInfo.paymentMethod)}</li>
           <li>{order.paymentInfo.totalPrice?.toLocaleString()}원</li>
-          <li>-{order.paymentInfo.usedMileage?.toLocaleString()}원</li>
+          <li>{order.paymentInfo.usedMileage?.toLocaleString()}원</li>
           <li>{order.paymentInfo.deliveryPrice?.toLocaleString()}원</li>
 
           <li>{formatDate(order.paymentInfo.paymentUpdatedAt)}</li>
@@ -44,7 +44,7 @@ export default function PaymentInfoSection({ order }) {
           {order.paymentInfo.paymentAmount?.toLocaleString()}원
         </p>
       </section>
-      <p className='text-xs md:text-sm text-gray-500 pt-4'>
+      <p className='text-xs md:text-sm text-blue-500 pt-4'>
         * 무통장 입금시 결제대기 상태일 때 총 결제금액이 0원으로 표시됩니다.
       </p>
     </section>

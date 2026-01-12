@@ -69,12 +69,7 @@ export default function OrderDetail() {
                 <li>부산은행 113-2019-7400-06 </li>
                 <li>주식회사 몽솜</li>
                 <li>
-                  {(
-                    Number(order.paymentInfo.finalPrice) +
-                    Number(order.paymentInfo.deliveryPrice) -
-                    Number(order.paymentInfo.usedMileage)
-                  ).toLocaleString()}{' '}
-                  원
+                  {Number(order.paymentInfo.finalPrice).toLocaleString()}원
                 </li>
               </ul>
             </div>

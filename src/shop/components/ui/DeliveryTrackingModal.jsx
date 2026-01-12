@@ -29,7 +29,7 @@ export default function DeliveryTrackingModal({ orderId }) {
     (async () => {
       try {
         setLoading(true);
-        const res = await getOrderDeliveryInfo(orderId); // ← await!
+        const res = await getOrderDeliveryInfo(orderId);
         // console.log('res:', res);
 
         if (!ignore) {

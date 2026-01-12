@@ -109,13 +109,13 @@ export default function ExchangeTableSection({ exchangeList }) {
                       </td>
 
                       <td className='px-2 py-4 text-sm text-primary-700'>
-                        <button
+                        <Button
                           type='button'
-                          className='underline'
+                          className='w-fit px-4'
                           onClick={() => handleDetail(change.changeId)}
                         >
                           상세보기
-                        </button>
+                        </Button>
                         {/* <button
                           type='button'
                           className='underline'
@@ -129,7 +129,7 @@ export default function ExchangeTableSection({ exchangeList }) {
                         </button> */}
                       </td>
 
-                      <td className='px-2 py-4 whitespace-nowrap text-sm text-gray-900 text-center'>
+                      <td className='px-2 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 text-center'>
                         {change.changeStatus}
                       </td>
                     </tr>
