@@ -25,19 +25,22 @@ export default function UserManagement() {
     }));
   };
 
-  const fetchUserList = useCallback(async () => {
-    const size = 10;
-    const userList = await getUserList({
-      page,
-      size,
-      searchItem: searchParamsItem.name || '',
-    });
-    console.log('🚀 ~ fetchUserList ~ userList:', userList);
-    if (userList.code === 1) {
-      setUserList(userList.data.users);
-      setPagination(userList.data.pagination.totalPage);
-    }
-  }, [page, searchParamsItem]);
+  const fetchUserList = useCallback(
+    async (searchItem = '') => {
+      const size = 10;
+      const userList = await getUserList({
+        page,
+        size,
+        searchItem,
+      });
+      console.log('🚀 ~ fetchUserList ~ userList:', userList);
+      if (userList.code === 1) {
+        setUserList(userList.data.users);
+        setPagination(userList.data.pagination.totalPage);
+      }
+    },
+    [page]
+  );
 
   useEffect(() => {
     fetchUserList();
@@ -48,7 +51,7 @@ export default function UserManagement() {
 
       <section>
         {' '}
-        <SearchForm submitButtonText='조회' onSubmit={fetchUserList}>
+        <SearchForm submitButtonText='조회' onSubmit={() => fetchUserList(searchParamsItem.name || '')}>
           <div className='grid grid-cols-[120px_1fr]'>
             <div className='bg-primary-100 text-gray-900 font-semibold px-6 py-4 border-b'>
               회원정보
