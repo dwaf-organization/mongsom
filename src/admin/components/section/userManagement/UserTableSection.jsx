@@ -5,13 +5,13 @@ import { Button } from '../../ui/button';
 import { chargeMileage } from '../../../api/user';
 import { useToast } from '../../../context/ToastContext';
 
-export default function UserTableSection({ userList }) {
+export default function UserTableSection({ userList, onRefresh }) {
   const { openModal } = useModal();
   const [mileageInputs, setMileageInputs] = useState({});
   const { addToast } = useToast();
 
   const handleDelete = async userCode => {
-    openModal(<DeleteUserModal userCode={userCode} />);
+    openModal(<DeleteUserModal userCode={userCode} onRefresh={onRefresh} />);
   };
 
   const handleMileageChange = (userCode, value) => {
@@ -27,8 +27,13 @@ export default function UserTableSection({ userList }) {
     if (!mileage) return;
 
     const response = await chargeMileage(userCode, Number(mileage));
-    addToast('마일리지가 충전되었습니다.', 'success');
-    console.log('🚀 ~ handleChargeButton ~ response:', response);
+    if (response.code === 1) {
+      if (onRefresh) {
+        onRefresh();
+      }
+      addToast('마일리지가 충전되었습니다.', 'success');
+      console.log('🚀 ~ handleChargeButton ~ response:', response);
+    }
 
     setMileageInputs(prev => ({
       ...prev,
@@ -69,7 +74,7 @@ export default function UserTableSection({ userList }) {
 
               <td className=' py-4'>
                 <div>
-                  <p>보유마일리지:5,000원 {user.mileage}</p>
+                  <p>보유마일리지: {user.mileage?.toLocaleString()}원</p>
                 </div>
                 <form
                   className='flex items-center gap-2 justify-center mt-2'

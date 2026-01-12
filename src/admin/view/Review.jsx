@@ -226,7 +226,7 @@ export default function Review() {
                         <p className='text-sm text-gray-600 mb-1'>
                           {item.productName}
                           {item.optionSummary && (
-                            <span className='text-gray-400 ml-2'>
+                            <span className='text-gray-600 ml-2'>
                               ({item.optionSummary})
                             </span>
                           )}
@@ -304,7 +304,7 @@ export default function Review() {
                     <div className='mt-4 px-2 flex items-start'>
                       <div className='min-w-[80px]'>
                         <p className='text-sm font-semibold text-gray-700'>
-                          관리자 답변
+                          판매자
                         </p>
                         <p className='text-sm text-gray-400'>
                           ({item.adminAnswerAt})

@@ -3,7 +3,7 @@ import { useModal } from '../../context/ModalContext';
 import { deleteUser } from '../../api/user';
 import { useToast } from '../../context/ToastContext';
 
-export default function DeleteUserModal({ userCode }) {
+export default function DeleteUserModal({ userCode, onRefresh }) {
   const { addToast } = useToast();
   const { closeModal } = useModal();
   const handleCancel = () => {
@@ -14,10 +14,13 @@ export default function DeleteUserModal({ userCode }) {
     if (res.code === 1) {
       addToast('회원이 삭제되었습니다.', 'success');
       closeModal();
+      if (onRefresh) {
+        onRefresh();
+      }
     } else {
       addToast(res?.data || '회원 삭제에 실패했습니다.', 'error');
+      closeModal();
     }
-    closeModal();
   };
   return (
     <div className='py-5 px-10'>

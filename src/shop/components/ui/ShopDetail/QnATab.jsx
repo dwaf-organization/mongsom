@@ -155,6 +155,7 @@ export default function QnATab({ product }) {
                       <td className='px-4 py-3 text-left whitespace-pre-wrap text-gray-700'>
                         <div className='flex flex-col gap-2'>
                           {item.qnaContents}
+                          <p> 주문번호: {item.orderId ?? '-'}</p>
                           {item.userCode === userCode && (
                             <div className='flex items-center text-right gap-2'>
                               <button

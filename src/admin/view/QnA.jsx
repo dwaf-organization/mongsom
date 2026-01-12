@@ -112,9 +112,14 @@ export default function QnA() {
                 <tr key={`${item.qnaCode}-expanded`} className='bg-primary-100'>
                   <td></td>
                   <td className='px-4 py-4' colSpan={4}>
-                    <p className='text-sm text-gray-700 whitespace-pre-wrap mb-4'>
-                      {expandedData.qnaContents}
-                    </p>
+                    <div>
+                      <p className='text-sm text-gray-700 whitespace-pre-wrap mb-4'>
+                        {expandedData.qnaContents}
+                      </p>
+                      <p className='text-xs text-gray-600 mb-2'>
+                        주문번호: {expandedData.orderId ?? '-'}
+                      </p>
+                    </div>
                     {item.answerStatus === '답변완료' ? (
                       <div className='border-t border-gray-400 pt-4'>
                         <span className='text-xs bg-gray-50 text-white px-2 py-1 whitespace-nowrap'>

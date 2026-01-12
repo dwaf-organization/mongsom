@@ -1,5 +1,5 @@
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import UserTableSection from '../components/section/userManagement/UserTableSection';
 import Pagination from '../components/ui/Pagination';
 import { getUserList } from '../api/user';
@@ -14,18 +14,24 @@ export default function UserManagement() {
     currentPage: 1,
     totalPage: 1,
   });
-  useEffect(() => {
-    const fetchUserList = async () => {
-      const size = 10;
-      const userList = await getUserList({ page, size });
-      console.log('🚀 ~ fetchUserList ~ userList:', userList);
-      if (userList.code === 1) {
-        setUserList(userList.data.users);
-        setPagination(userList.data.pagination.totalPage);
-      }
-    };
-    fetchUserList();
+
+  const [searchData, setSearchData] = useState({
+    name: '',
+  });
+
+  const fetchUserList = useCallback(async () => {
+    const size = 10;
+    const userList = await getUserList({ page, size });
+    console.log('🚀 ~ fetchUserList ~ userList:', userList);
+    if (userList.code === 1) {
+      setUserList(userList.data.users);
+      setPagination(userList.data.pagination.totalPage);
+    }
   }, [page]);
+
+  useEffect(() => {
+    fetchUserList();
+  }, [fetchUserList]);
   return (
     <InnerPaddingSectionWrapper>
       <h2 className='text-2xl font-bold text-gray-900 mb-6'>회원관리</h2>
@@ -48,7 +54,7 @@ export default function UserManagement() {
           </div>
         </SearchForm>
       </section>
-      <UserTableSection userList={userList} />
+      <UserTableSection userList={userList} onRefresh={fetchUserList} />
       <Pagination totalPage={pagination} />
     </InnerPaddingSectionWrapper>
   );
