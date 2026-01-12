@@ -17,7 +17,7 @@ export default function Header() {
               <img
                 src={mongsomLogo}
                 alt='Mongsom Logo'
-                className='h-6 w-auto md:h-8'
+                className='h-6 w-auto md:h-8 object-contain'
               />
             </Link>
           </h1>

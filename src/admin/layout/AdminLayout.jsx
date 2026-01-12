@@ -20,7 +20,7 @@ export default function AdminLayout({ children }) {
     <div className='flex'>
       <nav className=' px-2 text-center w-full max-w-[200px]'>
         <div className='flex items-center justify-center pt-10 pb-5 border-b border-gray-400'>
-          <img src={logo} alt='logo' />
+          <img src={logo} alt='logo' className='object-contain' />
         </div>
 
         {navigation.map(item => (
