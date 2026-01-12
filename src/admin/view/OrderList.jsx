@@ -32,7 +32,7 @@ export default function OrderList() {
   const today = useMemo(() => toISODate(new Date()), []);
   const monthAgo = useMemo(() => oneMonthAgoISO(), []);
 
-  const page = Number(searchParams.get('page') || 1);
+  const page = Number(searchParams.get('page') || 0);
   const size = Number(searchParams.get('size') || 10);
   const urlQuery = {
     startDate: searchParams.get('startDate') || monthAgo,
@@ -217,7 +217,8 @@ export default function OrderList() {
             onClick={handleExcel}
             disabled={isDownloading}
           >
-            <BookX size={18} /> {isDownloading ? '다운로드 중...' : '엑셀 다운로드'}
+            <BookX size={18} />{' '}
+            {isDownloading ? '다운로드 중...' : '엑셀 다운로드'}
           </button>
         </div>
       </div>

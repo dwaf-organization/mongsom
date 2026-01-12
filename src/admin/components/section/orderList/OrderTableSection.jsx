@@ -62,7 +62,7 @@ export default function OrderTableSection({ rows, loading, onRefresh }) {
           * 페이지 이동 전 일괄저장 버튼을 눌러야 저장됩니다.
         </p>
         <button
-          className='bg-primary-200 text-sm p-2 rounded-md text-white'
+          className='bg-blue-500 text-sm p-2 rounded-md text-white'
           onClick={handleSaveAll}
         >
           일괄 저장
