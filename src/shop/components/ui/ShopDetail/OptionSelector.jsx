@@ -174,15 +174,23 @@ export default function OptionSelector({
                 )}
               </label>
               <Select
-                options={type.options.map(o => ({
-                  label:
-                    o.priceAdjustment > 0
-                      ? `${o.label} (+${o.priceAdjustment.toLocaleString()}원)`
-                      : o.priceAdjustment < 0
-                        ? `${o.label} (${o.priceAdjustment.toLocaleString()}원)`
-                        : o.label,
-                  value: o.value,
-                }))}
+                options={type.options.map(o => {
+                  const isSoldOut = o.stockStatus === 0;
+                  let label = o.label;
+                  if (o.priceAdjustment > 0) {
+                    label = `${o.label} (+${o.priceAdjustment.toLocaleString()}원)`;
+                  } else if (o.priceAdjustment < 0) {
+                    label = `${o.label} (${o.priceAdjustment.toLocaleString()}원)`;
+                  }
+                  if (isSoldOut) {
+                    label = `${label} (품절)`;
+                  }
+                  return {
+                    label,
+                    value: o.value,
+                    disabled: isSoldOut,
+                  };
+                })}
                 value={selections[type.typeId] || ''}
                 onChange={value => handleSelectChange(type.typeId, value)}
                 className='w-full'

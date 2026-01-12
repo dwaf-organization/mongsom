@@ -86,15 +86,17 @@ const Select = ({
               {options.map((option, index) => (
                 <li
                   key={option.value}
-                  onClick={() => handleSelect(option)}
+                  onClick={() => !option.disabled && handleSelect(option)}
                   className={`
-                    px-4 py-3 cursor-pointer transition-colors duration-150 hover:text-primary-200 text-xs md:text-sm text-left
-                    ${selectedOption?.value === option.value ? ' text-primary-700' : 'text-gray-900'}
+                    px-4 py-3 transition-colors duration-150 text-xs md:text-sm text-left
+                    ${option.disabled ? 'text-gray-400 cursor-not-allowed' : 'cursor-pointer hover:text-primary-200'}
+                    ${selectedOption?.value === option.value ? ' text-primary-700' : option.disabled ? '' : 'text-gray-900'}
                     ${index === 0 ? 'rounded-t-lg' : ''}
                     ${index === options.length - 1 ? 'rounded-b-lg' : ''}
                   `}
                   role='option'
                   aria-selected={selectedOption?.value === option.value}
+                  aria-disabled={option.disabled}
                 >
                   {option.label}
                 </li>
