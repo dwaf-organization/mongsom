@@ -85,7 +85,7 @@ export default function OrderListTable() {
           <tr>
             <th className='text-center'>주문일자</th>
             <th className='text-center'>주문정보</th>
-            <th className='text-center'>주문금액</th>
+            <th className='text-center'>결제금액</th>
             <th className='text-right'>배송비</th>
             <th className='text-center'>상태</th>
           </tr>
