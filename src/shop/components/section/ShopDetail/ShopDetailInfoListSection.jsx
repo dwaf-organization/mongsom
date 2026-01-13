@@ -14,7 +14,7 @@ export default function ShopDetailInfoListSection({ tab, product, isLoading }) {
       case 'exchange':
         return <ExchangeReturnTab />;
       case 'qna':
-        return <QnATab />;
+        return <QnATab product={product} />;
       default:
         return <ProductInfoTab />;
     }

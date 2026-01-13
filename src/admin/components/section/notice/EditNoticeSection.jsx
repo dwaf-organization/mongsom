@@ -85,7 +85,7 @@ export default function EditNoticeSection() {
       }
       addToast('공지 수정이 완료되었습니다.', 'success');
 
-      navigate(-1);
+      navigate(-2);
     } catch (err) {
       console.error('❌ 공지 수정 실패:', err);
       addToast('공지 수정에 실패했습니다.', 'error');

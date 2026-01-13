@@ -9,7 +9,7 @@ export default function Notice() {
   const navigate = useNavigate();
 
   const currentPage = useMemo(
-    () => Number(searchParams.get('page') || 1),
+    () => Number(searchParams.get('page') || 0),
     [searchParams],
   );
   const pageSize = useMemo(
@@ -19,7 +19,7 @@ export default function Notice() {
 
   const [notices, setNotices] = useState([]);
   const [pagination, setPagination] = useState({
-    currentPage: 1,
+    currentPage: 0,
     totalPage: 1,
   });
   const [loading, setLoading] = useState(true);
@@ -140,7 +140,7 @@ export default function Notice() {
 
       {/* 모바일 카드 레이아웃 */}
       {!loading && notices.length > 0 && (
-        <div className='block md:hidden space-y-2'>
+        <div className='block pt-2 md:hidden space-y-2'>
           {notices.map((item, index) => {
             const id = item?.id ?? item?.noticeId ?? index;
             const dateRaw = item?.date ?? item?.createdAt;
@@ -183,7 +183,7 @@ export default function Notice() {
       )}
 
       <Pagination
-        currentPage={pagination.currentPage}
+        // currentPage={pagination.currentPage}
         totalPage={pagination.totalPage}
       />
     </InnerPaddingSectionWrapper>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import InnerPaddingSectionWrapper from '../wrapper/InnerPaddingSectionWrapper';
 import BreadCrumbSection from '../components/section/cart/BreadCrumbSection';
@@ -10,17 +10,18 @@ import PaymentButton from '../components/ui/order/PaymentButton';
 import { useAuth } from '../context/AuthContext';
 import { getCart } from '../api/cart';
 import { getUserInfo } from '../api/myPage';
+import { getmileage } from '../api/order';
+import { clearInstantPurchase } from '../utils/instantPurchase';
 
-function popInstantPurchase() {
-  const KEY = 'instantPurchase';
-  const raw = sessionStorage.getItem(KEY);
+const INSTANT_KEY = 'instantPurchase';
+
+function getInstantPurchase() {
+  const raw = sessionStorage.getItem(INSTANT_KEY);
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw);
-    sessionStorage.removeItem(KEY);
     return parsed?.data ?? parsed ?? null;
   } catch {
-    sessionStorage.removeItem(KEY);
     return null;
   }
 }
@@ -31,64 +32,41 @@ export default function Order() {
   const [cart, setCart] = useState([]);
   const [buyNowItems, setBuyNowItems] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
+  const [mileage, setMileage] = useState(0);
 
   const [isFormValid, setIsFormValid] = useState(false);
   const [customerInfo, setCustomerInfo] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('ACCOUNT'); // 'ACCOUNT' | 'CARD'
+  const [useMileage, setUseMileage] = useState(0); // 사용할 마일리지
 
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingCart, setLoadingCart] = useState(true);
 
-  const poppedRef = useRef(false);
-
+  // 바로구매 데이터 로드 (새로고침해도 유지)
   useEffect(() => {
-    if (poppedRef.current) return;
-    poppedRef.current = true;
-
-    const instant = popInstantPurchase();
+    const instant = getInstantPurchase();
 
     if (instant?.product && Array.isArray(instant.options)) {
-      const product = instant.product;
-
-      const productId = Number(product.productId ?? product.id);
-      const name = product.name ?? '';
-      const price = Number(product.price ?? 0);
-      const discountPer = Number(product.discountPer ?? 0);
-      const discountPrice = Number(
-        product.discountPrice ?? product.salePrice ?? product.price ?? 0,
-      );
-
-      const productImgUrl = Array.isArray(product.productImgUrl)
-        ? product.productImgUrl
-        : Array.isArray(product.productImgUrls)
-          ? product.productImgUrls
-          : Array.isArray(product.image)
-            ? product.image
-            : product.productImgUrl
-              ? [product.productImgUrl]
-              : [];
-
-      const mapped = instant.options.map((o, idx) => ({
-        cartId: `instant-${o.optId ?? 'noopt'}-${idx}`, // 로컬 키
-        optId: o.optId ?? Number(o.value ?? null) ?? null,
-        optName: o.optName ?? o.label ?? null,
-
-        productId,
-        productName: name,
-        price,
-        discountPer,
-        discountPrice,
-        quantity: Number(o.quantity ?? 1),
-        checkStatus: true,
-        productImgUrl,
-      }));
-
-      setBuyNowItems(mapped);
+      setBuyNowItems(instant.options);
     } else {
       setBuyNowItems([]);
     }
   }, []);
 
-  // 2) 사용자 정보는 항상 불러옴(바로구매/장바구니 무관)
+  // 페이지 이탈 시 바로구매 데이터 삭제 (뒤로가기)
+  useEffect(() => {
+    const handlePopState = () => {
+      clearInstantPurchase();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  // 2) 사용자 정보 및 마일리지는 항상 불러옴(바로구매/장바구니 무관)
   useEffect(() => {
     let cancelled = false;
 
@@ -96,13 +74,35 @@ export default function Order() {
       try {
         setLoadingUser(true);
         if (!userCode) {
-          if (!cancelled) setUserInfo(null);
+          if (!cancelled) {
+            setUserInfo(null);
+            setMileage(0);
+          }
           return;
         }
-        const u = await getUserInfo(userCode);
-        if (!cancelled) setUserInfo(u);
+        const [u, m] = await Promise.all([
+          getUserInfo(userCode),
+          getmileage(userCode),
+        ]);
+        if (!cancelled) {
+          setUserInfo(u);
+          // mileage 값 추출 (m이 이미 data이므로 직접 사용하거나, m.mileage가 숫자면 그대로 사용)
+          const mileageValue =
+            typeof m === 'number' ? m : (m?.mileage ?? m ?? 0);
+          console.log(
+            '🚀 ~ Order ~ mileage API response:',
+            m,
+            'extracted:',
+            mileageValue,
+          );
+          setMileage(mileageValue);
+        }
       } catch (e) {
-        if (!cancelled) setUserInfo(null);
+        console.error('사용자 정보 로드 실패:', e);
+        if (!cancelled) {
+          setUserInfo(null);
+          setMileage(0);
+        }
       } finally {
         if (!cancelled) setLoadingUser(false);
       }
@@ -112,6 +112,8 @@ export default function Order() {
       cancelled = true;
     };
   }, [userCode]);
+
+  console.log('🚀 ~ Order ~ mileage:', mileage);
 
   // 3) 장바구니는 “바로구매 없음”일 때만 불러옴
   useEffect(() => {
@@ -126,8 +128,9 @@ export default function Order() {
     (async () => {
       try {
         setLoadingCart(true);
-        const items = await getCart(userCode);
-        if (!cancelled) setCart(Array.isArray(items) ? items : []);
+        const res = await getCart(userCode);
+        const cartItems = res?.cartItems ?? [];
+        if (!cancelled) setCart(cartItems);
       } catch (e) {
         if (!cancelled) setCart([]);
       } finally {
@@ -147,6 +150,27 @@ export default function Order() {
     return (cart || []).filter(i => i.checkStatus);
   }, [buyNowItems, cart]);
 
+  // 마일리지 최대 사용 가능 금액 (상품 금액만, 배송비 제외)
+  const maxMileageUsable = useMemo(() => {
+    const calcItemPrice = item => {
+      if (item.totalPrice !== undefined) {
+        return Number(item.totalPrice);
+      }
+      const unitPrice = Number(
+        item.unitPrice ?? item.discountPrice ?? item.price ?? 0,
+      );
+      return unitPrice * Number(item.quantity ?? 1);
+    };
+
+    const totalPrice = selectedItems.reduce(
+      (sum, item) => sum + calcItemPrice(item),
+      0,
+    );
+
+    // 보유 마일리지와 상품 금액 중 작은 값으로 제한 (배송비 제외)
+    return Math.min(mileage || 0, totalPrice);
+  }, [selectedItems, mileage]);
+
   const handleFormValidChange = useCallback((isValid, customerData) => {
     setIsFormValid(isValid);
     setCustomerInfo(customerData);
@@ -155,7 +179,7 @@ export default function Order() {
   if (loading) {
     return (
       <InnerPaddingSectionWrapper className='max-w-[800px]'>
-        <h2 className='text-4xl font-semibold font-pretendard pb-5'>
+        <h2 className='text-2xl font-semibold font-pretendard pb-5 text-center'>
           주문/결제
         </h2>
         <BreadCrumbSection currentStep='order' />
@@ -167,7 +191,7 @@ export default function Order() {
   if (!selectedItems || selectedItems.length === 0) {
     return (
       <InnerPaddingSectionWrapper className='max-w-[800px]'>
-        <h2 className='text-4xl font-semibold font-pretendard pb-5'>
+        <h2 className='text-2xl font-semibold font-pretendard pb-5 text-center'>
           주문/결제
         </h2>
         <BreadCrumbSection currentStep='order' />
@@ -180,7 +204,7 @@ export default function Order() {
 
   return (
     <InnerPaddingSectionWrapper className='max-w-[800px]'>
-      <h2 className='text-2xl md:text-4xl font-semibold font-pretendard pb-5'>
+      <h2 className='text-2xl font-semibold font-pretendard pb-5 text-center'>
         주문/결제
       </h2>
       <BreadCrumbSection currentStep='order' />
@@ -192,12 +216,114 @@ export default function Order() {
         userInfo={userInfo}
       />
 
-      <OrderSummarySection items={selectedItems} />
+      <section className='mb-4 border-t-2 border-black-100 py-4'>
+        <h2 className='text-lg font-semibold mb-4'>할인혜택</h2>
+
+        <div className='flex items-center w-full gap-2'>
+          <div className=' flex justify-between items-center border border-gray-400 rounded-md p-1 w-full'>
+            <span className='font-semibold whitespace-nowrap px-2'>
+              마일리지
+            </span>
+
+            <div className='flex items-center w-full'>
+              <input
+                type='number'
+                value={useMileage}
+                onChange={e => {
+                  let inputValue = e.target.value;
+                  // 빈 문자열이면 0으로 설정
+                  if (inputValue === '') {
+                    setUseMileage(0);
+                    return;
+                  }
+                  // 숫자로 변환하여 앞의 0 제거
+                  const numValue = Number(inputValue);
+                  // 보유 마일리지와 총 주문 금액 중 작은 값을 최대값으로 설정
+                  const value = Math.max(
+                    0,
+                    Math.min(numValue, maxMileageUsable),
+                  );
+                  setUseMileage(value);
+                }}
+                onFocus={e => {
+                  e.stopPropagation();
+                  // focus 시 0이면 빈 문자열로 만들어서 입력하기 쉽게 함
+                  if (useMileage === 0) {
+                    e.target.value = '';
+                  }
+                }}
+                onBlur={e => {
+                  // blur 시 빈 문자열이면 0으로 설정
+                  if (e.target.value === '') {
+                    setUseMileage(0);
+                  }
+                }}
+                onClick={e => e.stopPropagation()}
+                className=' py-1 text-right w-full focus:outline-none focus:border-none'
+                min='0'
+                max={maxMileageUsable}
+              />
+              <span className='pr-2'>원</span>
+            </div>
+          </div>
+
+          <button
+            type='button'
+            onClick={() => {
+              if (useMileage > 0) {
+                setUseMileage(0);
+              } else {
+                setUseMileage(maxMileageUsable);
+              }
+            }}
+            className='px-3 py-2 border border-gray-400 rounded hover:bg-gray-100 whitespace-nowrap'
+          >
+            {useMileage > 0 ? '사용 취소' : '모두 사용'}
+          </button>
+        </div>
+        <p className='text-sm text-gray-600'>
+          사용가능: {(maxMileageUsable - useMileage).toLocaleString()}원 | 보유
+          마일리지: {(mileage || 0).toLocaleString()}원
+        </p>
+      </section>
+
+      <section className='mb-4 border-t-2 border-black-100 py-4'>
+        <h2 className='text-lg font-semibold'>결제 수단 선택</h2>
+
+        <div className='flex items-center gap-4 mt-3'>
+          <label className='flex items-center gap-2 cursor-pointer'>
+            <input
+              type='radio'
+              name='paymentMethod'
+              value='ACCOUNT'
+              checked={paymentMethod === 'ACCOUNT'}
+              onChange={e => setPaymentMethod(e.target.value)}
+              className='w-4 h-4'
+            />
+            <span>무통장 입금</span>
+          </label>
+          <label className='flex items-center gap-2 cursor-pointer'>
+            <input
+              type='radio'
+              name='paymentMethod'
+              value='CARD'
+              checked={paymentMethod === 'CARD'}
+              onChange={e => setPaymentMethod(e.target.value)}
+              className='w-4 h-4'
+            />
+            <span>일반결제</span>
+          </label>
+        </div>
+      </section>
+
+      <OrderSummarySection items={selectedItems} useMileage={useMileage} />
 
       <PaymentButton
         selectedItems={selectedItems}
         customerInfo={customerInfo}
         disabled={!isFormValid}
+        paymentMethod={paymentMethod}
+        useMileage={useMileage}
       />
     </InnerPaddingSectionWrapper>
   );

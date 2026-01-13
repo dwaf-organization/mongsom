@@ -3,10 +3,14 @@ import { Button } from '../../ui/button';
 import { formatDate } from '../../../utils/dateUtils';
 import { changeExchangeStatus } from '../../../api/exchange';
 import { useToast } from '../../../context/ToastContext';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function ExchangeTableSection({ exchangeList }) {
   const [openId, setOpenId] = useState(null);
   const { addToast } = useToast();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const tab = Number(searchParams.get('tab') || '교환');
 
   if (!exchangeList) {
     return <div>교환/반품 내역이 없습니다.</div>;
@@ -21,6 +25,10 @@ export default function ExchangeTableSection({ exchangeList }) {
     } else {
       addToast(res.data || '교환/반품 상태 변경에 실패했습니다.', 'error');
     }
+  };
+
+  const handleDetail = changeId => {
+    navigate(`${changeId}?${searchParams.toString()}`);
   };
 
   return (
@@ -64,14 +72,15 @@ export default function ExchangeTableSection({ exchangeList }) {
             <tbody className='divide-y'>
               {exchangeList.map(change => {
                 const isOpen = openId === change.changeId;
+                const productInfo = change.productInfo ?? {};
                 return (
                   <Fragment key={change.changeId}>
                     <tr className='text-center'>
                       <td className='px-2 py-4 whitespace-nowrap text-sm text-gray-900'>
-                        {formatDate(change.paymentAt)}
+                        {formatDate(change.requestedAt)}
                       </td>
                       <td className='px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
-                        {change.orderId}
+                        {change.orderNum}
                       </td>
                       <td className='px-2 py-4 whitespace-nowrap text-sm text-gray-900'>
                         {change.receivedUserName}
@@ -80,27 +89,34 @@ export default function ExchangeTableSection({ exchangeList }) {
                         <div className='flex items-center gap-3'>
                           <img
                             className='h-20 w-20 rounded-lg object-cover'
-                            src={change.productImgUrls[0]}
-                            alt={change.productName}
+                            src={productInfo.productImgUrl}
+                            alt={productInfo.productName}
                           />
                           <div className='min-w-0 flex-1'>
                             <div className='font-medium truncate max-w-[120px] text-left'>
-                              {change.productName}
+                              {productInfo.productName}
                             </div>
-                            {change.length > 1 && (
+                            {productInfo.optionComb && (
                               <div className='text-gray-500 text-xs'>
-                                외 {change.length - 1}개 상품
+                                {productInfo.optionComb}
                               </div>
                             )}
                           </div>
                         </div>
                       </td>
                       <td className='px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
-                        {change.price.toLocaleString()}원
+                        {change.finalPrice?.toLocaleString()}원
                       </td>
 
                       <td className='px-2 py-4 text-sm text-primary-700'>
-                        <button
+                        <Button
+                          type='button'
+                          className='w-fit px-4'
+                          onClick={() => handleDetail(change.changeId)}
+                        >
+                          상세보기
+                        </Button>
+                        {/* <button
                           type='button'
                           className='underline'
                           onClick={() =>
@@ -109,16 +125,12 @@ export default function ExchangeTableSection({ exchangeList }) {
                           aria-expanded={isOpen}
                           aria-controls={`row-detail-${change.changeId}`}
                         >
-                          {isOpen ? '상세보기' : '상세보기'}
-                        </button>
+                          상세보기
+                        </button> */}
                       </td>
 
-                      <td className='px-2 py-4 whitespace-nowrap text-sm text-gray-900 text-center'>
-                        {change.approvalStatus === 0
-                          ? '대기'
-                          : change.approvalStatus === 1
-                            ? '승인'
-                            : '반려'}
+                      <td className='px-2 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 text-center'>
+                        {change.changeStatus}
                       </td>
                     </tr>
 

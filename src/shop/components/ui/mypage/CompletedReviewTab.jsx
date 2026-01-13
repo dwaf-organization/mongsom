@@ -12,7 +12,7 @@ import ReviewDeleteModal from './ReviewDeleteModal';
 export default function CompletedReviewTab() {
   const { userCode } = useAuth();
   const [searchParams] = useSearchParams();
-  const page = Number(searchParams.get('page') || '1');
+  const page = Number(searchParams.get('page') || '0');
   const { openModal } = useModal();
 
   const [expandedReviews, setExpandedReviews] = useState({});
@@ -114,9 +114,9 @@ export default function CompletedReviewTab() {
 
   return (
     <section>
-      <h2 className='text-xl text-start font-semibold text-gray-800 border-b border-black-100 pb-4 mt-8 px-4'>
+      <p className='text-lg md:text-xl font-semibold text-left mt-8 md:px-4 pb-2 md:pb-4 border-b border-black-100'>
         작성한 리뷰 {reviews.length}
-      </h2>
+      </p>
 
       <ul>
         {reviews.map(review => {
@@ -124,7 +124,7 @@ export default function CompletedReviewTab() {
           return (
             <li
               key={review.reviewId}
-              className='border-t-2 border-gray-50 py-6 last:border-b-0'
+              className='border-b-2 border-gray-50 py-6 last:border-b-0'
             >
               <div className='flex items-center justify-between mb-2 border-b w-full border-gray-300 pb-4 '>
                 <div className='flex items-center gap-4'>
@@ -139,9 +139,15 @@ export default function CompletedReviewTab() {
                       <div className='w-[80px] h-[80px] bg-gray-100' />
                     )}
                   </Link>
-                  <p className='text-gray-800 truncate max-w-[7rem] md:max-w-[300px]'>
-                    {review.productName ?? review.name ?? '상품명'}
-                  </p>
+                  <div>
+                    <p className='text-gray-800 truncate max-w-[7rem] md:max-w-[300px]'>
+                      {review.productName ?? review.name ?? '상품명'}
+                    </p>
+                    <p className='text-gray-800 text-sm truncate max-w-[7rem] md:max-w-[300px]'>
+                      옵션: {review.option1Name ?? '-'} /{' '}
+                      {review.option2Name ?? '-'}
+                    </p>
+                  </div>
                 </div>
                 <button
                   className='text-primary-200 cursor-pointer select-none'
@@ -160,7 +166,7 @@ export default function CompletedReviewTab() {
                   </time>
                 </header>
 
-                <p className='text-gray-500 font-montserrat text-start'>
+                <p className=' font-montserrat text-start'>
                   {expandedReviews[review.reviewId]
                     ? review.reviewContent
                     : truncateText(review.reviewContent)}

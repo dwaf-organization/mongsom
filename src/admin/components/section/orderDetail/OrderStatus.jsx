@@ -42,21 +42,22 @@ export default function OrderStatus({ order, saving = false }) {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
+  const { orderInfo } = order ?? {};
+
   const initial = useMemo(() => {
-    const o = order ?? {};
     return {
-      status: normalizeStatus(o.deliveryStatus),
-      courier: o.deliveryCom ?? '',
-      invoice: o.invoiceNum ?? '',
+      status: normalizeStatus(orderInfo?.deliveryStatus),
+      courier: orderInfo?.deliveryCom ?? '',
+      invoice: orderInfo?.invoiceNum ?? '',
     };
-  }, [order]);
+  }, [orderInfo]);
 
   const [form, setForm] = useState(initial);
   const [submitting, setSubmitting] = useState(false);
 
   const isCancelled = useMemo(
-    () => normalizeStatus(order?.deliveryStatus) === '주문 취소',
-    [order],
+    () => normalizeStatus(orderInfo?.deliveryStatus) === '주문 취소',
+    [orderInfo],
   );
 
   useEffect(() => setForm(initial), [initial]);
@@ -86,7 +87,7 @@ export default function OrderStatus({ order, saving = false }) {
       );
       return;
     }
-    if (!order?.orderId) {
+    if (!orderInfo?.orderId) {
       addToast('주문 정보가 없습니다.');
       return;
     }
@@ -101,7 +102,7 @@ export default function OrderStatus({ order, saving = false }) {
       );
       return;
     }
-    if (!order?.orderId) {
+    if (!orderInfo?.orderId) {
       addToast('주문 정보가 없습니다.');
       return;
     }
@@ -109,8 +110,7 @@ export default function OrderStatus({ order, saving = false }) {
     try {
       setSubmitting(true);
       const payload = {
-        orderId: order.orderId,
-        userCode: order.userCode,
+        orderId: orderInfo.orderId,
         deliveryStatus: form.status,
         deliveryCom: form.courier.trim() || null,
         invoiceNum: form.invoice.trim() || null,

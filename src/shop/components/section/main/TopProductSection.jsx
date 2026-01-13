@@ -23,9 +23,10 @@ export default function TopProductSection() {
 
   useEffect(() => {
     const size = 9;
-    getAllProductList(sort, page, { size })
+    getAllProductList('popular', 0, { premium: '' })
       .then(res => {
-        const items = res?.items || [];
+        const items = res.products || [];
+        console.log('🚀 ~ TopProductSection ~ items:', items);
         setProductItems(items);
       })
       .catch(error => {
@@ -33,6 +34,8 @@ export default function TopProductSection() {
         setProductItems([]);
       });
   }, [sort, page]);
+
+  console.log('🚀 ~ TopProductSectionPC~ productItems:', productItems);
 
   if (productItems.length === 0) {
     return (
@@ -69,17 +72,19 @@ export default function TopProductSection() {
         </h2>
 
         <Slider {...createSliderSettings()} className='max-w-[1000px] mx-auto'>
-          {Array.isArray(productItems) &&
+          {/* <div className='flex flex-wrap gap-4 max-w-[1000px] mx-auto'> */}
+
+          {productItems &&
             productItems.map(product => (
               <Link
                 to={`${routes.shopDetail}/${product.productId}`}
-                key={product.id}
+                key={product.productId}
               >
-                <ul key={product.id} className='px-4'>
+                <ul key={product.productId} className='px-4'>
                   <div className='rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 gap-2 bg-white'>
                     <li className='relative items-center justify-center'>
                       <img
-                        src={product.productImgUrls[0]}
+                        src={product.mainImageUrl}
                         alt={product.name}
                         className='w-full max-w-[220px] h-[220px] object-cover rounded-lg'
                       />
@@ -91,7 +96,7 @@ export default function TopProductSection() {
                       {product.discountPer > 0 ? (
                         <div className='w-fullflex flex-col items-start justify-end py-2'>
                           <span className='flex items-center w-full justify-end font-semibold text-sm px-3 line-through text-gray-500'>
-                            {product.price.toLocaleString()} 원
+                            {product.basePrice.toLocaleString()} 원
                           </span>
                           <div className='flex items-start justify-end'>
                             <span className='flex font-semibold text-primary-200 text-sm'>
@@ -104,7 +109,7 @@ export default function TopProductSection() {
                         </div>
                       ) : (
                         <span className='flex items-center justify-end w-full font-semibold text-black-100 px-3 py-2 pt-7'>
-                          {product.price.toLocaleString()} 원
+                          {product.basePrice.toLocaleString()} 원
                         </span>
                       )}
                     </div>

@@ -102,7 +102,7 @@ export default function AddressInput({
       htmlFor={id}
       className={`flex flex-col items-start gap-2 w-full ${className}`}
     >
-      <span className='text-left text-lg'>
+      <span className='text-left'>
         {label}
         {required && <span className='text-red-500'>*</span>}
       </span>

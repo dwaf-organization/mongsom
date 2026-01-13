@@ -106,7 +106,7 @@ export default function AddressInfoSection({ onFormValidChange, userInfo }) {
   }, [formData, onFormValidChange]);
 
   return (
-    <section className='py-10'>
+    <section className=''>
       <h3 className='text-xl text-left font-semibold mb-4'>배송지 정보</h3>
       <p className='text-left mb-2'>주소록 선택</p>
 

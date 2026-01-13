@@ -5,7 +5,7 @@ import { deleteChangeOrder } from '../../../api/order';
 import { useToast } from '../../../context/ToastContext';
 import { useAuth } from '../../../context/AuthContext';
 
-export default function ExchangeCancelModal({ orderDetailId, orderId }) {
+export default function ExchangeCancelModal({ orderDetailId }) {
   const { closeModal } = useModal();
   const { addToast } = useToast();
   const { userCode } = useAuth();
@@ -16,7 +16,6 @@ export default function ExchangeCancelModal({ orderDetailId, orderId }) {
   const handleConfirm = async () => {
     const data = {
       orderDetailId: orderDetailId,
-      orderId: orderId,
       userCode: userCode,
     };
     const res = await deleteChangeOrder(data);

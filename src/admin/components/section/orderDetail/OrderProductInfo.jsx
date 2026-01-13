@@ -15,58 +15,65 @@ export default function OrderProductInfo({ order }) {
     );
   }
 
-  const userCode = order.userCode ?? null;
+  const { orderInfo, orderItems } = order;
 
-  const statusLabel = v => (v === 1 || v === '1' ? '주문 취소' : '주문');
+  const statusLabel = status => {
+    switch (status) {
+      case 0:
+        return '주문 대기';
+      case 1:
+        return '주문 취소';
+      case 2:
+        return '주문 완료';
+      default:
+        return '알 수 없음';
+    }
+  };
 
-  const handleOrderCancel = (orderDetailId, orderId, userCode) => {
+  const handleOrderCancel = (orderDetailId, orderId) => {
     if (!orderDetailId || !orderId) {
       addToast('주문 취소에 필요한 정보가 없습니다.', 'error');
       return;
     }
     openModal(
-      <OrderCancelModal
-        orderDetailId={orderDetailId}
-        orderId={orderId}
-        userCode={userCode}
-      />,
+      <OrderCancelModal orderDetailId={orderDetailId} orderId={orderId} />,
     );
   };
 
   return (
     <section className='py-10'>
       <h2 className='text-xl font-semibold text-left'>주문 상품 정보</h2>
-      <div className='mt-4 rounded-xl overflow-hidden max-w-[1000px]'>
+      <div className='mt-4 max-w-[1000px] '>
         <table className='w-full'>
           <colgroup>
-            <col style={{ width: 400 }} />
+            <col style={{ width: 200 }} />
+            <col style={{ width: 120 }} />
             <col style={{ width: 80 }} />
             <col style={{ width: 160 }} />
             <col style={{ width: 100 }} />
-            <col style={{ width: 120 }} />
+            {/* <col style={{ width: 120 }} /> */}
           </colgroup>
           <thead className='border-y border-gray-400'>
             <tr>
-              <th className='text-left px-4 py-3'>상품정보</th>
+              <th className='text-left px-8 py-3'>상품정보</th>
+              <th className='text-center px-8 py-3'>옵션</th>
               <th>수량</th>
               <th>가격</th>
-              <th>주문상태</th>
-              <th>주문 취소</th>
+              <th>교환 / 환불</th>
+              {/* <th>주문 취소</th> */}
             </tr>
           </thead>
           <tbody>
-            {order.details.map(detail => {
-              const img =
-                Array.isArray(detail.productImgUrls) &&
-                detail.productImgUrls.length > 0
-                  ? detail.productImgUrls[0]
-                  : null;
-              const isCanceled =
-                detail.orderStatus === 1 || detail.orderStatus === '1';
+            {orderItems?.map(item => {
+              const img = item.productImgUrl || null;
+              const isCanceled = item.orderStatus === 1;
+              const optionText = [item.option1Name, item.option2Name]
+                .filter(Boolean)
+                .join(' / ');
 
               return (
                 <tr
-                  key={detail.orderDetailId}
+                  key={item.orderDetailId}
                   className='text-center border-b border-gray-400'
                 >
                   <td className='px-6 py-3'>
@@ -74,7 +81,7 @@ export default function OrderProductInfo({ order }) {
                       {img ? (
                         <img
                           src={img}
-                          alt={detail.productName}
+                          alt={item.productName}
                           className='w-[80px] h-[80px] object-cover rounded-lg'
                         />
                       ) : (
@@ -83,33 +90,26 @@ export default function OrderProductInfo({ order }) {
                         </div>
                       )}
                       <div className='flex flex-col text-left gap-2 '>
-                        <p className=' max-w-[300px]'>{detail.productName}</p>
-                        <p className='text-gray-500 text-sm max-w-[300px] truncate'>
-                          [옵션] {detail.optName}
-                        </p>
+                        <p className=' max-w-[300px]'>{item.productName}</p>
+
+                        {item.changeStatus && (
+                          <p className='text-red-500 text-sm'>
+                            {item.changeStatus}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </td>
-                  <td>{detail.quantity}</td>
-                  <td>{Number(detail.price).toLocaleString()}원</td>
-                  <td>{statusLabel(detail.orderStatus)}</td>
                   <td>
-                    <Button
-                      type='button'
-                      variant='outline'
-                      className='disabled:bg-gray-300 disabled:text-black-100 w-fit'
-                      onClick={() =>
-                        handleOrderCancel(
-                          detail.orderDetailId,
-                          order.orderId,
-                          userCode,
-                        )
-                      }
-                      disabled={isCanceled}
-                    >
-                      {isCanceled ? '취소됨' : '주문 취소'}
-                    </Button>
+                    {optionText && (
+                      <p className=' text-sm max-w-[300px] truncate'>
+                        {optionText}
+                      </p>
+                    )}
                   </td>
+                  <td>{item.quantity}</td>
+                  <td>{Number(item.lineTotalPrice).toLocaleString()}원</td>
+                  <td>{item.changeStatus || '-'}</td>
                 </tr>
               );
             })}

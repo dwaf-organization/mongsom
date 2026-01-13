@@ -1,5 +1,6 @@
 const BASE_URL =
   (typeof process !== 'undefined' && process.env?.REACT_APP_BASE_API_URL) ||
+  // 'http://localhost:8000/';
   'https://api.mongsom.co.kr/';
 
 /**
@@ -15,6 +16,7 @@ const BASE_URL =
  *   isMultipart?: boolean;
  *   requireAuth?: boolean;
  *   tokenGetter?: () => ({ accessToken?: string, memberUuid?: string } | null);
+ *   responseType?: 'json' | 'blob';
  * }} RequestOptions
  */
 
@@ -37,6 +39,7 @@ async function fetchInstance(url, options = {}) {
     isMultipart = false,
     requireAuth = false,
     tokenGetter = defaultTokenGetter,
+    responseType = 'json',
     ...rest
   } = options;
 
@@ -79,9 +82,22 @@ async function fetchInstance(url, options = {}) {
     });
 
     const contentType = response.headers.get('content-type') || '';
+    console.log('📡 Response status:', response.status, response.statusText);
+    console.log('📡 Content-Type:', contentType);
+
+    // blob 응답 타입 처리
+    if (responseType === 'blob') {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return await response.blob();
+    }
+
+    // JSON 응답 처리
     if (!contentType.includes('application/json')) {
       const text = await response.text().catch(() => '');
-      console.error('Unexpected content type:', contentType, text);
+      console.error('Unexpected content type:', contentType);
+      console.error('Response body:', text);
       throw new Error('Invalid response format');
     }
 

@@ -27,9 +27,8 @@ export default function MobileTopProduct() {
   const sort = 'popular';
 
   useEffect(() => {
-    const size = 12;
-    getAllProductList(sort, page, { size })
-      .then(res => setItems(res?.items || []))
+    getAllProductList(sort, 0, { premium: '' })
+      .then(res => setItems(res?.products || []))
       .catch(() => setItems([]));
   }, [sort, page]);
 
@@ -71,7 +70,7 @@ export default function MobileTopProduct() {
                     <CardContent className='p-0'>
                       <div className='relative w-full aspect-square overflow-hidden rounded-t-sm bg-gray-100'>
                         <img
-                          src={prod.productImgUrls?.[0]}
+                          src={prod.mainImageUrl}
                           alt={prod.name}
                           className='absolute inset-0 w-full h-full object-cover object-center transition-transform duration-300 ease-in-out hover:scale-105'
                           loading='lazy'
@@ -91,7 +90,10 @@ export default function MobileTopProduct() {
                           {prod.discountPer > 0 ? (
                             <div className='space-y-1 pb-1'>
                               <span className='block text-right text-xs line-through text-gray-400'>
-                                {prod.price.toLocaleString()} 원
+                                {(
+                                  prod.basePrice + prod.salesMargin
+                                ).toLocaleString()}{' '}
+                                원
                               </span>
                               <div className='flex items-center justify-end gap-0.5'>
                                 <span className='font-bold text-primary-200 text-xs bg-primary-50 px-1 py-0.5 rounded'>
@@ -106,7 +108,10 @@ export default function MobileTopProduct() {
                             <div className='space-y-0.5'>
                               <div className='h-[12px]'></div>
                               <span className='block text-right font-bold text-black-100 text-xs'>
-                                {prod.price.toLocaleString()} 원
+                                {(
+                                  prod.basePrice + prod.salesMargin
+                                ).toLocaleString()}{' '}
+                                원
                               </span>
                             </div>
                           )}

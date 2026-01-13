@@ -1,5 +1,6 @@
 import { Button } from '../button';
 import { useNavigate } from 'react-router-dom';
+import { clearInstantPurchase } from '../../../utils/instantPurchase';
 
 export default function PurchaseBar() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function PurchaseBar() {
         className='w-full font-bold text-xl font-pretendard mt-11 bg-black-100 text-white py-3 hover:bg-black-100/90'
         variant='default'
         onClick={() => {
+          clearInstantPurchase();
           navigate('/order');
         }}
       >

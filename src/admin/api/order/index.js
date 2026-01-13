@@ -5,10 +5,7 @@ export const getOrderList = async ({
   size = 10,
   startDate,
   endDate,
-  orderId,
-  invoiceNum,
-  receivedUserPhone,
-  receivedUserName,
+  searchKeyword,
   deliveryStatus,
 }) => {
   const clamp = d => {
@@ -23,13 +20,8 @@ export const getOrderList = async ({
   const qs = new URLSearchParams();
   if (s) qs.set('startDate', s);
   if (e) qs.set('endDate', e);
-  if (orderId) qs.set('orderId', String(orderId).trim());
-  if (invoiceNum) qs.set('invoiceNum', String(invoiceNum).trim());
-  if (receivedUserPhone)
-    qs.set('receivedUserPhone', String(receivedUserPhone).trim());
-  if (receivedUserName)
-    qs.set('receivedUserName', String(receivedUserName).trim());
-  if (deliveryStatus) qs.set('deliveryStatus', String(deliveryStatus).trim());
+  if (searchKeyword) qs.set('searchKeyword', String(searchKeyword).trim());
+  if (deliveryStatus) qs.set('orderStatus', String(deliveryStatus).trim());
 
   const url = `api/v1/admin/order/list/${page}/${size}?${qs.toString()}`;
   console.log('🚀 ~ getOrderList ~ url:', url);
@@ -40,13 +32,14 @@ export const getOrderList = async ({
 };
 
 export const getOrderDetail = async orderId => {
-  const response = await fetchData.get(`api/v1/admin/order/detail/${orderId}`);
+  const response = await fetchData.get(`api/v1/my/order/detail/${orderId}`);
   console.log('🚀 ~ getOrderDetail ~ response:', response);
   return response;
 };
-
+// 배송 상태 업데이트 사용 안함
 export const updateOrderStatus = async data => {
   console.log('🚀 ~ updateOrderStatus ~ data:', data);
+
   const response = await fetchData.put(`api/v1/admin/order/delivery/update`, {
     body: JSON.stringify(data),
   });
@@ -57,6 +50,27 @@ export const cancelOrder = async data => {
   console.log('🚀 ~ cancelOrder ~ data:', data);
   const response = await fetchData.post(`api/v1/order/cancel`, {
     body: JSON.stringify(data),
+  });
+  return response;
+};
+
+export const DownLoadExcel = async deliveryStatus => {
+  const qs = new URLSearchParams();
+  if (deliveryStatus) qs.set('deliveryStatus', String(deliveryStatus).trim());
+
+  const url = `api/v1/admin/export/orders/excel?${qs.toString()}`;
+  console.log('🚀 ~ DownLoadExcel ~ url:', url);
+  const response = await fetchData.get(url, {
+    responseType: 'blob',
+  });
+  console.log('🚀 ~ DownLoadExcel ~ response:', response);
+  return response;
+};
+
+export const updateDeliveryInfo = async (data, userCode, orderId) => {
+  console.log('🚀 ~ updateDeliveryInfo ~ data:', data);
+  const response = await fetchData.put(`api/v1/admin/order/delivery/update`, {
+    body: { deliveryUpdates: data },
   });
   return response;
 };

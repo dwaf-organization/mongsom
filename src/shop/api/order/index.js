@@ -8,8 +8,10 @@ export const createOrder = async order => {
   return response.data;
 };
 
-export const getOrderList = async userCode => {
-  const response = await fetchData.get(`api/v1/my/order/${userCode}`);
+export const getOrderList = async (userCode, page = 0, size = 10) => {
+  const response = await fetchData.get(
+    `api/v1/my/order/${userCode}?page=${page}&size=${size}`,
+  );
   if (response.code === 1) {
     return response.data;
   }
@@ -46,14 +48,14 @@ export const exchangeOrder = async data => {
 
 export const deleteChangeOrder = async data => {
   console.log('🚀 ~ deleteChangeOrder ~ data:', data);
-  const response = await fetchData.post(`api/v1/my/change/delete`, {
-    body: JSON.stringify(data),
+  const response = await fetchData.delete(`api/v1/my/change/delete`, {
+    body: data,
   });
   return response;
 };
 
 export const getOrderDeliveryInfo = async orderId => {
-  const response = await fetchData.get(`api/v1/my/delivery/${orderId}`);
+  const response = await fetchData.get(`api/v1/my/delivery/find/${orderId}`);
   console.log('🚀 ~ getOrderDeliveryInfo ~ response:', response);
   if (response.code === 1) {
     return response;
@@ -66,11 +68,23 @@ export const getOrderDeliveryInfo = async orderId => {
   }
 };
 
-export const cancelOrder = async data => {
-  console.log('🚀 ~ cancelOrder ~ data:', data);
-  const response = await fetchData.post(`api/v1/order/cancel`, {
-    body: JSON.stringify(data),
-  });
+export const cancelOrder = async ({ orderId }) => {
+  console.log('🚀 ~ cancelOrder ~ orderId:', orderId);
+  const url = `api/v1/order/cancel/${orderId}`;
+  console.log('🚀 ~ cancelOrder ~ url:', url);
+
+  const response = await fetchData.delete(`api/v1/order/cancel/${orderId}`);
   console.log('🚀 ~ cancelOrder ~ response:', response);
-  return response.data;
+  return response;
+};
+
+export const getmileage = async userCode => {
+  const response = await fetchData.get(`api/v1/order/mileage/${userCode}`);
+  console.log('🚀 ~ getmileage ~ response:', response);
+  if (response.code === 1) {
+    return response.data;
+  }
+  if (response.code === -1) {
+    return response;
+  }
 };

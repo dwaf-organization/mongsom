@@ -8,26 +8,16 @@ const OrderStatusSelect = ({ value, onChange, name = 'status' }) => {
         value={value}
       >
         <option value='' className='text-gray-500'>
-          전체 주문 상태
+          전체
         </option>
-        <option value='결제 대기' className='text-gray-700'>
-          결제 대기
-        </option>
-        <option value='결제완료' className='text-gray-700'>
-          결제완료
-        </option>
-        <option value='상품 준비중' className='text-gray-700'>
-          상품 준비중
-        </option>
-        <option value='배송중' className='text-gray-700'>
-          배송중
-        </option>
-        <option value='배송완료' className='text-gray-700'>
-          배송완료
-        </option>
-        <option value='주문 취소' className='text-gray-700'>
-          주문 취소
-        </option>
+        <option value='결제대기'>결제 대기</option>
+        <option value='결제완료'>결제 완료</option>
+        <option value='상품준비중'>상품준비중</option>
+        <option value='배송중'>배송중</option>
+        <option value='배송완료'>배송완료</option>
+        <option value='예약배송'>예약배송</option>
+        <option value='재고부족'>재고부족</option>
+        <option value='입고지연'>입고지연</option>
       </select>
       <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
         <svg

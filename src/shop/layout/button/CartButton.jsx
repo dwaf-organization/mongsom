@@ -9,9 +9,13 @@ import {
 } from '../../utils/instantPurchase';
 
 export default function CartButton({ selectedOptions = [], product = {} }) {
+  console.log('🚀 ~ CartButton ~ product:', product);
   const { addToast } = useToast();
   const navigate = useNavigate();
   const { userCode } = useAuth();
+
+  const soldOut = product.stockStatus === 0;
+  console.log('🚀 ~ CartButton ~ soldOut:', soldOut);
 
   const productId = Number(product.productId ?? product.id);
   const isOptionSelected =
@@ -31,26 +35,96 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
 
     clearInstantPurchase();
 
-    const productId = Number(product.productId ?? product.id);
+    const prodId = Number(product.productId ?? product.id);
+    const basePrice = Number(product.basePrice ?? product.price ?? 0);
+    const discountPrice = Number(
+      product.discountPrice ?? product.salePrice ?? basePrice,
+    );
+
+    // 이미지 URL 추출
+    let mainImageUrl = product.mainImageUrl ?? '';
+
+    // productImages 배열에서 추출 (새 형식)
+    if (
+      !mainImageUrl &&
+      Array.isArray(product.productImages) &&
+      product.productImages.length > 0
+    ) {
+      mainImageUrl = product.productImages[0]?.productImgUrl ?? '';
+    }
+
+    // productImgUrls에서 추출
+    if (
+      !mainImageUrl &&
+      Array.isArray(product.productImgUrls) &&
+      product.productImgUrls.length > 0
+    ) {
+      mainImageUrl = product.productImgUrls[0] ?? '';
+    }
+
+    // productImgUrl에서 추출
+    if (!mainImageUrl && product.productImgUrl) {
+      if (
+        Array.isArray(product.productImgUrl) &&
+        product.productImgUrl.length > 0
+      ) {
+        mainImageUrl = product.productImgUrl[0] ?? '';
+      } else if (typeof product.productImgUrl === 'string') {
+        mainImageUrl = product.productImgUrl;
+      }
+    }
+
     const payload = {
       product: {
-        productId,
+        productId: prodId,
         name: product.name,
-        price: product.price,
+        price: basePrice,
+        basePrice,
         discountPer: product.discountPer,
-        discountPrice:
-          product.discountPrice ?? product.salePrice ?? product.price,
-        productImgUrl:
-          product.productImgUrl ??
-          product.productImgUrls ??
-          product.image ??
-          [],
+        discountPrice,
+        mainImageUrl,
       },
-      options: selectedOptions.map(opt => ({
-        optId: Number(opt.value ?? opt.optId) || null,
-        optName: opt.label ?? opt.optName ?? null,
-        quantity: Number(opt.quantity) || 1,
-      })),
+      options: selectedOptions.map((opt, idx) => {
+        // OptionSelector에서는 totalPriceAdjustment로 넘어옴
+        const optionPrice = Number(
+          opt.totalPriceAdjustment ?? opt.optionPrice ?? 0,
+        );
+        const unitPrice = discountPrice + optionPrice;
+        const quantity = Number(opt.quantity) || 1;
+
+        // selectedInfos에서 option1, option2 추출
+        const optionIds = (opt.selectedInfos || []).map(
+          info => info.optionValueId,
+        );
+
+        return {
+          cartId: `instant-${opt.combinationKey ?? idx}-${Date.now()}`,
+          productId: prodId,
+          productName: product.name,
+          basePrice,
+          discountPrice,
+          discountPer: product.discountPer,
+          optionPrice,
+          unitPrice,
+          quantity,
+          totalPrice: unitPrice * quantity,
+          checkStatus: 1,
+          mainImageUrl,
+          // OptionSelector에서는 typeName, optionName으로 넘어옴
+          selectedOptions:
+            opt.selectedInfos?.map(info => ({
+              optionTypeName: info.typeName ?? info.optionTypeName ?? '',
+              optionValueName: info.optionName ?? info.optionValueName ?? '',
+              priceAdjustment: Number(info.priceAdjustment ?? 0),
+            })) ?? [],
+          // 기존 호환용
+          optId: Number(opt.value ?? opt.optId) || null,
+          optName: opt.name ?? opt.label ?? opt.optName ?? null,
+          // 주문 생성용 option1, option2 추가
+          option1: optionIds[0] ?? null,
+          option2: optionIds[1] ?? null,
+        };
+      }),
     };
 
     setInstantPurchase(payload);
@@ -72,12 +146,16 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
     try {
       const results = await Promise.all(
         selectedOptions.map(opt => {
+          // selectedInfos에서 option1, option2 추출
+          const optionIds = (opt.selectedInfos || []).map(
+            info => info.optionValueId,
+          );
           const payload = {
             userCode,
-            optId: Number(opt.value ?? opt.optId),
             productId,
+            option1: optionIds[0] ?? null,
+            option2: optionIds[1] ?? null,
             quantity: Number(opt.quantity) || 1,
-            checkStatus: 1,
           };
           return addCart(payload);
         }),
@@ -99,6 +177,7 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
         className='w-full font-bold md:text-xl font-pretendard'
         variant='outline'
         onClick={handleAddToCart}
+        disabled={soldOut}
       >
         장바구니
       </Button>
@@ -106,6 +185,7 @@ export default function CartButton({ selectedOptions = [], product = {} }) {
         className='w-full font-bold md:text-xl font-pretendard'
         variant='default'
         onClick={handleBuy}
+        disabled={soldOut}
       >
         구매하기
       </Button>

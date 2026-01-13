@@ -11,10 +11,10 @@ export default function ProductList() {
   const { addToast } = useToast();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const pageStr = searchParams.get('page') || '1';
+  const pageStr = searchParams.get('page') || '0';
   const page = useMemo(() => {
     const n = Number(pageStr);
-    return Number.isFinite(n) && n > 0 ? n : 1;
+    return Number.isFinite(n) && n >= 0 ? n : 0;
   }, [pageStr]);
 
   const [query, setQuery] = useState({
@@ -78,7 +78,7 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchList();
-  }, [page, query, fetchList]);
+  }, [page, query]);
 
   const handleSearch = values => {
     setQuery({
@@ -116,7 +116,7 @@ export default function ProductList() {
       <ProductTableSection
         rows={rows}
         loading={loading}
-        onDeleted={handleDeleted} // ← 핵심
+        onDeleted={handleDeleted}
       />
 
       <div className='mt-6 flex items-center justify-center'>

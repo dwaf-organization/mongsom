@@ -14,17 +14,19 @@ import { fetchData } from '../instance';
 //   return response.data;
 // };
 
-export const getAllProductList = async (sort = 'all', page = 1, opts = {}) => {
-  const base = `api/v1/product/${sort}/${page}`;
-  const url =
-    sort === 'popular' && opts.size
-      ? `${base}/${encodeURIComponent(opts.size)}`
-      : base;
+export const getAllProductList = async (sortBy = '', page = 0, opts = {}) => {
+  const params = new URLSearchParams({
+    premium: opts.premium ?? '',
+    sortBy,
+    page,
+  });
+
+  const url = `api/v1/product/list?${params.toString()}`;
   console.log('🚀 ~ getAllProductList ~ url:', url);
 
   const response = await fetchData.get(url);
   console.log('🚀 ~ getAllProductList ~ response:', response);
-  return response.data; // { items, pagination } 형태라고 했던 그 data
+  return response.data;
 };
 
 export const getProductDetail = async id => {

@@ -1,22 +1,29 @@
-export default function OrderSummarySection({ items }) {
-  const totalPrice = items.reduce((sum, item) => {
-    const quantity = item.quantity || item.count || 1;
-    // salePrice가 있으면 salePrice 사용, 없으면 price 사용
-    const itemPrice = item.discountPrice || item.price;
-    return sum + itemPrice * quantity;
-  }, 0);
+export default function OrderSummarySection({ items, useMileage = 0 }) {
+  const calcItemPrice = item => {
+    if (item.totalPrice !== undefined) {
+      return Number(item.totalPrice);
+    }
+    const unitPrice = Number(
+      item.unitPrice ?? item.discountPrice ?? item.price ?? 0,
+    );
+    return unitPrice * Number(item.quantity ?? 1);
+  };
+
+  const totalPrice = items.reduce((sum, item) => sum + calcItemPrice(item), 0);
 
   const discount = items.reduce((sum, item) => {
-    const quantity = item.quantity || item.count || 1;
-    if (item.salePrice) {
-      return sum + (item.price - item.salePrice) * quantity;
+    const quantity = Number(item.quantity ?? 1);
+    const basePrice = Number(item.basePrice ?? item.price ?? 0);
+    const discountPrice = Number(item.discountPrice ?? basePrice);
+    if (basePrice > discountPrice) {
+      return sum + (basePrice - discountPrice) * quantity;
     }
     return sum;
   }, 0);
 
-  const shippingFee = 3000;
+  const shippingFee = totalPrice >= 50000 ? 0 : totalPrice > 0 ? 3000 : 0;
 
-  const finalPrice = totalPrice + shippingFee;
+  const finalPrice = totalPrice + shippingFee - useMileage;
 
   return (
     <section className='py-10 border-y-2 border-black-100'>
@@ -34,10 +41,19 @@ export default function OrderSummarySection({ items }) {
             + {shippingFee.toLocaleString()} won
           </p>
         </li>
+        {discount > 0 && (
+          <li className='flex justify-between'>
+            <p className='text-gray-700 text-xl'>할인</p>
+            <p className='font-semibold font-montserrat text-xl text-primary-200'>
+              - {discount.toLocaleString()} won
+            </p>
+          </li>
+        )}
+
         <li className='flex justify-between'>
-          <p className='text-gray-700 text-xl'>할인/부가결제</p>
+          <p className='text-gray-700 text-xl'>마일리지 사용</p>
           <p className='font-semibold font-montserrat text-xl text-primary-200'>
-            {discount.toLocaleString()} won
+            - {useMileage.toLocaleString()} won
           </p>
         </li>
       </ul>

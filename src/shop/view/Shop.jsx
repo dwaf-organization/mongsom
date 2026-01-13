@@ -15,24 +15,25 @@ export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [productItems, setProductItems] = useState([]);
   const [pagination, setPagination] = useState({
-    currentPage: 1,
+    currentPage: 0,
     totalPage: 1,
   });
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
-  const sort = searchParams.get('sort') || 'all';
-  const page = searchParams.get('page') || '1';
+  const sort = searchParams.get('sort') || 'latest';
+  const premium = searchParams.get('premium') || '';
+  const page = searchParams.get('page') || '0';
 
   useEffect(() => {
     setIsLoading(true); // 데이터 로딩 시작
-    const size = sort === 'popular' ? 9 : undefined;
-    getAllProductList(sort, page, { size })
+    window.scrollTo(0, 0); // 스크롤 최상단으로
+    getAllProductList(sort, page)
       .then(res => {
-        const items = res?.items || [];
+        const items = res?.products || [];
         setProductItems(items);
 
         const paginationData = res?.pagination || {
-          currentPage: 1,
+          currentPage: 0,
           totalPage: 1,
         };
         setPagination(paginationData);
@@ -40,13 +41,13 @@ export default function Shop() {
       .catch(error => {
         console.error('상품 목록을 불러오는데 실패했습니다:', error);
         setProductItems([]);
-        setPagination({ currentPage: 1, totalPage: 1 });
+        setPagination({ currentPage: 0, totalPage: 1 });
       })
       .finally(() => setIsLoading(false)); // 데이터 로딩 완료
-  }, [sort, page]);
+  }, [sort, page, premium]);
 
   const sortOptions = [
-    { value: 'new', label: '최신순' },
+    { value: 'latest', label: '최신순' },
     { value: 'popular', label: '인기순' },
     { value: 'review', label: '리뷰많은순' },
   ];
@@ -55,7 +56,7 @@ export default function Shop() {
     setSearchParams(prev => {
       const newParams = new URLSearchParams(prev);
       newParams.set('sort', newSort);
-      newParams.set('page', '1');
+      newParams.set('page', '0');
       return newParams;
     });
   };
@@ -82,22 +83,22 @@ export default function Shop() {
             value={sort}
             onChange={handleSortChange}
             className='w-24 md:order-last'
-            hidden={sort === 'premium'}
+            // hidden={sort === 'premium'}
           />
 
           <div className='flex items-center justify-center gap-4'>
             <Link
-              to={`${routes.shop}?sort=all`}
+              to={`${routes.shop}?premium=`}
               className={`rounded-full border border-gray-50 px-4 py-2 text-xs whitespace-nowrap text-gray-50 w-fit 
-          ${sort !== 'premium' ? 'border-primary-200 font-bold text-primary-200' : ''}
+          ${premium !== '1' ? 'border-primary-200 font-bold text-primary-200' : ''}
           `}
             >
               일반 상품
             </Link>
             <Link
-              to={`${routes.shop}?sort=premium`}
+              to={`${routes.shop}?premium=1`}
               className={`rounded-full border border-gray-50 px-4 py-2 text-xs whitespace-nowrap text-gray-50 w-fit 
-          ${sort === 'premium' ? 'border-primary-200 font-semibold text-primary-200' : ''}
+          ${premium === '1' ? 'border-primary-200 font-semibold text-primary-200' : ''}
           `}
             >
               프리미엄 선물용
@@ -132,14 +133,24 @@ export default function Shop() {
                       to={`${routes.shopDetail}/${item.productId}`}
                     >
                       <li className='roudned-lg'>
-                        <ImageSkeleton
-                          src={item.productImgUrls[0]}
-                          alt={item.name}
-                          className='w-full h-[120px] md:max-w-[320px] md:h-[320px] object-cover rounded-lg'
-                          skeletonClassName='rounded-t-lg'
-                          loading='eager'
-                          decoding='async'
-                        />
+                        <div className='relative'>
+                          <ImageSkeleton
+                            src={item.mainImageUrl}
+                            alt={item.name}
+                            containerClassName='w-full h-[120px] md:max-w-[320px] md:h-[320px] rounded-lg'
+                            imgClassName={`object-cover rounded-lg ${item.stockStatus === 0 ? 'opacity-60' : ''}`}
+                            skeletonClassName='rounded-lg'
+                            loading='eager'
+                            decoding='async'
+                          />
+                          {item.stockStatus === 0 && (
+                            <div className='absolute inset-0 flex items-center justify-center bg-black-50/50 rounded-lg'>
+                              <span className='text-white text-xs md:text-sm font-semibold px-3 py-1.5'>
+                                품절
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         <div className='p-2'>
                           {!item.discountPer && (
                             <div className='gap-2 md:hidden '>
@@ -169,7 +180,7 @@ export default function Shop() {
                                 </p>
                                 <p className='line-through text-gray-500 whitespace-nowrap hidden md:block'>
                                   {(
-                                    item.price + item.salesMargin
+                                    item.basePrice + item.salesMargin
                                   ).toLocaleString()}
                                   원
                                 </p>

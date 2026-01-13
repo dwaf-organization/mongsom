@@ -134,6 +134,12 @@ export default function InquireModal() {
               className='w-full max-w-[800px] rounded-md border border-gray-300 p-2'
             />
           </label>
+          <label className='w-full'>
+            문의상품
+            <p className='border border-gray-300 rounded-md p-2 text-gray-50'>
+              전체문의
+            </p>
+          </label>
 
           <label className='w-full'>
             이메일

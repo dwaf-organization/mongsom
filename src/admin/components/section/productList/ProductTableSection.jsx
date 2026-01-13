@@ -28,12 +28,14 @@ export default function ProductTableSection({ rows, loading, onDeleted }) {
         </div>
 
         <div className='overflow-x-auto scrollbar-hide'>
-          <table className='min-w-full table-fixed divide-y divide-gray-200'>
+          <table className='min-w-full table-fixed divide-y divide-gray-400'>
             <colgroup>
+              <col className='w-[30%]' />
               <col className='w-[20%]' />
               <col className='w-[20%]' />
               <col className='w-[20%]' />
-              <col className='w-[18%]' />
+              <col className='w-[20%]' />
+              <col className='w-[20%]' />
             </colgroup>
 
             <thead className='whitespace-nowrap border-t-2 border-gray-400'>
@@ -44,6 +46,12 @@ export default function ProductTableSection({ rows, loading, onDeleted }) {
                 </th>
                 <th className='px-4 py-3 text-center uppercase tracking-wider'>
                   분류
+                </th>
+                <th className='px-4 py-3 text-center uppercase tracking-wider'>
+                  판매여부
+                </th>
+                <th className='px-4 py-3 text-center uppercase tracking-wider'>
+                  등록일자
                 </th>
                 <th className='px-4 py-3 text-center uppercase tracking-wider'>
                   관리
@@ -79,7 +87,7 @@ export default function ProductTableSection({ rows, loading, onDeleted }) {
                   item.salePrice ??
                   item.discountPrice ??
                   null;
-                const basePrice = item.price + item.salesMargin ?? 0;
+                // const basePrice = item.price + item.salesMargin ?? 0;
 
                 const premiumLabel =
                   item.premium === 1
@@ -98,28 +106,34 @@ export default function ProductTableSection({ rows, loading, onDeleted }) {
                   <tr key={id}>
                     <td className='px-4 py-4 text-sm text-gray-900'>
                       <div className='flex items-center gap-3'>
-                        {img ? (
-                          <img
-                            className='h-20 w-20 rounded-lg object-cover flex-shrink-0'
-                            src={img}
-                            alt={name}
-                            loading='lazy'
-                          />
-                        ) : (
-                          <div className='h-20 w-20 rounded-lg bg-gray-100 grid place-items-center text-xs text-gray-500'>
-                            없음
-                          </div>
-                        )}
-
+                        <div className='flex flex-col items-center gap-2'>
+                          {item.stockStatus === 0 && (
+                            <span className='text-xs text-red-500 rounded-md'>
+                              품절
+                            </span>
+                          )}
+                          {item.firstImageUrl ? (
+                            <img
+                              className='h-20 w-20 rounded-lg object-cover flex-shrink-0'
+                              src={item.firstImageUrl}
+                              alt={name}
+                              loading='lazy'
+                            />
+                          ) : (
+                            <div className='h-20 w-20 rounded-lg bg-gray-100 grid place-items-center text-xs text-gray-500'>
+                              없음
+                            </div>
+                          )}
+                        </div>
                         <div className='min-w-0 flex-1'>
-                          <p className='truncate font-medium max-w-[250px]'>
+                          <p className='truncate font-medium max-w-[350px]'>
                             {name}
                           </p>
-                          {optionNames.length > 0 && (
+                          {item.optionTypeNames.length > 0 && (
                             <div className='text-gray-500 text-xs mt-1'>
-                              <p className='mb-0.5'>[옵션]</p>
+                              <p className='mb-0.5'>[옵션명]</p>
                               <div className='truncate block w-full max-w-[260px]'>
-                                {optionNames.join(' / ')}
+                                {item.optionTypeNames.join(' / ')}
                               </div>
                             </div>
                           )}
@@ -135,12 +149,17 @@ export default function ProductTableSection({ rows, loading, onDeleted }) {
                               {item.discountPer}%
                             </p>
                             <p className='text-gray-400 text-xs line-through'>
-                              {Number(basePrice).toLocaleString()} 원
+                              {Number(
+                                item.basePrice + item.salesMargin,
+                              ).toLocaleString()}{' '}
+                              원
                             </p>
                           </>
                         )}
                         <p className='font-medium'>
-                          {Number(discountPrice ?? basePrice).toLocaleString()}{' '}
+                          {Number(
+                            discountPrice ?? item.basePrice,
+                          ).toLocaleString()}{' '}
                           원
                         </p>
                       </div>
@@ -148,6 +167,14 @@ export default function ProductTableSection({ rows, loading, onDeleted }) {
 
                     <td className='px-4 py-4 whitespace-nowrap text-sm text-center text-gray-900'>
                       {premiumLabel}
+                    </td>
+
+                    <td className='px-4 py-4 whitespace-nowrap text-sm text-center text-gray-900'>
+                      {item.isAvailable ? '판매중' : '판매중지'}
+                    </td>
+
+                    <td className='px-4 py-4 whitespace-nowrap text-sm text-center text-gray-900'>
+                      {item.updatedAt.toLocaleString().split('T')[0]}
                     </td>
 
                     <td className='px-4 py-4 whitespace-nowrap text-sm text-gray-900'>

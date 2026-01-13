@@ -3,14 +3,19 @@ import { pickFirstImageUrl } from '../../../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
 
 export default function OrderDetailProductInfoSection({ order }) {
+  console.log('🚀 ~ OrderDetailProductInfoSection ~ order:', order);
   const navigate = useNavigate();
-  if (!order || !Array.isArray(order.details)) {
+  if (
+    !order ||
+    !Array.isArray(order.orderItems) ||
+    order.orderItems.length === 0
+  ) {
     return (
       <p className='text-center text-gray-600'>주문 정보를 찾을 수 없습니다.</p>
     );
   }
 
-  const orderNo = order.orderId;
+  const orderNo = order.orderInfo.orderId;
 
   const fmtPrice = n => {
     const num = Number(n);
@@ -24,11 +29,10 @@ export default function OrderDetailProductInfoSection({ order }) {
 
   return (
     <ul className='flex flex-col gap-4 pt-4'>
-      {order.details.map(d => {
-        const image = pickFirstImageUrl(d.productImgUrls);
+      {order.orderItems.map(d => {
         const name = d.productName || '-';
         const option = d.optName || '-';
-        const price = d.price;
+        const price = d.lineTotalPrice;
         const quantity = d.quantity ?? 1;
 
         const statusPerItem = Array.isArray(d.changeStatus)
@@ -37,7 +41,10 @@ export default function OrderDetailProductInfoSection({ order }) {
             ? [d.changeStatus]
             : [];
         const deliveryStatusForItem =
-          order.deliveryStatus ?? order.status ?? d.deliveryStatus ?? '';
+          order.orderInfo.deliveryStatus ??
+          order.status ??
+          d.deliveryStatus ??
+          '';
 
         const orderStatusForItem = Array.isArray(d.orderStatus)
           ? d.orderStatus
@@ -50,7 +57,6 @@ export default function OrderDetailProductInfoSection({ order }) {
           orderDetailId: d.orderDetailId,
           name,
           option,
-          image,
           price,
           quantity,
         };
@@ -58,35 +64,37 @@ export default function OrderDetailProductInfoSection({ order }) {
         return (
           <li
             key={d.orderDetailId ?? `${d.productId}-${d.optId ?? '0'}`}
-            className='border border-gray-400 rounded-xl px-4 py-6 flex items-start justify-between'
+            className='border border-gray-400 rounded-xl px-4 py-4 flex items-start justify-between'
           >
             <div className='flex flex-col gap-4'>
-              <p className='text-gray-500 text-left'>주문번호 : {orderNo}</p>
+              <p className='text-gray-500 text-sm text-left'>
+                주문번호 : {orderNo}
+              </p>
 
               <button
                 className='flex items-start gap-4'
                 onClick={() => handleProductClick(d.productId)}
               >
-                {image ? (
+                {d.productImgUrl ? (
                   <img
-                    src={image}
+                    src={d.productImgUrl}
                     alt={name}
-                    className='w-[80px] h-[80px] object-cover rounded-lg'
+                    className='w-[100px] h-[100px] object-cover rounded-lg'
                   />
                 ) : (
-                  <div className='w-[80px] h-[80px] rounded-lg bg-gray-100' />
+                  <div className='w-[100px] h-[100px] rounded-lg bg-gray-100' />
                 )}
 
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 mb-1'>
-                    <p className='text-gray-900 truncate max-w-[5rem] md:max-w-[27rem]'>
+                    <p className='text-gray-900 text-sm md:text-base truncate max-w-[5rem] md:max-w-[27rem]'>
                       {name}
                     </p>
                   </div>
-                  <p className='text-sm text-gray-600 mb-2 truncate max-w-[5rem] md:max-w-[27rem] text-left'>
-                    옵션: {option}
+                  <p className='text-xs md:text-sm text-gray-600 mb-2 truncate max-w-[5rem] md:max-w-[27rem] text-left'>
+                    옵션: {d.option1Name} / {d.option2Name}
                   </p>
-                  <div className='flex items-center gap-4 text-sm'>
+                  <div className='flex flex-col gap-1 text-left text-sm whitespace-nowrap'>
                     <span className='font-semibold'>{fmtPrice(price)}</span>
                     <span>수량: {quantity}개</span>
                   </div>
