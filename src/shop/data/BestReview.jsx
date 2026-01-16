@@ -12,8 +12,8 @@ export const bestReview = [
     id: 2,
     image:
       'https://firebasestorage.googleapis.com/v0/b/mongsom-22c9b.firebasestorage.app/o/review%2F%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2_%E1%84%92%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%B72.jpg?alt=media&token=feda1e90-88ae-494f-8a79-f81c35813813',
-    description: '핸드크림',
-    title: '생일선물',
+    title: '핸드크림',
+    description: '생일선물',
     review:
       '친구 생일선물을 고르다가 우연히 이 핸드크림을 보게 됐는데, 패키지가 너무 귀여워서 “선물용으로 딱이다!" 싶어 바로 구매했어요~ 친구가 향이 너무 좋다길래 결국 저도 쓰려고 재구매했습니다 ㅎㅎ 향은 말할 것도 없고 발랐을 때 끈적임 없이 잘 흡수되고 보습력 또한 너무 좋아서 사계절 내내 잘 쓸 수 있을 거 같아요~!',
   },

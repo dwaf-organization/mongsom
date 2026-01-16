@@ -24,7 +24,9 @@ export default function PurchaseInfo({ product, isLoading }) {
   };
 
   const handleClick = () => {
-    openModal(<InquireModal />);
+    openModal(
+      <InquireModal productName={product.name} productCode={product.code} />,
+    );
   };
 
   return (

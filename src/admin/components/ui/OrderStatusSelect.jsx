@@ -18,6 +18,7 @@ const OrderStatusSelect = ({ value, onChange, name = 'status' }) => {
         <option value='예약배송'>예약배송</option>
         <option value='재고부족'>재고부족</option>
         <option value='입고지연'>입고지연</option>
+        <option value='주문취소'>주문취소</option>
       </select>
       <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
         <svg
