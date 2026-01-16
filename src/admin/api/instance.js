@@ -1,7 +1,7 @@
 const BASE_URL =
   (typeof process !== 'undefined' && process.env?.REACT_APP_BASE_API_URL) ||
-  'http://localhost:8000/';
-// 'https://api.mongsom.co.kr/';
+  // 'http://localhost:8000/';
+  'https://api.mongsom.co.kr/';
 
 /**
  * @typedef {Object} CommonResponse
