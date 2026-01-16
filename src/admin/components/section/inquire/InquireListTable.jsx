@@ -34,6 +34,9 @@ export default function InquireListTable({ rows, loading, data }) {
                 <th className='px-6 py-3 uppercase tracking-wider text-center'>
                   카테고리
                 </th>
+                <th className='px-6 py-3 uppercase tracking-wider text-center'>
+                  문의상품
+                </th>
                 <th className='px-6 py-3 uppercase tracking-wider whitespace-nowrap'>
                   희망가격
                 </th>
@@ -43,7 +46,10 @@ export default function InquireListTable({ rows, loading, data }) {
             <tbody className='bg-white divide-y'>
               {data.map(inquiry => {
                 return (
-                  <tr key={inquiry.inquiryId} className='text-center'>
+                  <tr
+                    key={inquiry.inquiryId}
+                    className='text-center cursor-pointer  hover:bg-gray-100'
+                  >
                     <td className='px-6 py-3 text-sm text-gray-900'>
                       <div className='flex flex-col gap-1 items-center'>
                         <p className='font-medium'>{inquiry.inquiryId}</p>
@@ -65,6 +71,9 @@ export default function InquireListTable({ rows, loading, data }) {
 
                     <td className='px-6 py-3 whitespace-nowrap text-sm'>
                       {inquiry.category}
+                    </td>
+                    <td className='px-6 py-3 whitespace-nowrap text-sm'>
+                      {inquiry.name}
                     </td>
                     <td className='px-6 py-3 whitespace-nowrap text-sm'>
                       {inquiry.price}

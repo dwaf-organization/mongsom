@@ -10,7 +10,10 @@ const isEmail = v => /^\S+@\S+\.\S+$/.test(String(v || '').trim());
 
 const digits = v => String(v || '').replace(/\D/g, '');
 
-export default function InquireModal() {
+export default function InquireModal({
+  productName = '전체문의',
+  productCode = 0,
+}) {
   const { addToast } = useToast();
   const { closeModal } = useModal();
 
@@ -21,6 +24,7 @@ export default function InquireModal() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
+  const [product, setProduct] = useState(productName);
 
   const handleSubmit = async () => {
     if (!selectedCategory) return addToast('카테고리를 선택하세요.', 'error');
@@ -40,6 +44,8 @@ export default function InquireModal() {
       category: category?.label ?? '',
       companyName: name.trim(),
       email: email.trim(),
+      productId: productCode,
+      name: product.trim(),
       phone: digits(phone),
       price: price?.label ?? '',
     };
@@ -66,6 +72,7 @@ export default function InquireModal() {
       setEmail('');
       setPhone('');
       setMessage('');
+      setProduct(productName);
     } catch (e) {
       alert(e.message || '문의 접수 중 오류가 발생했습니다.');
     }
@@ -136,9 +143,13 @@ export default function InquireModal() {
           </label>
           <label className='w-full'>
             문의상품
-            <p className='border border-gray-300 rounded-md p-2 text-gray-50'>
-              전체문의
-            </p>
+            <input
+              type='text'
+              value={product}
+              onChange={e => setProduct(e.target.value)}
+              placeholder='상품명을 입력해주세요.'
+              className='w-full max-w-[800px] rounded-md border border-gray-300 p-2'
+            />
           </label>
 
           <label className='w-full'>

@@ -115,16 +115,16 @@ export default function Exchange() {
     }
 
     // ✅ 반품일 때 은행/계좌 필수
-    if (exchangeType === 'return') {
-      if (!refundBank.trim()) {
-        addToast('환불 은행을 입력해주세요.');
-        return;
-      }
-      if (!refundAccount.trim()) {
-        addToast('환불 계좌번호를 입력해주세요.');
-        return;
-      }
-    }
+    // if (exchangeType === 'return') {
+    //   if (!refundBank.trim()) {
+    //     addToast('환불 은행을 입력해주세요.');
+    //     return;
+    //   }
+    //   if (!refundAccount.trim()) {
+    //     addToast('환불 계좌번호를 입력해주세요.');
+    //     return;
+    //   }
+    // }
 
     const target = order.find(p => p.orderDetailId === selectedProduct);
     if (!target) {

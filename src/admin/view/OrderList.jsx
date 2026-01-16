@@ -211,6 +211,7 @@ export default function OrderList() {
             <option value='예약배송'>예약배송</option>
             <option value='재고부족'>재고부족</option>
             <option value='입고지연'>입고지연</option>
+            <option value='주문취소'>주문취소</option>
           </select>
           <button
             className=' flex items-center gap-1 font-semibold bg-green-900 text-sm hover:bg-green-700 text-white px-2 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed'

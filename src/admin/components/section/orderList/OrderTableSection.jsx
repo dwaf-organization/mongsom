@@ -207,6 +207,7 @@ export default function OrderTableSection({ rows, loading, onRefresh }) {
                           <option value='예약배송'>예약배송</option>
                           <option value='재고부족'>재고부족</option>
                           <option value='입고지연'>입고지연</option>
+                          <option value='주문취소'>주문취소</option>
                         </select>
                         <p className='border rounded-md border-gray-300 px-2 py-1 text-sm'>
                           택배사 : 로젠
