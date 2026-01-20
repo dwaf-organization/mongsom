@@ -265,9 +265,13 @@ export default function AddProductInfoSection() {
     try {
       setSubmitting(true);
       const resp = await createProduct(result.data);
-      console.log('✅ 상품 등록 성공:', resp);
-      addToast('상품 등록이 완료되었습니다.', 'success');
-      navigate('/admin/products-list');
+      if (resp.code === 1) {
+        console.log('✅ 상품 등록 성공:', resp);
+        addToast('상품 등록이 완료되었습니다.', 'success');
+        navigate('/admin/products-list');
+      } else {
+        addToast(resp.data.message, 'error');
+      }
 
       setProductData({
         name: '',
