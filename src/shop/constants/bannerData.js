@@ -5,11 +5,11 @@ export const simpleImageBanners = [
   {
     id: 2,
     image: mongsomBannerImg1,
-    link: '/shop-detail/2',
+    link: '/shop-detail/9',
   },
   {
     id: 3,
     image: mongsomBannerImg2,
-    link: '/shop-detail/3',
+    link: '/shop-detail/4',
   },
 ];
