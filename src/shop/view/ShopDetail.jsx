@@ -244,7 +244,7 @@ export default function ShopDetail() {
                 height={400}
                 decoding='async'
                 className={[
-                  'absolute inset-0 w-[400px] h-[400px] object-cover transition-opacity duration-200',
+                  'absolute inset-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] object-cover transition-opacity duration-200',
                   swapAnimating ? 'opacity-100' : 'opacity-0',
                 ].join(' ')}
                 onTransitionEnd={handleOverlayTransitionEnd}
