@@ -49,10 +49,24 @@ export default function ProductInfoTab({ product, isLoading }) {
         .rich-content :where(img, figure, video, iframe) {
           max-width: 800px;
           width: 100%;
+          margin-left: auto;
+          margin-right: auto;
         }
         .rich-content p:has(> img),
         .rich-content p:has(> a > img) {
           max-width: 800px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        /* Quill 에디터 정렬 클래스 */
+        .rich-content .ql-align-center {
+          text-align: center;
+        }
+        .rich-content .ql-align-right {
+          text-align: right;
+        }
+        .rich-content .ql-align-justify {
+          text-align: justify;
         }
       `}</style>
     </>
